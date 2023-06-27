@@ -15,6 +15,8 @@
 		DBA06D552A46A55A00E755E5 /* Meal.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA06D542A46A55A00E755E5 /* Meal.swift */; };
 		DBA06D592A4A6A2200E755E5 /* MealTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA06D582A4A6A2200E755E5 /* MealTableViewController.swift */; };
 		DBA06D5B2A4A90FD00E755E5 /* NetworkLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA06D5A2A4A90FD00E755E5 /* NetworkLayer.swift */; };
+		DBB70A482A4B265E0053934F /* MealDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB70A472A4B265E0053934F /* MealDetailViewController.swift */; };
+		DBB70A4C2A4B81850053934F /* MealTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB70A4B2A4B81850053934F /* MealTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +30,8 @@
 		DBA06D542A46A55A00E755E5 /* Meal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Meal.swift; sourceTree = "<group>"; };
 		DBA06D582A4A6A2200E755E5 /* MealTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTableViewController.swift; sourceTree = "<group>"; };
 		DBA06D5A2A4A90FD00E755E5 /* NetworkLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkLayer.swift; sourceTree = "<group>"; };
+		DBB70A472A4B265E0053934F /* MealDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealDetailViewController.swift; sourceTree = "<group>"; };
+		DBB70A4B2A4B81850053934F /* MealTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +65,8 @@
 			isa = PBXGroup;
 			children = (
 				DBA06D582A4A6A2200E755E5 /* MealTableViewController.swift */,
+				DBB70A4B2A4B81850053934F /* MealTableViewCell.swift */,
+				DBB70A472A4B265E0053934F /* MealDetailViewController.swift */,
 				DBA06D402A46A51B00E755E5 /* AppDelegate.swift */,
 				DBA06D422A46A51B00E755E5 /* SceneDelegate.swift */,
 				DBA06D462A46A51B00E755E5 /* Main.storyboard */,
@@ -146,6 +152,8 @@
 			files = (
 				DBA06D412A46A51B00E755E5 /* AppDelegate.swift in Sources */,
 				DBA06D552A46A55A00E755E5 /* Meal.swift in Sources */,
+				DBB70A4C2A4B81850053934F /* MealTableViewCell.swift in Sources */,
+				DBB70A482A4B265E0053934F /* MealDetailViewController.swift in Sources */,
 				DBA06D592A4A6A2200E755E5 /* MealTableViewController.swift in Sources */,
 				DBA06D5B2A4A90FD00E755E5 /* NetworkLayer.swift in Sources */,
 				DBA06D432A46A51B00E755E5 /* SceneDelegate.swift in Sources */,

@@ -14,7 +14,8 @@ enum NetworkLayerError: Error {
     case dataError
 }
 
-typealias MealResult = (Result<MealDirectory, NetworkLayerError>) -> Void
+typealias MealResult = (Result<[Meal], NetworkLayerError>) -> Void
+typealias MealDetailResult = (Result<MealDetail, NetworkLayerError>) -> Void
 
 //enum APIEndpoints {
 //    case search = "search.php?s="
@@ -30,22 +31,30 @@ class NetworkHandler {
         
         let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, response, error in
             guard error == nil else {
-                completion(.failure(.unknown))
+                DispatchQueue.main.async {
+                    completion(.failure(.unknown))
+                }
                 return
             }
             
             guard let data = data else {
-                completion(.failure(.dataError))
+                DispatchQueue.main.async {
+                    completion(.failure(.dataError))
+                }
                 return
             }
             
             do {
                 let directory = try JSONDecoder().decode(MealDirectory.self, from: data)
-                completion(.success(directory))
+                DispatchQueue.main.async {
+                    completion(.success(directory.meals))
+                }
                 
             } catch {
                 print(error)
-                completion(.failure(.malformedJson))
+                DispatchQueue.main.async {
+                    completion(.failure(.malformedJson))
+                }
             }
             
             
@@ -55,7 +64,44 @@ class NetworkHandler {
         
     }
     
-    static func fetchMealDetails(with id: String, completion: MealResult) {
+    // TODO: - Put task on background trhead
+    
+    static func fetchMealDetails(with id: String, completion: @escaping MealDetailResult) {
+        let details = detailsEndpoint + id
         
+        guard let detailsUrl = URL(string: details) else { completion(.failure(.urlFailure)); return }
+        
+        let task = URLSession.shared.dataTask(with: URLRequest(url: detailsUrl)) { data, response, error in
+            guard error == nil else {
+                DispatchQueue.main.async {
+                    completion(.failure(.unknown))
+                }
+                return
+            }
+            
+            guard let data = data else {
+                DispatchQueue.main.async {
+                    completion(.failure(.dataError))                    
+                }
+                return
+            }
+            
+            do {
+                let mealDetail = try JSONDecoder().decode(MealDetail.self, from: data)
+                DispatchQueue.main.async {
+                    completion(.success(mealDetail))
+                }
+                
+            } catch {
+                print(error)
+                DispatchQueue.main.async {
+                    completion(.failure(.malformedJson))
+                }
+            }
+            
+            
+        }
+        
+        task.resume()
     }
 }
