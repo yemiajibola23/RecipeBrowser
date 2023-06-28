@@ -9,14 +9,18 @@ import UIKit
 
 class MealDetailViewController: UIViewController {
     
+    @IBOutlet weak var mealImageView: UIImageView!
+    
+    static let segueIdentifier = "showMealDetail"
+    
     var id: String! {
         didSet {
             NetworkHandler.fetchMealDetails(with: self.id) { [weak self] result in
                 switch result {
-                case .success(let detail):
-                    self?.configureView(with: detail)
+                case .success(let details):
+                    self?.configureView(with: details)
                 case .failure(let error):
-                    print(error.localizedDescription)
+                    print(error)
                 }
             }
         }
@@ -29,8 +33,15 @@ class MealDetailViewController: UIViewController {
     }
     
     
-    func configureView(with mealDetail: MealDetail) {
-        
+    func configureView(with mealDetails: [MealDetail]) {
+        NetworkHandler.fetchImage(urlString: mealDetails.first!.thumbnail) { result in
+            switch result {
+            case .success(let image):
+                self.mealImageView.image = image
+            case .failure(let error):
+                print(error)
+            }
+        }
     }
 
 }

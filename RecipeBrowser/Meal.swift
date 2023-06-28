@@ -23,11 +23,20 @@ struct Meal: Codable {
     }
 }
 
+
+struct MealDetailContainer: Codable {
+    var mealDetails: [MealDetail]
+    
+    enum CodingKeys: String, CodingKey {
+        case mealDetails = "meals"
+    }
+}
+
 struct MealDetail: Codable {
     var id: String
     var name: String
     var thumbnail: String
-    var origin: Origin
+    var origin: String
     var instructions: String
     
     enum CodingKeys: String, CodingKey {
@@ -57,32 +66,32 @@ enum Category: String, Codable {
     case vegetarian
 }
 
-enum Origin: String, Codable {
-    case american
-    case british
-    case chinese
-    case croatian
-    case dutch
-    case egyptian
-    case filipino
-    case french
-    case greek
-    case indian
-    case irish
-    case italian
-    case jamaican
-    case japanese
-    case kenyan
-    case malaysian
-    case mexican
-    case moroccan
-    case polish
-    case portuguese
-    case russian
-    case spanish
-    case thai
-    case tunisian
-    case turkish
-    case unknown
-    case vietnamese
-}
+//enum Origin: String, Codable {
+//    case american
+//    case british
+//    case chinese
+//    case croatian
+//    case dutch
+//    case egyptian
+//    case filipino
+//    case french
+//    case greek
+//    case indian
+//    case irish
+//    case italian
+//    case jamaican
+//    case japanese
+//    case kenyan
+//    case malaysian
+//    case mexican
+//    case moroccan
+//    case polish
+//    case portuguese
+//    case russian
+//    case spanish
+//    case thai
+//    case tunisian
+//    case turkish
+//    case unknown
+//    case vietnamese
+//}

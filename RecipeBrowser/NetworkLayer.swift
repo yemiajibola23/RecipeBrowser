@@ -5,7 +5,7 @@
 //  Created by Yemi Ajibola on 6/26/23.
 //
 
-import Foundation
+import UIKit
 
 enum NetworkLayerError: Error {
     case urlFailure
@@ -15,7 +15,8 @@ enum NetworkLayerError: Error {
 }
 
 typealias MealResult = (Result<[Meal], NetworkLayerError>) -> Void
-typealias MealDetailResult = (Result<MealDetail, NetworkLayerError>) -> Void
+typealias MealDetailResult = (Result<[MealDetail], NetworkLayerError>) -> Void
+typealias ImageResult = (Result<UIImage, NetworkLayerError>) -> Void
 
 //enum APIEndpoints {
 //    case search = "search.php?s="
@@ -24,7 +25,7 @@ typealias MealDetailResult = (Result<MealDetail, NetworkLayerError>) -> Void
 
 class NetworkHandler {
     static let dessertEndpoint = "https://themealdb.com/api/json/v1/1/filter.php?c=Dessert"
-    static let detailsEndpoint = "www.themealdb.com/api/json/v1/1/lookup.php?i="
+    static let detailsEndpoint = "https://themealdb.com/api/json/v1/1/lookup.php?i="
     
     static func fetchMeals(completion: @escaping MealResult) {
         guard let url = URL(string: dessertEndpoint) else { completion(.failure(.urlFailure)); return }
@@ -68,6 +69,7 @@ class NetworkHandler {
     
     static func fetchMealDetails(with id: String, completion: @escaping MealDetailResult) {
         let details = detailsEndpoint + id
+        print(details)
         
         guard let detailsUrl = URL(string: details) else { completion(.failure(.urlFailure)); return }
         
@@ -87,9 +89,9 @@ class NetworkHandler {
             }
             
             do {
-                let mealDetail = try JSONDecoder().decode(MealDetail.self, from: data)
+                let mealDetail = try JSONDecoder().decode(MealDetailContainer.self, from: data)
                 DispatchQueue.main.async {
-                    completion(.success(mealDetail))
+                    completion(.success(mealDetail.mealDetails))
                 }
                 
             } catch {
@@ -100,6 +102,34 @@ class NetworkHandler {
             }
             
             
+        }
+        
+        task.resume()
+    }
+    
+    
+    static func fetchImage(urlString: String, completion: @escaping ImageResult) {
+        // Check user default for image
+        if let imageData = UserDefaults.standard.data(forKey: urlString), let image = UIImage(data: imageData) {
+            completion(.success(image))
+            return
+        }
+        
+        guard let url = URL(string: urlString) else { completion(.failure(.urlFailure)); return }
+        
+        let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
+            if let imageData = data, let image = UIImage(data: imageData) {
+                UserDefaults.standard.set(imageData, forKey: urlString)
+                
+                DispatchQueue.main.async {
+                    completion(.success(image))
+                }
+                return
+            }
+            
+            if let _ = error {
+                completion(.failure(.unknown))
+            }
         }
         
         task.resume()

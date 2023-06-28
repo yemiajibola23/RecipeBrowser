@@ -17,11 +17,11 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="MealCell" rowHeight="83" id="qaQ-MK-ptc" customClass="MealTableViewCell" customModule="RecipeBrowser" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="50" width="393" height="83"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="MealCell" rowHeight="49" id="qaQ-MK-ptc" customClass="MealTableViewCell" customModule="RecipeBrowser" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="50" width="393" height="49"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="qaQ-MK-ptc" id="BGU-Gj-Yi0">
-                                    <rect key="frame" x="0.0" y="0.0" width="393" height="83"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="393" height="49"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2il-Fy-Nch">
@@ -39,7 +39,7 @@
                                 </tableViewCellContentView>
                                 <connections>
                                     <outlet property="nameLabel" destination="2il-Fy-Nch" id="T1N-tI-gTQ"/>
-                                    <segue destination="zuC-2c-O3l" kind="show" id="1Qf-Fj-xeG"/>
+                                    <segue destination="zuC-2c-O3l" kind="show" identifier="showMealDetail" id="1Qf-Fj-xeG"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -60,10 +60,24 @@
                     <view key="view" contentMode="scaleToFill" id="ruT-gl-Daa">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="783"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Ei0-Uh-b7X">
+                                <rect key="frame" x="76" y="59" width="240" height="128"/>
+                            </imageView>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="T8P-Cp-vtN"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="Ei0-Uh-b7X" firstAttribute="centerX" secondItem="ruT-gl-Daa" secondAttribute="centerX" id="80K-CL-SUH"/>
+                            <constraint firstItem="Ei0-Uh-b7X" firstAttribute="centerY" secondItem="ruT-gl-Daa" secondAttribute="centerY" id="EaF-y7-eJJ"/>
+                            <constraint firstItem="Ei0-Uh-b7X" firstAttribute="centerY" secondItem="ruT-gl-Daa" secondAttribute="centerY" id="OZa-dt-84i"/>
+                            <constraint firstItem="Ei0-Uh-b7X" firstAttribute="top" secondItem="T8P-Cp-vtN" secondAttribute="top" id="kVv-1N-JdT"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="RL1-zm-VNV"/>
+                    <connections>
+                        <outlet property="mealImageView" destination="Ei0-Uh-b7X" id="Toj-sh-X14"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8Ty-xl-eiH" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
