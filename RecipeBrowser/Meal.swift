@@ -43,7 +43,7 @@ extension Meal {
               let measurement = dict["strMeasure\(i)"] as? String,
               !ingredient.isEmpty,
               !measurement.isEmpty {
-            ingredients.append(Ingredient(ingredient: ingredient, measurement: measurement))
+            ingredients.append(Ingredient(name: ingredient, measurement: measurement))
             i += 1
         }
         self.ingredients = ingredients
@@ -59,21 +59,21 @@ extension Meal {
     static let test = Meal(id: "53049", name: "Apam balik", thumbnail:  "https://www.themealdb.com/images/media/meals/adxcbq1619787919.jpg", category: "Dessert", origin: "Mix milk, oil and egg together. Sift flour, baking powder and salt into the mixture. Stir well until all ingredients are combined evenly.\r\n\r\nSpread some batter onto the pan. Spread a thin layer of batter to the side of the pan. Cover the pan for 30-60 seconds until small air bubbles appear.\r\n\r\nAdd butter, cream corn, crushed peanuts and sugar onto the pancake. Fold the pancake into half once the bottom surface is browned.\r\n\r\nCut into wedges and best eaten when it is warm.", instructions: "https://www.youtube.com/watch?v=6R8ffRRJcrg", ingredients: Meal.ingredientTest )
     
     static let ingredientTest: [Ingredient]?  = [
-        Ingredient(ingredient: "Milk", measurement: "200ml"),
-        Ingredient(ingredient: "Oil", measurement: "60ml"),
-        Ingredient(ingredient: "Eggs", measurement: "2"),
-        Ingredient(ingredient: "Flour", measurement: "1600g"),
-        Ingredient(ingredient: "Baking Powder", measurement: "3 tsp"),
-        Ingredient(ingredient: "Salt", measurement: "1/2 tsp"),
-        Ingredient(ingredient: "Unsalted Butter", measurement: "25g"),
-        Ingredient(ingredient: "Sugar", measurement: "45g"),
-        Ingredient(ingredient: "Peanut Butter", measurement: "3 tbs")
+        Ingredient(name: "Milk", measurement: "200ml"),
+        Ingredient(name: "Oil", measurement: "60ml"),
+        Ingredient(name: "Eggs", measurement: "2"),
+        Ingredient(name: "Flour", measurement: "1600g"),
+        Ingredient(name: "Baking Powder", measurement: "3 tsp"),
+        Ingredient(name: "Salt", measurement: "1/2 tsp"),
+        Ingredient(name: "Unsalted Butter", measurement: "25g"),
+        Ingredient(name: "Sugar", measurement: "45g"),
+        Ingredient(name: "Peanut Butter", measurement: "3 tbs")
     ]
 }
 
 
 struct Ingredient: Decodable {
-    var ingredient: String
+    var name: String
     var measurement: String
 }
 

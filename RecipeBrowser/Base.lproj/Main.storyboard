@@ -89,11 +89,11 @@
                                     <constraint firstAttribute="height" constant="226" id="afe-U4-Zcb"/>
                                 </constraints>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="IngredientCell" rowHeight="73" id="vjh-pL-Fol" customClass="IngredientsTableViewCell" customModule="RecipeBrowser" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="50" width="361" height="73"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="IngredientCell" rowHeight="153" id="vjh-pL-Fol" customClass="IngredientsTableViewCell" customModule="RecipeBrowser" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="50" width="361" height="153"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="vjh-pL-Fol" id="riN-DL-9Og">
-                                            <rect key="frame" x="0.0" y="0.0" width="361" height="73"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="361" height="153"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="01t-cA-cdY">
@@ -103,19 +103,23 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1W4-Ql-7cf">
-                                                    <rect key="frame" x="20" y="34" width="42" height="21"/>
+                                                    <rect key="frame" x="299" y="11" width="42" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="1W4-Ql-7cf" firstAttribute="top" secondItem="01t-cA-cdY" secondAttribute="bottom" constant="2" id="YIf-TZ-2Vm"/>
+                                                <constraint firstItem="1W4-Ql-7cf" firstAttribute="trailing" secondItem="riN-DL-9Og" secondAttribute="trailingMargin" id="2Qj-cU-O27"/>
                                                 <constraint firstItem="01t-cA-cdY" firstAttribute="top" secondItem="riN-DL-9Og" secondAttribute="topMargin" id="gOO-0R-MNE"/>
-                                                <constraint firstItem="1W4-Ql-7cf" firstAttribute="leading" secondItem="riN-DL-9Og" secondAttribute="leadingMargin" id="y2z-bj-p65"/>
                                                 <constraint firstItem="01t-cA-cdY" firstAttribute="leading" secondItem="riN-DL-9Og" secondAttribute="leadingMargin" id="yYh-SG-5pz"/>
+                                                <constraint firstItem="1W4-Ql-7cf" firstAttribute="top" secondItem="riN-DL-9Og" secondAttribute="topMargin" id="z6P-Ai-ETh"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="ingredientLabel" destination="01t-cA-cdY" id="ixX-rH-Ihs"/>
+                                            <outlet property="measurementLabel" destination="1W4-Ql-7cf" id="SCr-3Z-vFn"/>
+                                        </connections>
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>

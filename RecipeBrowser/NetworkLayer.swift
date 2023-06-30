@@ -81,7 +81,7 @@ final class NetworkHandler {
             
             if response.statusCode == 200 {
                 do {
-                    UserDefaults.setValue(data, forKey: request.url ?? UUID().uuidString)
+                    UserDefaults.standard.setValue(data, forKey: request.url ?? UUID().uuidString)
                     return UIImage(data: data)
                 }
                 

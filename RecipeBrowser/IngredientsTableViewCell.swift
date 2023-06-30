@@ -8,5 +8,8 @@
 import UIKit
 
 class IngredientsTableViewCell: UITableViewCell {
-
+    @IBOutlet weak var ingredientLabel: UILabel!
+    @IBOutlet weak var measurementLabel: UILabel!
+    
+    static let reuseIdentifier = "IngredientCell"
 }

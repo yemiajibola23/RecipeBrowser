@@ -20,7 +20,7 @@ class MealDetailViewController: UIViewController {
     var recipeSource = RecipeSource()
     
     var id: String!
-    var meal: Meal! {
+    var meal: Meal = Meal.test {
         didSet {
             self.configureView(with: self.meal)
         }
@@ -46,17 +46,22 @@ class MealDetailViewController: UIViewController {
 
         originLabel.text = meal.origin
         instructionsTextView.text = meal.instructions
+        ingredientsTableview.reloadData()
     }
 
 }
 
 extension MealDetailViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return UITableViewCell()
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: IngredientsTableViewCell.reuseIdentifier, for: indexPath) as? IngredientsTableViewCell, let ingredient = meal.ingredients?[indexPath.row] else { return UITableViewCell() }
+        cell.ingredientLabel.text = ingredient.name
+        cell.measurementLabel.text = ingredient.measurement
+        
+        return cell
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
+        return meal.ingredients?.count ?? 9
     }
 }
 
