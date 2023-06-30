@@ -17,6 +17,10 @@
 		DBA06D5B2A4A90FD00E755E5 /* NetworkLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA06D5A2A4A90FD00E755E5 /* NetworkLayer.swift */; };
 		DBB70A482A4B265E0053934F /* MealDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB70A472A4B265E0053934F /* MealDetailViewController.swift */; };
 		DBB70A4C2A4B81850053934F /* MealTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB70A4B2A4B81850053934F /* MealTableViewCell.swift */; };
+		DBB70A4E2A4EBA310053934F /* MealRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB70A4D2A4EBA310053934F /* MealRequest.swift */; };
+		DBB70A502A4EBD5C0053934F /* RecipeSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB70A4F2A4EBD5C0053934F /* RecipeSource.swift */; };
+		DBB70A522A4ED4530053934F /* ImageRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB70A512A4ED4530053934F /* ImageRequest.swift */; };
+		DBB70A542A4ED7D40053934F /* IngredientsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB70A532A4ED7D40053934F /* IngredientsTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +36,10 @@
 		DBA06D5A2A4A90FD00E755E5 /* NetworkLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkLayer.swift; sourceTree = "<group>"; };
 		DBB70A472A4B265E0053934F /* MealDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealDetailViewController.swift; sourceTree = "<group>"; };
 		DBB70A4B2A4B81850053934F /* MealTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTableViewCell.swift; sourceTree = "<group>"; };
+		DBB70A4D2A4EBA310053934F /* MealRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealRequest.swift; sourceTree = "<group>"; };
+		DBB70A4F2A4EBD5C0053934F /* RecipeSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeSource.swift; sourceTree = "<group>"; };
+		DBB70A512A4ED4530053934F /* ImageRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageRequest.swift; sourceTree = "<group>"; };
+		DBB70A532A4ED7D40053934F /* IngredientsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientsTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +74,7 @@
 			children = (
 				DBA06D582A4A6A2200E755E5 /* MealTableViewController.swift */,
 				DBB70A4B2A4B81850053934F /* MealTableViewCell.swift */,
+				DBB70A532A4ED7D40053934F /* IngredientsTableViewCell.swift */,
 				DBB70A472A4B265E0053934F /* MealDetailViewController.swift */,
 				DBA06D402A46A51B00E755E5 /* AppDelegate.swift */,
 				DBA06D422A46A51B00E755E5 /* SceneDelegate.swift */,
@@ -75,6 +84,9 @@
 				DBA06D4B2A46A51D00E755E5 /* LaunchScreen.storyboard */,
 				DBA06D4E2A46A51D00E755E5 /* Info.plist */,
 				DBA06D5A2A4A90FD00E755E5 /* NetworkLayer.swift */,
+				DBB70A4D2A4EBA310053934F /* MealRequest.swift */,
+				DBB70A512A4ED4530053934F /* ImageRequest.swift */,
+				DBB70A4F2A4EBD5C0053934F /* RecipeSource.swift */,
 			);
 			path = RecipeBrowser;
 			sourceTree = "<group>";
@@ -150,6 +162,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DBB70A502A4EBD5C0053934F /* RecipeSource.swift in Sources */,
 				DBA06D412A46A51B00E755E5 /* AppDelegate.swift in Sources */,
 				DBA06D552A46A55A00E755E5 /* Meal.swift in Sources */,
 				DBB70A4C2A4B81850053934F /* MealTableViewCell.swift in Sources */,
@@ -157,6 +170,9 @@
 				DBA06D592A4A6A2200E755E5 /* MealTableViewController.swift in Sources */,
 				DBA06D5B2A4A90FD00E755E5 /* NetworkLayer.swift in Sources */,
 				DBA06D432A46A51B00E755E5 /* SceneDelegate.swift in Sources */,
+				DBB70A4E2A4EBA310053934F /* MealRequest.swift in Sources */,
+				DBB70A522A4ED4530053934F /* ImageRequest.swift in Sources */,
+				DBB70A542A4ED7D40053934F /* IngredientsTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

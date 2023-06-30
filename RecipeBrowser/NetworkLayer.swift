@@ -9,129 +9,104 @@ import UIKit
 
 enum NetworkLayerError: Error {
     case urlFailure
-    case unknown
-    case malformedJson
+    case unknown(_ message: String)
+    case malformedJson(_ key: String)
     case dataError
+    case networkError
+    case httpError
+    case statusError(_ code: Int)
+    
+    var description: String {
+        switch self {
+            
+        case .urlFailure:
+            return "There was an issue with the url."
+        case .unknown(let error):
+            return "An unknown issue occurred.\n \(error)"
+        case .malformedJson(_):
+            return ""
+        case .dataError:
+            return ""
+        case .networkError:
+            return ""
+        case .httpError:
+            return "There was an issue with the http."
+        case .statusError(let code):
+            return "HTTP status code error: \(code)."
+        }
+    }
 }
 
-typealias MealResult = (Result<[Meal], NetworkLayerError>) -> Void
-typealias MealDetailResult = (Result<[MealDetail], NetworkLayerError>) -> Void
-typealias ImageResult = (Result<UIImage, NetworkLayerError>) -> Void
 
-//enum APIEndpoints {
-//    case search = "search.php?s="
-//    case ingredient = ""
-//}
-
-class NetworkHandler {
-    static let dessertEndpoint = "https://themealdb.com/api/json/v1/1/filter.php?c=Dessert"
-    static let detailsEndpoint = "https://themealdb.com/api/json/v1/1/lookup.php?i="
+struct NetworkRequest {
+    var request: URLRequest
     
-    static func fetchMeals(completion: @escaping MealResult) {
-        guard let url = URL(string: dessertEndpoint) else { completion(.failure(.urlFailure)); return }
+    init(apiRequest: APIRequest) {
+        var urlcomponents = URLComponents(string: apiRequest.url?.description ?? Constants.baseURL) // if there is nothing inside api.url than send me the base url
         
-        let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, response, error in
-            guard error == nil else {
-                DispatchQueue.main.async {
-                    completion(.failure(.unknown))
-                }
-                return
-            }
-            
-            guard let data = data else {
-                DispatchQueue.main.async {
-                    completion(.failure(.dataError))
-                }
-                return
-            }
-            
-            do {
-                let directory = try JSONDecoder().decode(MealDirectory.self, from: data)
-                DispatchQueue.main.async {
-                    completion(.success(directory.meals))
-                }
-                
-            } catch {
-                print(error)
-                DispatchQueue.main.async {
-                    completion(.failure(.malformedJson))
-                }
-            }
-            
-            
+        let path = urlcomponents?.path.appending(apiRequest.path) ?? ""
+        
+        urlcomponents?.path = path
+        
+        if let queryItem = apiRequest.queryItems {
+            urlcomponents?.queryItems =  queryItem
         }
-        
-        task.resume()
-        
-    }
-    
-    // TODO: - Put task on background trhead
-    
-    static func fetchMealDetails(with id: String, completion: @escaping MealDetailResult) {
-        let details = detailsEndpoint + id
-        print(details)
-        
-        guard let detailsUrl = URL(string: details) else { completion(.failure(.urlFailure)); return }
-        
-        let task = URLSession.shared.dataTask(with: URLRequest(url: detailsUrl)) { data, response, error in
-            guard error == nil else {
-                DispatchQueue.main.async {
-                    completion(.failure(.unknown))
-                }
-                return
-            }
-            
-            guard let data = data else {
-                DispatchQueue.main.async {
-                    completion(.failure(.dataError))                    
-                }
-                return
-            }
-            
-            do {
-                let mealDetail = try JSONDecoder().decode(MealDetailContainer.self, from: data)
-                DispatchQueue.main.async {
-                    completion(.success(mealDetail.mealDetails))
-                }
-                
-            } catch {
-                print(error)
-                DispatchQueue.main.async {
-                    completion(.failure(.malformedJson))
-                }
-            }
-            
-            
-        }
-        
-        task.resume()
-    }
-    
-    
-    static func fetchImage(urlString: String, completion: @escaping ImageResult) {
-        // Check user default for image
-        if let imageData = UserDefaults.standard.data(forKey: urlString), let image = UIImage(data: imageData) {
-            completion(.success(image))
+        guard let fullUrl = urlcomponents?.url else {
+            assertionFailure("Did not load the url")
+            request = URLRequest(url: URL(string: "")!)
             return
         }
-        
-        guard let url = URL(string: urlString) else { completion(.failure(.urlFailure)); return }
-        
-        let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
-            if let imageData = data, let image = UIImage(data: imageData) {
-                UserDefaults.standard.set(imageData, forKey: urlString)
-                
-                DispatchQueue.main.async {
-                    completion(.success(image))
-                }
-                return
-            }
-            
-            if let _ = error {
-                completion(.failure(.unknown))
-            }
+        request = URLRequest(url: fullUrl)
+        request.httpMethod = apiRequest.method.rawValue
+        request.timeoutInterval = apiRequest.timeoutInterval
+    }
+}
+
+
+
+
+final class NetworkHandler {
+    
+    func handleImage(request: APIRequest) async throws -> UIImage? {
+        if let urlString = request.url, let imageData =  UserDefaults.standard.data(forKey: urlString) {
+            return UIImage(data: imageData)
         }
         
-        task.resume()
+        
+        do {
+            let networkRequest = NetworkRequest(apiRequest: request)
+            let (data, response) = try await URLSession.shared.data(for: networkRequest.request)
+            
+            guard let response = response as? HTTPURLResponse else { throw NetworkLayerError.httpError }
+            
+            if response.statusCode == 200 {
+                do {
+                    UserDefaults.setValue(data, forKey: request.url ?? UUID().uuidString)
+                    return UIImage(data: data)
+                }
+                
+            } else {
+                throw NetworkLayerError.statusError(response.statusCode)
+            }
+        }
+            
+    }
+    
+    func handle<T: Decodable>(request: APIRequest) async throws -> T {
+        do {
+            let networkRequest = NetworkRequest(apiRequest: request)
+            let (data, response) = try await URLSession.shared.data(for: networkRequest.request)
+            
+            guard let response = response as? HTTPURLResponse else { throw NetworkLayerError.httpError }
+            
+            if response.statusCode == 200 {
+                do {
+                    return try JSONDecoder().decode(T.self, from: data)
+                }
+                
+            } else {
+                throw NetworkLayerError.statusError(response.statusCode)
+            }
+        }
     }
 }

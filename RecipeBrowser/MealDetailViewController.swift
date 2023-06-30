@@ -10,38 +10,86 @@ import UIKit
 class MealDetailViewController: UIViewController {
     
     @IBOutlet weak var mealImageView: UIImageView!
+    @IBOutlet weak var nameLabel: UILabel!
+    @IBOutlet weak var originLabel: UILabel!
+    @IBOutlet weak var instructionsTextView: UITextView!
+    @IBOutlet weak var ingredientsTableview: UITableView!
     
     static let segueIdentifier = "showMealDetail"
     
-    var id: String! {
+    var recipeSource = RecipeSource()
+    
+    var id: String!
+    var meal: Meal! {
         didSet {
-            NetworkHandler.fetchMealDetails(with: self.id) { [weak self] result in
-                switch result {
-                case .success(let details):
-                    self?.configureView(with: details)
-                case .failure(let error):
-                    print(error)
-                }
-            }
+            self.configureView(with: self.meal)
         }
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
-    }
-    
-    
-    func configureView(with mealDetails: [MealDetail]) {
-        NetworkHandler.fetchImage(urlString: mealDetails.first!.thumbnail) { result in
-            switch result {
-            case .success(let image):
-                self.mealImageView.image = image
-            case .failure(let error):
-                print(error)
+        ingredientsTableview.dataSource = self
+        
+        Task {
+            do {
+                meal = try await recipeSource.getMealDetails(mealID: id).meals.first ?? Meal.test
+                mealImageView.image = try await recipeSource.getImage(url: meal.thumbnail)
+            } catch {
+                showAlert(with: error as? NetworkLayerError ?? .unknown(error.localizedDescription))
             }
         }
     }
+    
+    
+    func configureView(with meal: Meal) {
+        navigationItem.title = meal.name
 
+        originLabel.text = meal.origin
+        instructionsTextView.text = meal.instructions
+    }
+
+}
+
+extension MealDetailViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        return UITableViewCell()
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 0
+    }
+}
+
+
+extension UIViewController {
+    func showAlert(with error: NetworkLayerError) {
+            var title: String
+            switch error {
+            case .malformedJson:
+                title = "Malformed JSON Error"
+            case .urlFailure:
+                title = "URL Error"
+            case .networkError:
+                title = "Network Failure"
+//            case .empty:
+//                title = "No recipes"
+            case .unknown:
+                title = "Unknown Issue"
+            case .dataError:
+                title = "Data Issue"
+//            case .imageError:
+//                title = "Image Error"
+            case .httpError:
+                title = "HTTP Error"
+            case .statusError:
+                title = "Status Error"
+            }
+            
+        let alert = UIAlertController(title: title, message: error.description, preferredStyle: .alert)
+            let defaultAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+            alert.addAction(defaultAction)
+            
+            present(alert, animated: false, completion: nil)
+            
+        }
 }

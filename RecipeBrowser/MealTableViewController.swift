@@ -14,26 +14,20 @@ class MealTableViewController: UITableViewController {
         }
     }
 
+    var recipeSource = RecipeSource()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
+        navigationItem.title = "Desserts"
         
-
-        
-        NetworkHandler.fetchMeals { [weak self] result in
-            guard  let self = self else { return }
-            switch result {
-            case .failure(let networkError):
-                // TODO: Show error in alert
-                print(networkError)
-            case .success(let meals):
-//                print(meals)
-                self.meals = meals
+        Task {
+            do {
+                meals = try await recipeSource.getMealsForCategory(category: "dessert").meals
+            } catch {
+                showAlert(with: error as? NetworkLayerError ?? .unknown(error.localizedDescription))
             }
         }
+        
 
     }
 
@@ -65,8 +59,6 @@ class MealTableViewController: UITableViewController {
         let id = meals?[selectedIndex.row].id else { return }
         
         destination.id = id
-        
-        
     }
 
 }
