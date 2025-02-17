@@ -10,8 +10,8 @@ import Testing
 
 struct RecipeBrowserTests {
 
-    @Test func example() async throws {
-        // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+    @Test func testAlwaysSucceeds() {
+        #expect(true, "This will always pass")
     }
 
 }
