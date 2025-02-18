@@ -8,9 +8,15 @@
 import SwiftUI
 
 struct RecipeListView: View {
+    @State var recipes = Recipe.mock
+    
     var body: some View {
         NavigationStack {
-            RecipeItemView()
+            List {
+                ForEach($recipes) { recipe in
+                    RecipeItemView(recipe: recipe)
+                }
+            }
         }
         .padding()
     }

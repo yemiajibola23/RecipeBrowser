@@ -8,21 +8,22 @@
 import SwiftUI
 
 struct RecipeItemView: View {
+    @Binding var recipe: Recipe
     var body: some View {
         VStack {
             Image("placeholder-meal")
                 .resizable()
                 .frame(width: 300, height: 300)
                 .clipShape(RoundedRectangle(cornerRadius: 25.0))
-            Text("Meal 1")
+            Text(recipe.name)
                 .font(.title)
                 .bold()
-            Text("Cuisine")
+            Text(recipe.cuisine)
                 .font(.title2)
         }
     }
 }
 
 #Preview {
-    RecipeItemView()
+    RecipeItemView(recipe: .constant(.mock.first!))
 }
