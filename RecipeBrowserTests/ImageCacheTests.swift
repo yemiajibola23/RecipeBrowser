@@ -2,32 +2,29 @@
 //  ImageCacheTests.swift
 //  RecipeBrowserTests
 //
-//  Created by Amira Ajibola  on 2/17/25.
+//  Created by Yemi Ajibola  on 2/18/25.
 //
 
-import Testing
+import XCTest
 import Foundation
 
 class ImageCache {
-    var cacheDirectory: URL?
+    let cacheDirectory: URL?
     
     init() {
-        let cacheFolder = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
-        cacheDirectory = cacheFolder.appending(component: "ImageCache", directoryHint: .isDirectory)
+        let cachesFolder = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        cacheDirectory = cachesFolder.appending(path: "ImageCache", directoryHint: .isDirectory)
     }
 }
 
 
-struct ImageCacheTests {
+final class ImageCacheTests: XCTestCase {
 
-    @Test("Initialization of image cache creates cache directory if it doesn't exist.")
-    func initializationCreatesCacheDirectory()  {
-        // given
+    func testInitCreatesCacheDirectory()  {
         // when
         let sut = ImageCache()
         
         // then
-        #expect(sut.cacheDirectory != nil)
+        XCTAssertNotNil(sut.cacheDirectory)
     }
-
 }
