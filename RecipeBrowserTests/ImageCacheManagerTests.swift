@@ -44,7 +44,6 @@ class ImageCacheManager {
     }
 }
 
-
 final class ImageCacheManagerTests: XCTestCase {
     fileprivate var memoryCache: MockInMemoryCache?
     fileprivate var diskCache: MockDiskCache?
@@ -55,21 +54,6 @@ final class ImageCacheManagerTests: XCTestCase {
         sut?.clearCache()
     }
     
-    func testImageCacheDownloadsImageIfNotInRAMorDisk() async {
-        // Given
-        let expectedImage = UIImage(systemName: "star")!
-        let testURL = URL(string: "https://test.com/sample.jpg")!
-
-        let mockDownloader = MockImageDownloader()
-        mockDownloader.mockImage = expectedImage
-        
-        sut = makeSUT(mockDownloader: mockDownloader)
-        
-        // When
-        let downloadedImage = try? await sut?.loadImage(from: testURL)
-        XCTAssertNotNil(downloadedImage, "Image should be downloaded since not in cache.")
-    }
-    
     func testImageCacheManagerLoadsImageFromRAM() async {
         // Given
         let expectedImage = UIImage(systemName: "star")!
@@ -77,7 +61,7 @@ final class ImageCacheManagerTests: XCTestCase {
         
         // Memory cache has image
         let memoryCache = MockInMemoryCache()
-        memoryCache.image = expectedImage
+        memoryCache.mockImage = expectedImage
         
         sut = makeSUT(memoryCache: memoryCache)
         
@@ -93,13 +77,28 @@ final class ImageCacheManagerTests: XCTestCase {
         
         // Memory cache has image
         let mockDiskCache = MockDiskCache()
-        mockDiskCache.image = expectedImage
+        mockDiskCache.mockImage = expectedImage
         
         sut = makeSUT(diskCache: mockDiskCache)
         
         // When
         let diskImage = try? await sut?.loadImage(from: testURL)
         XCTAssertNotNil(diskImage)
+    }
+    
+    func testImageCacheDownloadsImageIfNotInRAMorDisk() async {
+        // Given
+        let expectedImage = UIImage(systemName: "star")!
+        let testURL = URL(string: "https://test.com/sample.jpg")!
+
+        let mockDownloader = MockImageDownloader()
+        mockDownloader.mockImage = expectedImage
+        
+        sut = makeSUT(mockDownloader: mockDownloader)
+        
+        // When
+        let downloadedImage = try? await sut?.loadImage(from: testURL)
+        XCTAssertNotNil(downloadedImage, "Image should be downloaded since not in cache.")
     }
     
     func testImageCacheManagerSavesImageInRAMOrDiskIfDownloaded() async {
@@ -120,8 +119,8 @@ final class ImageCacheManagerTests: XCTestCase {
         let cachedImage = try? await sut?.loadImage(from: testURL)
         
         // Then
-        XCTAssertEqual(diskCache?.image, cachedImage)
-        XCTAssertEqual(memoryCache?.image, cachedImage)
+        XCTAssertEqual(diskCache?.mockImage, cachedImage)
+        XCTAssertEqual(memoryCache?.mockImage, cachedImage)
     }
 }
 
@@ -155,42 +154,42 @@ private extension ImageCacheManagerTests {
     }
     
     class MockInMemoryCache: ImageCachable {
-        var image: UIImage?
+        var mockImage: UIImage?
         
         init(image: UIImage? = nil) {
-            self.image = image
+            self.mockImage = image
         }
         
         func saveImage(_ image: UIImage, for url: URL) {
-            self.image = image
+            self.mockImage = image
         }
         
-        func loadImage(for url: URL) -> UIImage? { image }
+        func loadImage(for url: URL) -> UIImage? { mockImage }
         
-        func containsImage(for url: URL) -> Bool { image != nil }
+        func containsImage(for url: URL) -> Bool { mockImage != nil }
         
         func clearCache() {
-            image = nil
+            mockImage = nil
         }
     }
     
     class MockDiskCache: ImageCachable {
-        var image: UIImage?
+        var mockImage: UIImage?
         
         init(image: UIImage? = nil) {
-            self.image = image
+            self.mockImage = image
         }
         
         func saveImage(_ image: UIImage, for url: URL) {
-            self.image = image
+            self.mockImage = image
         }
         
-        func loadImage(for url: URL) -> UIImage? { image }
+        func loadImage(for url: URL) -> UIImage? { mockImage }
         
-        func containsImage(for url: URL) -> Bool { image != nil }
+        func containsImage(for url: URL) -> Bool { mockImage != nil }
         
         func clearCache() {
-            image = nil
+            mockImage = nil
         }
     }
 }
