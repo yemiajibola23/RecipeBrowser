@@ -7,7 +7,7 @@
 
 import UIKit
 
-public final class DiskCache {
+final class DiskCache {
     
     private let fileManager = FileManager.default
     private var cacheDirectory: URL
