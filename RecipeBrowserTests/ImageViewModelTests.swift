@@ -8,36 +8,6 @@
 import XCTest
 @testable import RecipeBrowser
 
-class ImageViewModel {
-    private var cacheManager: ImageCacheProtocol
-    var image: UIImage?
-    var isLoading = false
-    var errorMessage: String?
-    
-    init(cacheManager: ImageCacheProtocol) {
-        self.cacheManager = cacheManager
-    }
-    
-    func loadImage(from url: URL) async {
-        isLoading = true
-        print("is Loading is true.")
-        errorMessage = nil
-        
-        do {
-            if let fetchedImage = try await cacheManager.loadImage(from: url) {
-                image = fetchedImage
-            } else {
-                errorMessage = "Failed to load image."
-            }
-        } catch {
-            errorMessage = error.localizedDescription
-        }
-        
-        isLoading = false
-        print("IsLoading is false.")
-    }
-}
-
 final class ImageViewModelTests: XCTestCase {
     
     func testImageViewModelLoadImagesUpdatesImageOnSuccess() async {
