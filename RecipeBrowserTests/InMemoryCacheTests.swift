@@ -6,26 +6,7 @@
 //
 
 import XCTest
-
-class InMemoryCache {
-    private let cache = NSCache<NSString, UIImage>()
-    
-    func saveImage(_ image: UIImage, for url: URL) {
-        cache.setObject(image, forKey: url.absoluteString as NSString)
-    }
-    
-    func loadImage(for url: URL) -> UIImage? {
-        cache.object(forKey: url.absoluteString as NSString)
-    }
-    
-    func containsImage(for url: URL) -> Bool {
-        return cache.object(forKey: url.absoluteString as NSString) != nil
-    }
-    
-    func clearCache() {
-        cache.removeAllObjects()
-    }
-}
+@testable import RecipeBrowser
 
 final class InMemoryCacheTests: XCTestCase {
     
