@@ -44,11 +44,11 @@ class ImageCacheManager {
 
 final class ImageCacheManagerTests: XCTestCase {
 
-    func testImageCacheStoresImagesForFutureRequests() async {
+    func testImageCacheDownloadsImageIfNotInRAMorDisk() async {
         // Given
         let expectedImage = UIImage(systemName: "star")!
-        let memoryCache = InMemoryCache()
-        let diskCache = DiskCache()
+        let memoryCache = MockInMemoryCache()
+        let diskCache = MockDiskCache()
         let testURL = URL(string: "https://test.com/sample.jpg")!
 
         let mockDownloader = MockImageDownloader()
@@ -70,6 +70,35 @@ final class ImageCacheManagerTests: XCTestCase {
         XCTAssertNotNil(secondRetrievedImage)
         XCTAssertEqual(secondRetrievedImage?.pngData(), expectedImage.pngData())
     }
+    
+    func testImageCachManagerLoadsImageFromRAM() async {
+        
+        // Given
+        let expectedImage = UIImage(systemName: "star")!
+        let testURL = URL(string: "https://test.com/sample.jpg")!
+
+        // downloader has no image
+        let mockDownloader = MockImageDownloader()
+        mockDownloader.mockImage = nil
+        
+        // Disk cache has no image
+        let diskCache = MockDiskCache()
+        diskCache.image = nil
+        
+        
+        // Memory cache has image
+        let memoryCache = MockInMemoryCache()
+        memoryCache.image = expectedImage
+        
+        let sut = ImageCacheManager(diskCache: diskCache,
+                                    memoryCache: memoryCache,
+                                    downloader: mockDownloader)
+        
+        // When
+        let retrievedImage = try? await sut.loadImage(from: testURL)
+        
+        XCTAssertNotNil(retrievedImage)
+    }
 }
 
 
@@ -89,5 +118,41 @@ private extension ImageCacheManagerTests {
             
             return image
         }
+    }
+    
+    class MockInMemoryCache: ImageCachable {
+        var image: UIImage?
+        
+        init(image: UIImage? = nil) {
+            self.image = image
+        }
+        
+        func saveImage(_ image: UIImage, for url: URL) {
+            self.image = image
+        }
+        
+        func loadImage(for url: URL) -> UIImage? { image }
+        
+        func containsImage(for url: URL) -> Bool { image != nil }
+        
+        func clearCache() {}
+    }
+    
+    class MockDiskCache: ImageCachable {
+        var image: UIImage?
+        
+        init(image: UIImage? = nil) {
+            self.image = image
+        }
+        
+        func saveImage(_ image: UIImage, for url: URL) {
+            self.image = image
+        }
+        
+        func loadImage(for url: URL) -> UIImage? { image }
+        
+        func containsImage(for url: URL) -> Bool { image != nil }
+        
+        func clearCache() {}
     }
 }
