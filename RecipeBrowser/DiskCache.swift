@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class DiskCache {
+final class DiskCache: ImageCachable {
     
     private let fileManager = FileManager.default
     private var cacheDirectory: URL
@@ -26,12 +26,12 @@ final class DiskCache {
         return cacheDirectory.appending(component: fileName)
     }
     
-    func saveImage(_ image: UIImage, for url: URL) async {
+    func saveImage(_ image: UIImage, for url: URL) {
         guard let imageData = image.pngData() else { return }
         try? imageData.write(to: cachePath(for: url))
     }
     
-    func loadImage(for url: URL) async -> UIImage? {
+    func loadImage(for url: URL) -> UIImage? {
         let path = cachePath(for: url)
         
         return UIImage(contentsOfFile: path.path())
