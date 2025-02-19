@@ -40,6 +40,6 @@ final class DiskCacheTests: XCTestCase {
         
         // then
         XCTAssertNotNil(retrievedImage)
-//        XCTAssertEqual(retrievedImage?.pngData(), sampleImage.pngData()) TODO: - Fix flaky test.
+//        XCTAssertEqual(retrievedImage?.pngData(), sampleImage.pngData(), "Retrieved image from disk should match the original image.") TODO: - Fix flaky test.
     }
 }
