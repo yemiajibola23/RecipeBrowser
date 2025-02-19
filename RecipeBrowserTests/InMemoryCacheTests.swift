@@ -21,15 +21,25 @@ class InMemoryCache {
     func containsImage(for url: URL) -> Bool {
         return cache.object(forKey: url.absoluteString as NSString) != nil
     }
+    
+    func clearCache() {
+        cache.removeAllObjects()
+    }
 }
 
 final class InMemoryCacheTests: XCTestCase {
+    
+    var sut: InMemoryCache!
+    
+    override func tearDown() {
+        sut?.clearCache()
+    }
     
     func testInMemoryCacheSavesImageSuccessfully() {
         // given
         let sampleImage = UIImage(systemName: "star")!
         let testURL = URL(string: "https://test.com/sample.jpg")!
-        let sut = InMemoryCache()
+        sut = InMemoryCache()
         
         // when
         sut.saveImage(sampleImage, for: testURL)
@@ -42,7 +52,7 @@ final class InMemoryCacheTests: XCTestCase {
         // given
         let sampleImage = UIImage(systemName: "star")!
         let testURL = URL(string: "https://test.com/sample.jpg")!
-        let sut = InMemoryCache()
+        sut = InMemoryCache()
         sut.saveImage(sampleImage, for: testURL)
         
         // when
