@@ -7,6 +7,11 @@
 
 import UIKit
 
+protocol ImageCacheProtocol {
+    func loadImage(from url: URL) async throws -> UIImage?
+    func clearCache()
+}
+
 class ImageCacheManager {
     private let diskCache: ImageCachable
     private let memoryCache: ImageCachable
