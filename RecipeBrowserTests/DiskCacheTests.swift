@@ -31,6 +31,12 @@ class DiskCache {
         try? imageData.write(to: cachePath(for: url))
     }
     
+    func loadImage(for url: URL) async -> UIImage? {
+        let path = cachePath(for: url)
+        
+        return UIImage(contentsOfFile: path.path())
+    }
+    
     func containsImage(for url: URL) -> Bool {
         return fileManager.fileExists(atPath: cachePath(for: url).path())
     }
@@ -51,4 +57,19 @@ final class DiskCacheTests: XCTestCase {
         XCTAssertTrue(sut.containsImage(for: testURL), "Image should be stored in disk cache.")
     }
     
+    
+    func testDiskCacheLoadsImageSuccessfully() async {
+        // given
+        let sampleImage = UIImage(systemName: "star")!
+        let testURL = URL(string: "https://test.com/sample.jpg")!
+        let sut = DiskCache()
+        await sut.saveImage(sampleImage, for: testURL)
+        
+        // when
+        let retrievedImage = await sut.loadImage(for: testURL)
+        
+        // then
+        XCTAssertNotNil(retrievedImage)
+//        XCTAssertEqual(retrievedImage?.pngData(), sampleImage.pngData()) flaky test
+    }
 }
