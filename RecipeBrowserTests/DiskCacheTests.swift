@@ -10,37 +10,36 @@ import XCTest
 
 final class DiskCacheTests: XCTestCase {
     var sut: DiskCache!
+    let sampleImage = UIImage(systemName: "star")!
+    let testURL = URL(string: "https://test.com/sample.jpg")!
+    
+    override func setUp() {
+        // Given
+        sut = DiskCache()
+    }
     
     override func tearDown() {
         sut.clearCache()
     }
 
-    func testDiskCacheSavesImageSuccessfully() async {
-        // given
-        let sampleImage = UIImage(systemName: "star")!
-        let testURL = URL(string: "https://test.com/sample.jpg")!
-        sut = DiskCache()
-        
+    func testDiskCacheSavesImageSuccessfully() {
         // when
-        await sut.saveImage(sampleImage, for: testURL)
+        sut.saveImage(sampleImage, for: testURL)
         
         // then
         XCTAssertTrue(sut.containsImage(for: testURL), "Image should be stored in disk cache.")
     }
     
     
-    func testDiskCacheLoadsImageSuccessfully() async {
+    func testDiskCacheLoadsImageSuccessfully() {
         // given
-        let sampleImage = UIImage(systemName: "star")!
-        let testURL = URL(string: "https://test.com/sample.jpg")!
-        sut = DiskCache()
-        await sut.saveImage(sampleImage, for: testURL)
+        sut.saveImage(sampleImage, for: testURL)
         
         // when
-        let retrievedImage = await sut.loadImage(for: testURL)
+        let retrievedImage = sut.loadImage(for: testURL)
         
         // then
         XCTAssertNotNil(retrievedImage)
-//        XCTAssertEqual(retrievedImage?.pngData(), sampleImage.pngData()) flaky test
+//        XCTAssertEqual(retrievedImage?.pngData(), sampleImage.pngData()) TODO: - Fix flaky test.
     }
 }
