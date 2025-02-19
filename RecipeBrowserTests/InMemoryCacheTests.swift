@@ -14,7 +14,7 @@ class InMemoryCache {
         cache.setObject(image, forKey: url.absoluteString as NSString)
     }
     
-    func loadImage(for url: URL) async -> UIImage? {
+    func loadImage(for url: URL) -> UIImage? {
         cache.object(forKey: url.absoluteString as NSString)
     }
     
@@ -48,7 +48,7 @@ final class InMemoryCacheTests: XCTestCase {
         XCTAssertTrue(sut.containsImage(for: testURL), "Image should be stored in memory cache.")
     }
     
-    func testInMemoryCacheLoadsImageSuccessfully() async {
+    func testInMemoryCacheLoadsImageSuccessfully() {
         // given
         let sampleImage = UIImage(systemName: "star")!
         let testURL = URL(string: "https://test.com/sample.jpg")!
@@ -56,8 +56,9 @@ final class InMemoryCacheTests: XCTestCase {
         sut.saveImage(sampleImage, for: testURL)
         
         // when
-        let retrievedImage = await sut.loadImage(for: testURL)
+        let retrievedImage = sut.loadImage(for: testURL)
         
+        // then
         XCTAssertNotNil(retrievedImage)
         XCTAssertEqual(retrievedImage?.pngData(), sampleImage.pngData())
     }
