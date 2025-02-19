@@ -23,6 +23,8 @@ class ImageCacheManager {
     func loadImage(from url: URL) async throws -> UIImage? {
         if let memoryImage = memoryCache.loadImage(for: url) {
             return memoryImage
+        } else if let diskImage = diskCache.loadImage(for: url) {
+            return diskImage
         } else {
             do {
                 let image = try await downloader.fetchImage(from: url)
@@ -71,9 +73,24 @@ final class ImageCacheManagerTests: XCTestCase {
         let sut = makeSUT(memoryCache: memoryCache)
         
         // When
-        let retrievedImage = try? await sut.loadImage(from: testURL)
+        let memoryImage = try? await sut.loadImage(from: testURL)
+        XCTAssertNotNil(memoryImage)
+    }
+    
+    func testImageCacheManagerLoadsImageFromDiskIfNotInRAM() async {
+        // Given
+        let expectedImage = UIImage(systemName: "star")!
+        let testURL = URL(string: "https://test.com/sample.jpg")!
         
-        XCTAssertNotNil(retrievedImage)
+        // Memory cache has image
+        let mockDiskCache = MockDiskCache()
+        mockDiskCache.image = expectedImage
+        
+        let sut = makeSUT(diskCache: mockDiskCache)
+        
+        // When
+        let diskImage = try? await sut.loadImage(from: testURL)
+        XCTAssertNotNil(diskImage)
     }
 }
 
@@ -119,7 +136,9 @@ private extension ImageCacheManagerTests {
         
         func containsImage(for url: URL) -> Bool { image != nil }
         
-        func clearCache() {}
+        func clearCache() {
+            image = nil
+        }
     }
     
     class MockDiskCache: ImageCachable {
@@ -137,6 +156,8 @@ private extension ImageCacheManagerTests {
         
         func containsImage(for url: URL) -> Bool { image != nil }
         
-        func clearCache() {}
+        func clearCache() {
+            image = nil
+        }
     }
 }
