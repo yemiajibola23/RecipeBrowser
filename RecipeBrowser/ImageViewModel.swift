@@ -6,18 +6,22 @@
 //
 
 import UIKit
+import Observation
 
+@Observable
 class ImageViewModel {
     private var cacheManager: ImageCacheProtocol
     var image: UIImage?
     var isLoading = false
     var errorMessage: String?
+    let url: URL
     
-    init(cacheManager: ImageCacheProtocol) {
+    init(url: URL, cacheManager: ImageCacheProtocol) {
+        self.url = url
         self.cacheManager = cacheManager
     }
     
-    func loadImage(from url: URL) async {
+    func loadImage() async {
         isLoading = true
         print("is Loading is true.")
         errorMessage = nil

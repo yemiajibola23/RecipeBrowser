@@ -17,10 +17,9 @@ final class ImageViewModelTests: XCTestCase {
         let mockCacheManager = MockImageCacheManager()
         mockCacheManager.mockImage = expectedImage
         
-        let sut = ImageViewModel(cacheManager: mockCacheManager)
-        
+        let sut = makeSUT(url: testURL, cacheManager: mockCacheManager)
         // When
-        await sut.loadImage(from: testURL)
+        await sut.loadImage()
         
         // Then
         XCTAssertNotNil(sut.image, "View model should have image afer loading image.")
@@ -35,10 +34,10 @@ final class ImageViewModelTests: XCTestCase {
         let mockCacheManager = MockImageCacheManager()
         mockCacheManager.mockError = expectedError
         
-        let sut = ImageViewModel(cacheManager: mockCacheManager)
+        let sut = makeSUT(url: testURL, cacheManager: mockCacheManager)
 
         // When
-        await sut.loadImage(from: testURL)
+        await sut.loadImage()
         
         // Then
         XCTAssertNil(sut.image, "View model should not have image afer loading image with error.")
@@ -53,11 +52,11 @@ final class ImageViewModelTests: XCTestCase {
             mockCacheManager.mockImage = expectedImage
             let expectation = expectation(description: "Expected to load image.")
             
-            let sut = ImageViewModel(cacheManager: mockCacheManager)
+            let sut = makeSUT(url: testURL, cacheManager: mockCacheManager)
             
             // when
             Task {
-                await sut.loadImage(from: testURL)
+                await sut.loadImage()
                 expectation.fulfill()
             }
             
@@ -73,6 +72,10 @@ final class ImageViewModelTests: XCTestCase {
 }
 
 private extension ImageViewModelTests {
+    func makeSUT(url: URL, cacheManager: MockImageCacheManager) -> ImageViewModel {
+        ImageViewModel(url: url, cacheManager: cacheManager)
+    }
+    
     func waitForCondition(timeout: TimeInterval, condition: @escaping () -> Bool) async {
         let startTime = Date()
 
