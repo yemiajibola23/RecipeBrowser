@@ -21,19 +21,18 @@ class DiskCache {
         }
     }
     
-    func saveImage(_ image: UIImage, for url: URL) async {
+    private func cachePath(for url: URL) -> URL {
         let fileName = url.lastPathComponent
-        let fullPath = cacheDirectory.appending(component: fileName)
-        
+        return cacheDirectory.appending(component: fileName)
+    }
+    
+    func saveImage(_ image: UIImage, for url: URL) async {
         guard let imageData = image.pngData() else { return }
-        try? imageData.write(to: fullPath)
+        try? imageData.write(to: cachePath(for: url))
     }
     
     func containsImage(for url: URL) -> Bool {
-        let fileName = url.lastPathComponent
-        let fullPath = cacheDirectory.appending(component: fileName)
-        
-        return fileManager.fileExists(atPath: fullPath.path())
+        return fileManager.fileExists(atPath: cachePath(for: url).path())
     }
 }
 
