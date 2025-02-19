@@ -10,9 +10,9 @@ import Foundation
 @testable import RecipeBrowser
 
 class ImageCacheManager {
-    let diskCache: ImageCachable
-    let memoryCache: ImageCachable
-    let downloader: ImageDownloadable
+    private let diskCache: ImageCachable
+    private let memoryCache: ImageCachable
+    private let downloader: ImageDownloadable
     
     init(diskCache: ImageCachable, memoryCache: ImageCachable, downloader: ImageDownloadable) {
         self.diskCache = diskCache
@@ -30,6 +30,7 @@ class ImageCacheManager {
                 let image = try await downloader.fetchImage(from: url)
                 if let downloadedImage = image {
                     memoryCache.saveImage(downloadedImage, for: url)
+                    diskCache.saveImage(downloadedImage, for: url)
                 }
                 
                 return image
@@ -45,7 +46,15 @@ class ImageCacheManager {
 
 
 final class ImageCacheManagerTests: XCTestCase {
-
+    fileprivate var memoryCache: MockInMemoryCache?
+    fileprivate var diskCache: MockDiskCache?
+    
+    var sut: ImageCacheManager?
+    
+    override func tearDown() {
+        sut?.clearCache()
+    }
+    
     func testImageCacheDownloadsImageIfNotInRAMorDisk() async {
         // Given
         let expectedImage = UIImage(systemName: "star")!
@@ -54,10 +63,10 @@ final class ImageCacheManagerTests: XCTestCase {
         let mockDownloader = MockImageDownloader()
         mockDownloader.mockImage = expectedImage
         
-        let sut = makeSUT(mockDownloader: mockDownloader)
+        sut = makeSUT(mockDownloader: mockDownloader)
         
         // When
-        let downloadedImage = try? await sut.loadImage(from: testURL)
+        let downloadedImage = try? await sut?.loadImage(from: testURL)
         XCTAssertNotNil(downloadedImage, "Image should be downloaded since not in cache.")
     }
     
@@ -70,10 +79,10 @@ final class ImageCacheManagerTests: XCTestCase {
         let memoryCache = MockInMemoryCache()
         memoryCache.image = expectedImage
         
-        let sut = makeSUT(memoryCache: memoryCache)
+        sut = makeSUT(memoryCache: memoryCache)
         
         // When
-        let memoryImage = try? await sut.loadImage(from: testURL)
+        let memoryImage = try? await sut?.loadImage(from: testURL)
         XCTAssertNotNil(memoryImage)
     }
     
@@ -86,11 +95,33 @@ final class ImageCacheManagerTests: XCTestCase {
         let mockDiskCache = MockDiskCache()
         mockDiskCache.image = expectedImage
         
-        let sut = makeSUT(diskCache: mockDiskCache)
+        sut = makeSUT(diskCache: mockDiskCache)
         
         // When
-        let diskImage = try? await sut.loadImage(from: testURL)
+        let diskImage = try? await sut?.loadImage(from: testURL)
         XCTAssertNotNil(diskImage)
+    }
+    
+    func testImageCacheManagerSavesImageInRAMOrDiskIfDownloaded() async {
+        // Given
+        let expectedImage = UIImage(systemName: "star")!
+        let testURL = URL(string: "https://test.com/sample.jpg")!
+
+        let mockDownloader = MockImageDownloader()
+        mockDownloader.mockImage = expectedImage
+        
+        sut = makeSUT(mockDownloader: mockDownloader)
+        
+        // When
+       _ = try? await sut?.loadImage(from: testURL)
+        
+        mockDownloader.mockImage = nil
+        
+        let cachedImage = try? await sut?.loadImage(from: testURL)
+        
+        // Then
+        XCTAssertEqual(diskCache?.image, cachedImage)
+        XCTAssertEqual(memoryCache?.image, cachedImage)
     }
 }
 
@@ -99,7 +130,9 @@ private extension ImageCacheManagerTests {
     func makeSUT(diskCache: MockDiskCache = MockDiskCache(),
                  memoryCache: MockInMemoryCache = MockInMemoryCache(),
                  mockDownloader: MockImageDownloader = MockImageDownloader()) -> ImageCacheManager {
-        ImageCacheManager(diskCache: diskCache,
+        self.diskCache = diskCache
+        self.memoryCache = memoryCache
+        return ImageCacheManager(diskCache: diskCache,
                           memoryCache: memoryCache,
                           downloader: mockDownloader)
     }
