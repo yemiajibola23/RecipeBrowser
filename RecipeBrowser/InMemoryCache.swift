@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class InMemoryCache {
+final class InMemoryCache: ImageCachable {
     private let cache = NSCache<NSString, UIImage>()
     
     func saveImage(_ image: UIImage, for url: URL) {

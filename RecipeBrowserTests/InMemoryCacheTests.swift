@@ -9,7 +9,6 @@ import XCTest
 @testable import RecipeBrowser
 
 final class InMemoryCacheTests: XCTestCase {
-    
     var sut: InMemoryCache!
     
     override func tearDown() {

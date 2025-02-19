@@ -11,7 +11,6 @@ import XCTest
 final class DiskCacheTests: XCTestCase {
     var sut: DiskCache!
     
-    
     override func tearDown() {
         sut.clearCache()
     }
