@@ -40,15 +40,26 @@ class DiskCache {
     func containsImage(for url: URL) -> Bool {
         return fileManager.fileExists(atPath: cachePath(for: url).path())
     }
+    
+    func clearCache() {
+        try? fileManager.removeItem(at: cacheDirectory)
+        try? fileManager.createDirectory(at: cacheDirectory, withIntermediateDirectories: true, attributes: nil)
+    }
 }
 
 final class DiskCacheTests: XCTestCase {
+    var sut: DiskCache!
+    
+    
+    override func tearDown() {
+        sut.clearCache()
+    }
 
     func testDiskCacheSavesImageSuccessfully() async {
         // given
         let sampleImage = UIImage(systemName: "star")!
         let testURL = URL(string: "https://test.com/sample.jpg")!
-        let sut = DiskCache()
+        sut = DiskCache()
         
         // when
         await sut.saveImage(sampleImage, for: testURL)
@@ -62,7 +73,7 @@ final class DiskCacheTests: XCTestCase {
         // given
         let sampleImage = UIImage(systemName: "star")!
         let testURL = URL(string: "https://test.com/sample.jpg")!
-        let sut = DiskCache()
+        sut = DiskCache()
         await sut.saveImage(sampleImage, for: testURL)
         
         // when
