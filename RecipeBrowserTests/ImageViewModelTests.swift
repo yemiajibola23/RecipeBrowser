@@ -19,9 +19,13 @@ class ImageViewModel {
     }
     
     func loadImage(from url: URL) async {
-        guard let fetchedImage = try? await cacheManager.loadImage(from: url) else { return }
+        do {
+            let fetchedImage = try await cacheManager.loadImage(from: url)
+            image = fetchedImage
+        } catch {
+            errorMessage = error.localizedDescription
+        }
         
-        image = fetchedImage
     }
 }
 
@@ -44,13 +48,35 @@ final class ImageViewModelTests: XCTestCase {
         XCTAssertEqual(sut.image?.pngData()!, expectedImage.pngData()!, "Loaded image should match expected image.")
         
     }
+    
+    func testImageViewModelSetsErrorMessageOnFailure() async {
+        // Given
+        let testURL = URL(string: "https://test.com/sample.jpg")!
+        let expectedError = NSError(domain: "any", code: 0)
+        let mockCacheManager = MockImageCacheManager()
+        mockCacheManager.mockError = expectedError
+        
+        let sut = ImageViewModel(cacheManager: mockCacheManager)
+        
+        // When
+        await sut.loadImage(from: testURL)
+        
+        // Then
+        XCTAssertNil(sut.image, "View model should not have image afer loading image with error.")
+        XCTAssertNotNil(sut.errorMessage, " View model should have error message. ")
+        
+    }
 }
 
 private extension ImageViewModelTests {
     class MockImageCacheManager: ImageCacheProtocol {
         var mockImage: UIImage?
+        var mockError: Error?
         
-        func loadImage(from url: URL) async throws -> UIImage? { mockImage }
+        func loadImage(from url: URL) async throws -> UIImage? {
+            if let error = mockError { throw error }
+            return mockImage
+        }
         
         func clearCache() { mockImage = nil }
     }
