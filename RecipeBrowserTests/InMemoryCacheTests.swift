@@ -39,7 +39,7 @@ final class InMemoryCacheTests: XCTestCase {
         
         // then
         XCTAssertNotNil(retrievedImage)
-        XCTAssertEqual(retrievedImage?.pngData(), sampleImage.pngData())
+        XCTAssertEqual(retrievedImage?.pngData(), sampleImage.pngData(),  "Retrieved image from memory should match the original image.")
     }
 
 }
