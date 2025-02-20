@@ -27,7 +27,6 @@ class RecipeManager {
             print(error.localizedDescription)
             throw .unknown
         }
-       
     }
 }
 
@@ -35,13 +34,10 @@ final class RecipeManagerTests: XCTestCase {
     
     func testRecipeManagerFetchRecipesError() async {
         let url =  URL(string: "https://test-url.com/recipes")!
-        let expectedData = Data("this is data".utf8)
         
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [MockURLProtocol.self]
         let session = URLSession(configuration: configuration)
-        
-        let failureResponse = HTTPURLResponse(url: url, statusCode: 404, httpVersion: nil, headerFields: nil)
         MockURLProtocol.mockResponses[url] = .failure(RecipeManager.Error.unknown)
         
         let sut = RecipeManager(session: session)
@@ -50,10 +46,8 @@ final class RecipeManagerTests: XCTestCase {
              _ = try await sut.fetchRecipes(from: url)
             XCTFail("Expected to fail.")
         } catch {
-            
             // Success
         }
-        
     }
     
     func testRecipeManagerFetchRecipesSucceedsReturnsData() async {
