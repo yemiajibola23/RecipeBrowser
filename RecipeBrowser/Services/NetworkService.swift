@@ -7,7 +7,12 @@
 
 import UIKit
 
-final class NetworkService {
+protocol NetworkServiceProtocol {
+    func handleRequest(for url: URL) async throws -> Data
+}
+
+
+final class NetworkService: NetworkServiceProtocol {
     enum Error: Swift.Error {
         case invalidURL
         case networkFailure(statusCode: Int)
