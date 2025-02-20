@@ -39,13 +39,9 @@ final class RecipeManagerTests: XCTestCase {
     
     func testRecipeManagerFetchRecipesError() async {
         let url =  URL(string: "https://test-url.com/recipes")!
-        
-        let configuration = URLSessionConfiguration.ephemeral
-        configuration.protocolClasses = [MockURLProtocol.self]
-        let session = URLSession(configuration: configuration)
         MockURLProtocol.mockResponses[url] = .failure(RecipeManager.Error.unknown)
         
-        let sut = RecipeManager(session: session)
+        let sut = makeSUT()
 
         do {
              _ = try await sut.fetchRecipes(from: url)
@@ -57,14 +53,10 @@ final class RecipeManagerTests: XCTestCase {
     
     func testRecipeManagerFetchRecipesReturnsInvalidURLErrorForInvalidURLResponse() async {
         let badURL = URL(string: "ftp://test.com/recipes")!
-        let configuration = URLSessionConfiguration.ephemeral
-        configuration.protocolClasses = [MockURLProtocol.self]
-        let session = URLSession(configuration: configuration)
-        
         let successfulResponse = HTTPURLResponse(url: badURL, statusCode: 200, httpVersion: nil, headerFields: nil)
         MockURLProtocol.mockResponses[badURL] = .success((successfulResponse, Data()))
         
-        let sut = RecipeManager(session: session)
+        let sut = makeSUT()
         
         do {
             _ = try await sut.fetchRecipes(from: badURL)
@@ -78,15 +70,11 @@ final class RecipeManagerTests: XCTestCase {
         // Given
         let url =  URL(string: "https://test-url.com/recipes")!
         let expectedData = Data("this is data".utf8)
-        
-        let configuration = URLSessionConfiguration.ephemeral
-        configuration.protocolClasses = [MockURLProtocol.self]
-        let session = URLSession(configuration: configuration)
-        
         let successResponse = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)
+        
         MockURLProtocol.mockResponses[url] = .success((successResponse, expectedData))
         
-        let sut = RecipeManager(session: session)
+        let sut = makeSUT()
 
         // When
         do {
@@ -95,5 +83,16 @@ final class RecipeManagerTests: XCTestCase {
         } catch {
             XCTFail("Expected to succeed but failed with \(error)")
         }
+    }
+}
+
+
+extension RecipeManagerTests {
+    func makeSUT() -> RecipeManager {
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [MockURLProtocol.self]
+        let session = URLSession(configuration: configuration)
+        
+        return  RecipeManager(session: session)
     }
 }
