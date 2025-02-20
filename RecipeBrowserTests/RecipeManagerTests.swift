@@ -11,6 +11,7 @@ import XCTest
 class RecipeManager {
     enum Error: Swift.Error {
         case unknown
+        case invalidURL
     }
     
     var session: URLSession
@@ -20,6 +21,10 @@ class RecipeManager {
     }
     
     func fetchRecipes(from url: URL) async throws(Error) -> Data {
+        guard url.scheme == "http" || url.scheme == "https" else {
+            throw Error.invalidURL
+        }
+        
         do {
             let (data, _) = try await session.data(from: url)
             return data
@@ -50,6 +55,25 @@ final class RecipeManagerTests: XCTestCase {
         }
     }
     
+    func testRecipeManagerFetchRecipesReturnsInvalidURLErrorForInvalidURLResponse() async {
+        let badURL = URL(string: "ftp://test.com/recipes")!
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [MockURLProtocol.self]
+        let session = URLSession(configuration: configuration)
+        
+        let successfulResponse = HTTPURLResponse(url: badURL, statusCode: 200, httpVersion: nil, headerFields: nil)
+        MockURLProtocol.mockResponses[badURL] = .success((successfulResponse, Data()))
+        
+        let sut = RecipeManager(session: session)
+        
+        do {
+            _ = try await sut.fetchRecipes(from: badURL)
+            XCTFail("Expected to fail but suceeeded.")
+        } catch {
+            XCTAssertEqual(error, RecipeManager.Error.invalidURL)
+        }
+    }
+    
     func testRecipeManagerFetchRecipesSucceedsReturnsData() async {
         // Given
         let url =  URL(string: "https://test-url.com/recipes")!
@@ -72,5 +96,4 @@ final class RecipeManagerTests: XCTestCase {
             XCTFail("Expected to succeed but failed with \(error)")
         }
     }
-
 }
