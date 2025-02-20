@@ -6,6 +6,7 @@
 //
 
 import Foundation
+@testable import RecipeBrowser
 
 class MockURLProtocol: URLProtocol {
     static var mockResponses: [URL: Result<(HTTPURLResponse?, Data), Error>] = [:]
@@ -28,7 +29,25 @@ class MockURLProtocol: URLProtocol {
         self.client?.urlProtocolDidFinishLoading(self)
     }
     
-    
     override func stopLoading() {}
+}
+
+
+class MockNetworkService: NetworkServiceProtocol {
+    var mockResponse: Result<(HTTPURLResponse?, Data), Error>
+    
+    init(result: Result<(HTTPURLResponse?, Data), Error>) {
+        mockResponse = result
+    }
+    
+    func handleRequest(for url: URL) async throws -> Data {
+        switch mockResponse {
+        case let .success((response, data)):
+            guard response?.statusCode == 200 else { throw NSError(domain: "bad response", code: 1) }
+            return data
+        case let .failure(error): throw error
+        }
+    }
+    
     
 }
