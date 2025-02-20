@@ -12,11 +12,8 @@ struct RecipeItemView: View {
     
     var body: some View {
         VStack {
-            Image("placeholder-meal")
-                .resizable()
-                .frame(width: 300, height: 300)
-                .clipShape(RoundedRectangle(cornerRadius: 25.0))
-            Text(recipe.name)
+            CachedAsyncImage(viewModel: viewModel)                
+            Text(viewModel.name)
                 .font(.title)
                 .bold()
             Text(viewModel.cuisine)
