@@ -12,7 +12,7 @@ protocol ImageCacheProtocol {
     func clearCache()
 }
 
-class ImageCacheManager {
+class ImageCacheManager: ImageCacheProtocol {
     private let diskCache: ImageCachable
     private let memoryCache: ImageCachable
     private let downloader: ImageDownloadable
@@ -46,3 +46,4 @@ class ImageCacheManager {
         diskCache.clearCache()
     }
 }
+
