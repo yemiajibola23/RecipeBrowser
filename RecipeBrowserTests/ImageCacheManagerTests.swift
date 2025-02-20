@@ -22,7 +22,6 @@ final class ImageCacheManagerTests: XCTestCase {
     func testImageCacheManagerLoadsImageFromRAM() async {
         // Given
         let expectedImage = UIImage(systemName: "star")!
-        let testURL = URL(string: "https://test.com/sample.jpg")!
         
         // Memory cache has image
         let memoryCache = MockInMemoryCache()
@@ -31,14 +30,13 @@ final class ImageCacheManagerTests: XCTestCase {
         sut = makeSUT(memoryCache: memoryCache)
         
         // When
-        let memoryImage = try? await sut?.loadImage(from: testURL)
+        let memoryImage = try? await sut?.loadImage(from: testURL(isImage: true))
         XCTAssertNotNil(memoryImage)
     }
     
     func testImageCacheManagerLoadsImageFromDiskIfNotInRAM() async {
         // Given
         let expectedImage = UIImage(systemName: "star")!
-        let testURL = URL(string: "https://test.com/sample.jpg")!
         
         // Memory cache has image
         let mockDiskCache = MockDiskCache()
@@ -47,14 +45,13 @@ final class ImageCacheManagerTests: XCTestCase {
         sut = makeSUT(diskCache: mockDiskCache)
         
         // When
-        let diskImage = try? await sut?.loadImage(from: testURL)
+        let diskImage = try? await sut?.loadImage(from: testURL(isImage: true))
         XCTAssertNotNil(diskImage)
     }
     
     func testImageCacheDownloadsImageIfNotInRAMorDisk() async {
         // Given
         let expectedImage = UIImage(systemName: "star")!
-        let testURL = URL(string: "https://test.com/sample.jpg")!
 
         let mockDownloader = MockImageDownloader()
         mockDownloader.mockImage = expectedImage
@@ -62,14 +59,13 @@ final class ImageCacheManagerTests: XCTestCase {
         sut = makeSUT(mockDownloader: mockDownloader)
         
         // When
-        let downloadedImage = try? await sut?.loadImage(from: testURL)
+        let downloadedImage = try? await sut?.loadImage(from: testURL(isImage: true))
         XCTAssertNotNil(downloadedImage, "Image should be downloaded since not in cache.")
     }
     
     func testImageCacheManagerSavesImageInRAMOrDiskIfDownloaded() async {
         // Given
         let expectedImage = UIImage(systemName: "star")!
-        let testURL = URL(string: "https://test.com/sample.jpg")!
 
         let mockDownloader = MockImageDownloader()
         mockDownloader.mockImage = expectedImage
@@ -77,11 +73,11 @@ final class ImageCacheManagerTests: XCTestCase {
         sut = makeSUT(mockDownloader: mockDownloader)
         
         // When
-       _ = try? await sut?.loadImage(from: testURL)
+       _ = try? await sut?.loadImage(from: testURL(isImage: true))
         
         mockDownloader.mockImage = nil
         
-        let cachedImage = try? await sut?.loadImage(from: testURL)
+        let cachedImage = try? await sut?.loadImage(from: testURL(isImage: true))
         
         // Then
         XCTAssertEqual(diskCache?.mockImage, cachedImage)

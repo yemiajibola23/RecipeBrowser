@@ -11,7 +11,6 @@ import XCTest
 final class DiskCacheTests: XCTestCase {
     var sut: DiskCache!
     let sampleImage = UIImage(systemName: "star")!
-    let testURL = URL(string: "https://test.com/sample.jpg")!
     
     override func setUp() {
         // Given
@@ -24,19 +23,19 @@ final class DiskCacheTests: XCTestCase {
 
     func testDiskCacheSavesImageSuccessfully() {
         // when
-        sut.saveImage(sampleImage, for: testURL)
+        sut.saveImage(sampleImage, for: testURL(isImage: true))
         
         // then
-        XCTAssertTrue(sut.containsImage(for: testURL), "Image should be stored in disk cache.")
+        XCTAssertTrue(sut.containsImage(for: testURL(isImage: true)), "Image should be stored in disk cache.")
     }
     
     
     func testDiskCacheLoadsImageSuccessfully() {
         // given
-        sut.saveImage(sampleImage, for: testURL)
+        sut.saveImage(sampleImage, for: testURL(isImage: true))
         
         // when
-        let retrievedImage = sut.loadImage(for: testURL)
+        let retrievedImage = sut.loadImage(for: testURL(isImage: true))
         
         // then
         XCTAssertNotNil(retrievedImage)
