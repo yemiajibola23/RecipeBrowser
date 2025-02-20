@@ -13,9 +13,8 @@ final class ImageDownloaderTests: XCTestCase {
         let testURL = URL(string: "https://test.com/recipes")!
         let invalidData = Data("this-is-invalid".utf8)
         let successfulResponse = HTTPURLResponse(url: testURL, statusCode: 200, httpVersion: nil, headerFields: nil)
-        let mockNetworkService = MockNetworkService(result: .success((successfulResponse, invalidData)))
-
-        let sut = ImageDownloader(networkService: mockNetworkService)
+        
+        let sut = makeSUT(result: .success((successfulResponse, invalidData)))
         
         // when
         do {
@@ -28,79 +27,33 @@ final class ImageDownloaderTests: XCTestCase {
         }
     }
     
-//    func testImageDownladerFailsWithInvalidURL() async {
-//        let testURL = URL(string: "ftp://test.com/sample.jpg")!
-//        let successResponse = HTTPURLResponse(url: testURL, statusCode: 200, httpVersion: nil, headerFields: nil)
-//        let configuration = URLSessionConfiguration.ephemeral
-//        configuration.protocolClasses = [MockURLProtocol.self]
-//        let session = URLSession(configuration: configuration)
-//        
-//
-//        MockURLProtocol.mockResponses[testURL] = .success((successResponse, Data()))
-//        
-//        let sut = ImageDownloader(session: session)
-//        
-//        // when
-//        do {
-//            _ = try await sut.fetchImage(from: testURL)
-//            XCTFail("Expected to fail with network failure but succeeded.")
-//        } catch ImageDownloader.Error.invalidURL {
-//            // Success
-//        } catch {
-//            XCTFail("Expected to fail with invalid url but failed with \(error)")
-//        }
-//    }
-//    
-//    func testImageDownladerFailsWithUnknowError() async {
-//        let testURL = URL(string: "https://test.com/sample.jpg")!
-//        let configuration = URLSessionConfiguration.ephemeral
-//        configuration.protocolClasses = [MockURLProtocol.self]
-//        let session = URLSession(configuration: configuration)
-//        
-//
-//        MockURLProtocol.mockResponses[testURL] = .failure(URLError(.notConnectedToInternet))
-//        
-//        let sut = ImageDownloader(session: session)
-//        
-//        // when
-//        do {
-//            _ = try await sut.fetchImage(from: testURL)
-//            XCTFail("Expected to fail with network failure but succeeded.")
-//        } catch ImageDownloader.Error.unknown(let unknownError) {
-//            XCTAssertTrue(unknownError is URLError, "Expected URLError but got \(unknownError).")
-//        } catch {
-//            XCTFail("Expected to fail with unknown error but failed with \(error)")
-//        }
-//    }
-//    
-//    func testImageDownloaderSucceedsAndReturnsImage() async {
-//        let expectedImage = UIImage(systemName: "star")!
-//        let expectedData = expectedImage.pngData()!
-//        
-//        let testURL = URL(string: "https://test.com/sample.jpg")!
-//        let successResponse = HTTPURLResponse(url: testURL, statusCode: 200, httpVersion: nil, headerFields: nil)
-//        let configuration = URLSessionConfiguration.ephemeral
-//        configuration.protocolClasses = [MockURLProtocol.self]
-//        let session = URLSession(configuration: configuration)
-//        
-//
-//        MockURLProtocol.mockResponses[testURL] = .success((successResponse, expectedData))
-//        
-//        let sut = ImageDownloader(session: session)
-//        
-//        // when
-//        do {
-//            let actualImage = try await sut.fetchImage(from: testURL)
-//            XCTAssertNotNil(actualImage)
-////            XCTAssertTrue(imagesAreIdentical(actualImage, expectedImage), "Expected same image data as expected image data.") TODO: - Fix flaky test
-//        } catch {
-//            XCTFail("Expected to succeed but failed with \(error)")
-//        }
-//    }
+    func testImageDownloaderSucceedsAndReturnsImage() async {
+        let testURL = URL(string: "https://test.com/recipes")!
+        let expectedImage = UIImage(systemName: "star")!
+        let expectedData = expectedImage.pngData()!
+        
+        let successfulResponse = HTTPURLResponse(url: testURL, statusCode: 200, httpVersion: nil, headerFields: nil)
+        
+        let sut = makeSUT(result: .success((successfulResponse, expectedData)))
+        
+        // when
+        do {
+            let actualImage = try await sut.fetchImage(from: testURL)
+            XCTAssertNotNil(actualImage)
+//            XCTAssertEqual(actualImage?.pngData()!, expectedData, "Expected same image data as expected image data.") //TODO: - Fix flaky test
+        } catch {
+            XCTFail("Expected to succeed but failed with \(error)")
+        }
+    }
 }
 
 
 private extension ImageDownloaderTests {
+    
+    func makeSUT(result: Result<(HTTPURLResponse?, Data), Error>) -> ImageDownloader {
+        let mockNetworkService = MockNetworkService(result: result)
+        return ImageDownloader(networkService: mockNetworkService)
+    }
     
     func imagesAreIdentical(_ img1: UIImage, _ img2: UIImage) -> Bool {
         guard let data1 = img1.cgImage, let data2 = img2.cgImage else { return false }
