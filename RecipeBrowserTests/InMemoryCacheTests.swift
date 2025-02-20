@@ -11,7 +11,6 @@ import XCTest
 final class InMemoryCacheTests: XCTestCase {
     var sut: InMemoryCache!
     let sampleImage = UIImage(systemName: "star")!
-    let testURL = URL(string: "https://test.com/sample.jpg")!
     
     override func setUp() {
         // Given
@@ -23,6 +22,8 @@ final class InMemoryCacheTests: XCTestCase {
     }
     
     func testInMemoryCacheSavesImageSuccessfully() {
+        // given
+        let testURL = testURL(isImage: true)
         // when
         sut.saveImage(sampleImage, for: testURL)
         
@@ -32,10 +33,10 @@ final class InMemoryCacheTests: XCTestCase {
     
     func testInMemoryCacheLoadsImageSuccessfully() {
         // given
-        sut.saveImage(sampleImage, for: testURL)
+        sut.saveImage(sampleImage, for: testURL(isImage: true))
         
         // when
-        let retrievedImage = sut.loadImage(for: testURL)
+        let retrievedImage = sut.loadImage(for: testURL(isImage: true))
         
         // then
         XCTAssertNotNil(retrievedImage)

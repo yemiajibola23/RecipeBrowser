@@ -8,6 +8,12 @@
 import Foundation
 @testable import RecipeBrowser
 
+func testURL(isImage: Bool = false) -> URL {
+    let url = URL(string: "https://test.com/")!
+    
+    return isImage ? url.appending(path: "sample.jpg", directoryHint: .notDirectory) : url
+}
+
 class MockURLProtocol: URLProtocol {
     static var mockResponses: [URL: Result<(HTTPURLResponse?, Data), Error>] = [:]
     

@@ -10,15 +10,14 @@ import XCTest
 
 final class ImageDownloaderTests: XCTestCase {
     func testImageDownloaderFailsWithImageDecodeFailure() async {
-        let testURL = URL(string: "https://test.com/recipes")!
         let invalidData = Data("this-is-invalid".utf8)
-        let successfulResponse = HTTPURLResponse(url: testURL, statusCode: 200, httpVersion: nil, headerFields: nil)
+        let successfulResponse = HTTPURLResponse(url: testURL(isImage: true), statusCode: 200, httpVersion: nil, headerFields: nil)
         
         let sut = makeSUT(result: .success((successfulResponse, invalidData)))
         
         // when
         do {
-            _ = try await sut.fetchImage(from: testURL)
+            _ = try await sut.fetchImage(from: testURL(isImage: true))
             XCTFail("Expected to fail with network failure but succeeded.")
         } catch ImageDownloader.Error.imageDecodeFailure {
             // Success
@@ -28,17 +27,16 @@ final class ImageDownloaderTests: XCTestCase {
     }
     
     func testImageDownloaderSucceedsAndReturnsImage() async {
-        let testURL = URL(string: "https://test.com/recipes")!
         let expectedImage = UIImage(systemName: "star")!
         let expectedData = expectedImage.pngData()!
         
-        let successfulResponse = HTTPURLResponse(url: testURL, statusCode: 200, httpVersion: nil, headerFields: nil)
+        let successfulResponse = HTTPURLResponse(url: testURL(isImage: true), statusCode: 200, httpVersion: nil, headerFields: nil)
         
         let sut = makeSUT(result: .success((successfulResponse, expectedData)))
         
         // when
         do {
-            let actualImage = try await sut.fetchImage(from: testURL)
+            let actualImage = try await sut.fetchImage(from: testURL(isImage: true))
             XCTAssertNotNil(actualImage)
 //            XCTAssertEqual(actualImage?.pngData()!, expectedData, "Expected same image data as expected image data.") //TODO: - Fix flaky test
         } catch {

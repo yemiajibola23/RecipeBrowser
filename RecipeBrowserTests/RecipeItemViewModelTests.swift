@@ -12,12 +12,11 @@ final class RecipeItemViewModelTests: XCTestCase {
     
     func testImageViewModelLoadImagesUpdatesImageOnSuccess() async {
         // Given
-        let testURL = URL(string: "https://test.com/sample.jpg")!
         let expectedImage = UIImage(systemName: "star")!
         let mockCacheManager = MockImageCacheManager()
         mockCacheManager.mockImage = expectedImage
         
-        let sut = makeSUT(url: testURL, cacheManager: mockCacheManager)
+        let sut = makeSUT(url: testURL(isImage: true), cacheManager: mockCacheManager)
         // When
         await sut.loadImage()
         
@@ -29,12 +28,11 @@ final class RecipeItemViewModelTests: XCTestCase {
     
     func testImageViewModelSetsErrorMessageOnFailure() async {
         // Given
-        let testURL = URL(string: "https://test.com/sample.jpg")!
         let expectedError = NSError(domain: "any", code: 0)
         let mockCacheManager = MockImageCacheManager()
         mockCacheManager.mockError = expectedError
         
-        let sut = makeSUT(url: testURL, cacheManager: mockCacheManager)
+        let sut = makeSUT(url: testURL(isImage: true), cacheManager: mockCacheManager)
 
         // When
         await sut.loadImage()
@@ -46,13 +44,12 @@ final class RecipeItemViewModelTests: XCTestCase {
     
         func testImageViewModelIsLoadingStateChange() async {
             // Given
-            let testURL = URL(string: "https://test.com/sample.jpg")!
             let expectedImage = UIImage(systemName: "star")!
             let mockCacheManager = MockImageCacheManager()
             mockCacheManager.mockImage = expectedImage
             let expectation = expectation(description: "Expected to load image.")
             
-            let sut = makeSUT(url: testURL, cacheManager: mockCacheManager)
+            let sut = makeSUT(url: testURL(isImage: true), cacheManager: mockCacheManager)
             
             // when
             Task {
