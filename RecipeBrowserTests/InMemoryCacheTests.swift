@@ -23,7 +23,7 @@ final class InMemoryCacheTests: XCTestCase {
     
     func testInMemoryCacheSavesImageSuccessfully() {
         // given
-        let testURL = testURL(isImage: true)
+        let testURL = testURL()
         // when
         sut.saveImage(sampleImage, for: testURL)
         
@@ -33,10 +33,10 @@ final class InMemoryCacheTests: XCTestCase {
     
     func testInMemoryCacheLoadsImageSuccessfully() {
         // given
-        sut.saveImage(sampleImage, for: testURL(isImage: true))
+        sut.saveImage(sampleImage, for: testURL())
         
         // when
-        let retrievedImage = sut.loadImage(for: testURL(isImage: true))
+        let retrievedImage = sut.loadImage(for: testURL())
         
         // then
         XCTAssertNotNil(retrievedImage)
