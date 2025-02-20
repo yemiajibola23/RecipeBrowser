@@ -13,7 +13,7 @@ final class NetworkServiceTests: XCTestCase {
     func testHandleRequestFailsWithNetworkFailureWhenNon200HTTPURLResponse() async {
         // Given
         let testURL = testURL()
-        let failureResponse = HTTPURLResponse(url: testURL, statusCode: 404, httpVersion: nil, headerFields: nil)
+        let failureResponse = httpFailedResponse(testURL)
         
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [MockURLProtocol.self]
@@ -29,7 +29,7 @@ final class NetworkServiceTests: XCTestCase {
             _ = try await sut.handleRequest(for: testURL)
             XCTFail("Expected to fail with network failure but succeeded.")
         } catch NetworkService.Error.networkFailure(let actualStatusCode) {
-            XCTAssertEqual(actualStatusCode, failureResponse?.statusCode)
+            XCTAssertEqual(actualStatusCode, failureResponse.statusCode)
         } catch {
             XCTFail("Expected to fail with network failure but failed with \(error).")
         }

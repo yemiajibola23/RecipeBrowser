@@ -30,7 +30,7 @@ final class ImageCacheManagerTests: XCTestCase {
         sut = makeSUT(memoryCache: memoryCache)
         
         // When
-        let memoryImage = try? await sut?.loadImage(from: testURL(isImage: true))
+        let memoryImage = try? await sut?.loadImage(from: testURL())
         XCTAssertNotNil(memoryImage)
     }
     
@@ -45,7 +45,7 @@ final class ImageCacheManagerTests: XCTestCase {
         sut = makeSUT(diskCache: mockDiskCache)
         
         // When
-        let diskImage = try? await sut?.loadImage(from: testURL(isImage: true))
+        let diskImage = try? await sut?.loadImage(from: testURL())
         XCTAssertNotNil(diskImage)
     }
     
@@ -59,7 +59,7 @@ final class ImageCacheManagerTests: XCTestCase {
         sut = makeSUT(mockDownloader: mockDownloader)
         
         // When
-        let downloadedImage = try? await sut?.loadImage(from: testURL(isImage: true))
+        let downloadedImage = try? await sut?.loadImage(from: testURL())
         XCTAssertNotNil(downloadedImage, "Image should be downloaded since not in cache.")
     }
     
@@ -73,11 +73,11 @@ final class ImageCacheManagerTests: XCTestCase {
         sut = makeSUT(mockDownloader: mockDownloader)
         
         // When
-       _ = try? await sut?.loadImage(from: testURL(isImage: true))
+       _ = try? await sut?.loadImage(from: testURL())
         
         mockDownloader.mockImage = nil
         
-        let cachedImage = try? await sut?.loadImage(from: testURL(isImage: true))
+        let cachedImage = try? await sut?.loadImage(from: testURL())
         
         // Then
         XCTAssertEqual(diskCache?.mockImage, cachedImage)

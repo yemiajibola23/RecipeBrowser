@@ -16,7 +16,7 @@ final class RecipeItemViewModelTests: XCTestCase {
         let mockCacheManager = MockImageCacheManager()
         mockCacheManager.mockImage = expectedImage
         
-        let sut = makeSUT(url: testURL(isImage: true), cacheManager: mockCacheManager)
+        let sut = makeSUT(url: testURL(), cacheManager: mockCacheManager)
         // When
         await sut.loadImage()
         
@@ -32,7 +32,7 @@ final class RecipeItemViewModelTests: XCTestCase {
         let mockCacheManager = MockImageCacheManager()
         mockCacheManager.mockError = expectedError
         
-        let sut = makeSUT(url: testURL(isImage: true), cacheManager: mockCacheManager)
+        let sut = makeSUT(url: testURL(), cacheManager: mockCacheManager)
 
         // When
         await sut.loadImage()
@@ -49,7 +49,7 @@ final class RecipeItemViewModelTests: XCTestCase {
             mockCacheManager.mockImage = expectedImage
             let expectation = expectation(description: "Expected to load image.")
             
-            let sut = makeSUT(url: testURL(isImage: true), cacheManager: mockCacheManager)
+            let sut = makeSUT(url: testURL(), cacheManager: mockCacheManager)
             
             // when
             Task {
