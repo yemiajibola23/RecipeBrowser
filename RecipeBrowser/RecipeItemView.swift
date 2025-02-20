@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct RecipeItemView: View {
-    @Binding var recipe: Recipe
+    @Bindable var viewModel: RecipeItemViewModel
+    
     var body: some View {
         VStack {
             Image("placeholder-meal")
@@ -18,12 +19,12 @@ struct RecipeItemView: View {
             Text(recipe.name)
                 .font(.title)
                 .bold()
-            Text(recipe.cuisine)
+            Text(viewModel.cuisine)
                 .font(.title2)
         }
     }
 }
 
 #Preview {
-    RecipeItemView(recipe: .constant(.mock.first!))
+    RecipeItemView(viewModel: RecipeItemViewModel(recipe: .mock.first!, cacheManager: MockImageCacheManager()))
 }
