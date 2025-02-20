@@ -14,7 +14,7 @@ struct RecipeListView: View {
         NavigationStack {
             List {
                 ForEach($recipes) { recipe in
-                    RecipeItemView(recipe: recipe)
+//                    RecipeItemView(recipe: recipe)
                 }
             }
         }
