@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct RecipeRepositiory: Decodable {
+struct RecipeRepository: Decodable {
     var recipes: [Recipe]
 }
 
@@ -42,3 +42,5 @@ extension Recipe: Decodable {
         case youtubeURL = "youtube_url"
     }
 }
+
+extension Recipe: Equatable {}

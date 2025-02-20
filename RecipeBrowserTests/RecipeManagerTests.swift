@@ -10,106 +10,43 @@ import XCTest
 
 class RecipeManager {
     enum Error: Swift.Error {
-        case unknown
-        case invalidURL
-        case networkFailure(statusCode: Int)
+        case unknown(reason: Swift.Error)
     }
     
-    var session: URLSession
+    let networkService: NetworkServiceProtocol
     
-    init(session: URLSession = .shared) {
-        self.session = session
+    init(networkService: NetworkServiceProtocol) {
+        self.networkService = networkService
     }
     
-    func fetchRecipes(from url: URL) async throws(Error) -> Data {
-        guard url.scheme == "http" || url.scheme == "https" else {
-            throw Error.invalidURL
-        }
-        
+    func fetchRecipes(from url: URL) async throws(Error) -> [Recipe] {
         do {
-            let (data, response) = try await session.data(from: url)
-            
-            guard let httpResponse = response as? HTTPURLResponse else { throw Error.networkFailure(statusCode: 0) }
-            
-            guard httpResponse.statusCode == 200 else {
-                throw Error.networkFailure(statusCode: httpResponse.statusCode)
-            }
-            return data
-        } catch let error as Error {
-            throw error
-        }catch {
+            let data = try await networkService.handleRequest(for: url)
+            let root = try JSONDecoder().decode(RecipeRepository.self, from: data)
+            return root.recipes
+        } catch {
             print(error.localizedDescription)
-            throw .unknown
+            throw .unknown(reason: error)
         }
     }
 }
 
 final class RecipeManagerTests: XCTestCase {
-    
-    func testRecipeManagerFetchRecipesError() async {
-        let url =  URL(string: "https://test-url.com/recipes")!
-        MockURLProtocol.mockResponses[url] = .failure(RecipeManager.Error.unknown)
-        
-        let sut = makeSUT()
-
-        do {
-             _ = try await sut.fetchRecipes(from: url)
-            XCTFail("Expected to fail.")
-        } catch {
-            // Success
-        }
-    }
-    
-    func testRecipeManagerFetchRecipesReturnsInvalidURLErrorForInvalidURLResponse() async {
-        let badURL = URL(string: "ftp://test.com/recipes")!
-        let successfulResponse = HTTPURLResponse(url: badURL, statusCode: 200, httpVersion: nil, headerFields: nil)
-        MockURLProtocol.mockResponses[badURL] = .success((successfulResponse, Data()))
-        
-        let sut = makeSUT()
-        
-        do {
-            _ = try await sut.fetchRecipes(from: badURL)
-            XCTFail("Expected to fail but suceeeded.")
-        } catch RecipeManager.Error.invalidURL {
-        } catch {
-            XCTFail("Expected to fail with invalid url error but failed with \(error).")
-        }
-    }
-    
-    func testRecipeManagerFetchRecipesReturnsNetworkFailureWhenNon200HTTPURLResponse() async {
+    func testRecipeManagerFetchRecipesSucceedsReturnsRecipes() async {
         // Given
-        let testURL = URL(string: "https://test.com/recipes")!
-        let non200HTTPResponse = HTTPURLResponse(url: testURL, statusCode: 404, httpVersion: nil, headerFields: nil)
+        let successfulResponse = HTTPURLResponse(url: testURL(), statusCode: 200, httpVersion: nil, headerFields: nil)
+        let (recipe1, recipe1JSON) = makeRecipe(id: UUID(), name: "Recipe 1", cuisine: "American")
+        let (recipe2, recipe2JSON) = makeRecipe(id: UUID(), name: "Recipe 2", cuisine: "Malaysian")
+        let (recipe3, recipe3JSON) = makeRecipe(id: UUID(), name: "Recipe 3", cuisine: "British")
         
-        MockURLProtocol.mockResponses[testURL] = .success((non200HTTPResponse, Data()))
+        let expectedData = makeRecipesJSON([recipe1JSON, recipe2JSON, recipe3JSON])
         
-        let sut = makeSUT()
-        
-        // when
-        do {
-            _ = try await sut.fetchRecipes(from: testURL)
-            XCTFail("Expected to fail with network failure but succeeded.")
-        } catch RecipeManager.Error.networkFailure(let actualStatusCode) {
-            XCTAssertEqual(actualStatusCode, non200HTTPResponse?.statusCode, "Expected to fail with 404 status code.")
-        } catch {
-            XCTFail("Expected to fail with network failure but failed with \(error).")
-        }
-    }
-    
-    func testRecipeManagerFetchRecipesSucceedsReturnsData() async {
-        // Given
-        let url =  URL(string: "https://test-url.com/recipes")!
-        let expectedData = Data("this is data".utf8)
-        let successResponse = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)
-        
-        MockURLProtocol.mockResponses[url] = .success((successResponse, expectedData))
-        
-        let sut = makeSUT()
+        let sut = makeSUT(result: .success((successfulResponse, expectedData)))
 
         // When
         do {
-            let actualData = try await sut.fetchRecipes(from: url)
-            XCTAssertEqual(actualData, expectedData)
+            let actualRecipes = try await sut.fetchRecipes(from: testURL())
+            XCTAssertEqual([recipe1, recipe2, recipe3], actualRecipes)
         } catch {
             XCTFail("Expected to succeed but failed with \(error)")
         }
@@ -118,11 +55,29 @@ final class RecipeManagerTests: XCTestCase {
 
 
 extension RecipeManagerTests {
-    func makeSUT() -> RecipeManager {
-        let configuration = URLSessionConfiguration.ephemeral
-        configuration.protocolClasses = [MockURLProtocol.self]
-        let session = URLSession(configuration: configuration)
+    func makeSUT(result: Result<(HTTPURLResponse?, Data), Error>) -> RecipeManager {
+        let mockNetworkService = MockNetworkService(result: result)
         
-        return  RecipeManager(session: session)
+        return  RecipeManager(networkService: mockNetworkService)
+    }
+    
+    private func makeRecipe(id: UUID, name: String, cuisine: String, imageURL: URL = testURL()) -> (Recipe, [String : Any]) {
+        (
+            Recipe(id: id.uuidString,
+                   name: name,
+                   cuisine: cuisine,
+                   smallPhotoURL: imageURL.absoluteString),
+            [
+                "uuid": id.uuidString,
+                "name":  name,
+                "cuisine": cuisine,
+                "photo_url_small": imageURL.absoluteString
+            ].compactMapValues { $0 }
+        )
+    }
+    
+    private func makeRecipesJSON(_ items: [[String: Any]]) -> Data {
+        let json = ["recipes" : items]
+        return try! JSONSerialization.data(withJSONObject: json)
     }
 }
