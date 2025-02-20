@@ -12,6 +12,7 @@ class RecipeManager {
     enum Error: Swift.Error {
         case unknown
         case invalidURL
+        case networkFailure(statusCode: Int)
     }
     
     var session: URLSession
@@ -26,9 +27,17 @@ class RecipeManager {
         }
         
         do {
-            let (data, _) = try await session.data(from: url)
+            let (data, response) = try await session.data(from: url)
+            
+            guard let httpResponse = response as? HTTPURLResponse else { throw Error.networkFailure(statusCode: 0) }
+            
+            guard httpResponse.statusCode == 200 else {
+                throw Error.networkFailure(statusCode: httpResponse.statusCode)
+            }
             return data
-        } catch {
+        } catch let error as Error {
+            throw error
+        }catch {
             print(error.localizedDescription)
             throw .unknown
         }
@@ -61,8 +70,29 @@ final class RecipeManagerTests: XCTestCase {
         do {
             _ = try await sut.fetchRecipes(from: badURL)
             XCTFail("Expected to fail but suceeeded.")
+        } catch RecipeManager.Error.invalidURL {
         } catch {
-            XCTAssertEqual(error, RecipeManager.Error.invalidURL)
+            XCTFail("Expected to fail with invalid url error but failed with \(error).")
+        }
+    }
+    
+    func testRecipeManagerFetchRecipesReturnsNetworkFailureWhenNon200HTTPURLResponse() async {
+        // Given
+        let testURL = URL(string: "https://test.com/recipes")!
+        let non200HTTPResponse = HTTPURLResponse(url: testURL, statusCode: 404, httpVersion: nil, headerFields: nil)
+        
+        MockURLProtocol.mockResponses[testURL] = .success((non200HTTPResponse, Data()))
+        
+        let sut = makeSUT()
+        
+        // when
+        do {
+            _ = try await sut.fetchRecipes(from: testURL)
+            XCTFail("Expected to fail with network failure but succeeded.")
+        } catch RecipeManager.Error.networkFailure(let actualStatusCode) {
+            XCTAssertEqual(actualStatusCode, non200HTTPResponse?.statusCode, "Expected to fail with 404 status code.")
+        } catch {
+            XCTFail("Expected to fail with network failure but failed with \(error).")
         }
     }
     
