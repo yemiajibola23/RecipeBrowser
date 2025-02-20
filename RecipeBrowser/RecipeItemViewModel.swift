@@ -9,7 +9,7 @@ import UIKit
 import Observation
 
 @Observable
-class ImageViewModel {
+class RecipeItemViewModel {
     private var cacheManager: ImageCacheProtocol
     var image: UIImage?
     var isLoading = false

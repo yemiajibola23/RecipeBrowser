@@ -8,7 +8,7 @@
 import XCTest
 @testable import RecipeBrowser
 
-final class ImageViewModelTests: XCTestCase {
+final class RecipeItemViewModelTests: XCTestCase {
     
     func testImageViewModelLoadImagesUpdatesImageOnSuccess() async {
         // Given
@@ -71,9 +71,9 @@ final class ImageViewModelTests: XCTestCase {
         }
 }
 
-private extension ImageViewModelTests {
-    func makeSUT(url: URL, cacheManager: MockImageCacheManager) -> ImageViewModel {
-        ImageViewModel(url: url, cacheManager: cacheManager)
+private extension RecipeItemViewModelTests {
+    func makeSUT(url: URL, cacheManager: MockImageCacheManager) -> RecipeItemViewModel {
+        RecipeItemViewModel(recipe: Recipe.mock.first!, cacheManager: cacheManager)
     }
     
     func waitForCondition(timeout: TimeInterval, condition: @escaping () -> Bool) async {
@@ -85,19 +85,5 @@ private extension ImageViewModelTests {
         }
 
         XCTFail("Condition not met within \(timeout) seconds")
-    }
-
-    
-    class MockImageCacheManager: ImageCacheProtocol {
-        var mockImage: UIImage?
-        var mockError: Error?
-        
-        func loadImage(from url: URL) async throws -> UIImage? {
-            if let error = mockError { throw error }
-            try? await Task.sleep(nanoseconds: 500_000_000)
-            return mockImage
-        }
-        
-        func clearCache() { mockImage = nil }
     }
 }
