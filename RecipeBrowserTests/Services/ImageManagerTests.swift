@@ -9,11 +9,11 @@ import XCTest
 import Foundation
 @testable import RecipeBrowser
 
-final class ImageCacheManagerTests: XCTestCase {
+final class ImageManagerTests: XCTestCase {
     fileprivate var memoryCache: MockInMemoryCache?
     fileprivate var diskCache: MockDiskCache?
     
-    var sut: ImageCacheManager?
+    var sut: ImageManager?
     
     override func tearDown() {
         sut?.clearCache()
@@ -86,13 +86,13 @@ final class ImageCacheManagerTests: XCTestCase {
 }
 
 
-private extension ImageCacheManagerTests {
+private extension ImageManagerTests {
     func makeSUT(diskCache: MockDiskCache = MockDiskCache(),
                  memoryCache: MockInMemoryCache = MockInMemoryCache(),
-                 mockDownloader: MockImageDownloader = MockImageDownloader()) -> ImageCacheManager {
+                 mockDownloader: MockImageDownloader = MockImageDownloader()) -> ImageManager {
         self.diskCache = diskCache
         self.memoryCache = memoryCache
-        return ImageCacheManager(diskCache: diskCache,
+        return ImageManager(diskCache: diskCache,
                           memoryCache: memoryCache,
                           downloader: mockDownloader)
     }

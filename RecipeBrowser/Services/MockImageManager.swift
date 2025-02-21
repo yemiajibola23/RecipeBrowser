@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MockImageCacheManager: ImageCacheProtocol {
+class MockImageManager: ImageManagerProtocol {
         var mockImage: UIImage?
         var mockError: Error?
         

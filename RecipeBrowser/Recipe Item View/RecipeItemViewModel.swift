@@ -11,7 +11,7 @@ import Observation
 @Observable
 class RecipeItemViewModel {
     
-    private var cacheManager: ImageCacheProtocol
+    private var cacheManager: ImageManagerProtocol
     
     var image: UIImage?
     var isLoading = false
@@ -22,7 +22,7 @@ class RecipeItemViewModel {
     
     let recipe: Recipe
     
-    init(recipe: Recipe, cacheManager: ImageCacheProtocol) {
+    init(recipe: Recipe, cacheManager: ImageManagerProtocol) {
         self.recipe = recipe
         self.cacheManager = cacheManager
     }
