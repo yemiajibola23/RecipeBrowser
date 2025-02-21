@@ -13,7 +13,7 @@ final class RecipeItemViewModelTests: XCTestCase {
     func testImageViewModelLoadImagesUpdatesImageOnSuccess() async {
         // Given
         let expectedImage = UIImage(systemName: "star")!
-        let mockCacheManager = MockImageCacheManager()
+        let mockCacheManager = MockImageManager()
         mockCacheManager.mockImage = expectedImage
         
         let sut = makeSUT(url: testURL(), cacheManager: mockCacheManager)
@@ -29,7 +29,7 @@ final class RecipeItemViewModelTests: XCTestCase {
     func testImageViewModelSetsErrorMessageOnFailure() async {
         // Given
         let expectedError = NSError(domain: "any", code: 0)
-        let mockCacheManager = MockImageCacheManager()
+        let mockCacheManager = MockImageManager()
         mockCacheManager.mockError = expectedError
         
         let sut = makeSUT(url: testURL(), cacheManager: mockCacheManager)
@@ -45,7 +45,7 @@ final class RecipeItemViewModelTests: XCTestCase {
         func testImageViewModelIsLoadingStateChange() async {
             // Given
             let expectedImage = UIImage(systemName: "star")!
-            let mockCacheManager = MockImageCacheManager()
+            let mockCacheManager = MockImageManager()
             mockCacheManager.mockImage = expectedImage
             let expectation = expectation(description: "Expected to load image.")
             
@@ -69,7 +69,7 @@ final class RecipeItemViewModelTests: XCTestCase {
 }
 
 private extension RecipeItemViewModelTests {
-    func makeSUT(url: URL, cacheManager: MockImageCacheManager) -> RecipeItemViewModel {
+    func makeSUT(url: URL, cacheManager: MockImageManager) -> RecipeItemViewModel {
         RecipeItemViewModel(recipe: Recipe.mock.first!, cacheManager: cacheManager)
     }
     

@@ -7,12 +7,12 @@
 
 import UIKit
 
-protocol ImageCacheProtocol {
+protocol ImageManagerProtocol {
     func loadImage(from url: URL) async throws -> UIImage?
     func clearCache()
 }
 
-class ImageCacheManager: ImageCacheProtocol {
+class ImageManager: ImageManagerProtocol {
     private let diskCache: ImageCachable
     private let memoryCache: ImageCachable
     private let downloader: ImageDownloadable
