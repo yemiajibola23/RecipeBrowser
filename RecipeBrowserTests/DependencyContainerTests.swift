@@ -22,6 +22,7 @@ class DependencyContainer {
             downloader: ImageDownloader(networkService: networkService))
     }
     
+    func makeRecipeManager() -> RecipeManager { RecipeManager(networkService: networkService) }
 }
 
 final class DependencyContainerTests: XCTestCase {
@@ -41,5 +42,14 @@ final class DependencyContainerTests: XCTestCase {
         let instance2 = container.imageManager
         
         XCTAssertTrue(instance1 === instance2, "Image manager should be a singleton instance.")
+    }
+    
+    func testDependencyContainerMakeRecipeManagerMakesSeparateInstances() {
+        let container = DependencyContainer.shared
+        
+        let instance1 = container.makeRecipeManager()
+        let instance2 = container.makeRecipeManager()
+        
+        XCTAssertFalse(instance1 === instance2, "Recipe manager should have separate instance.")
     }
 }
