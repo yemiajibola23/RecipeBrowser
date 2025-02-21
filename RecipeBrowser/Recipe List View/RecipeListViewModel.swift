@@ -10,7 +10,7 @@ import Foundation
 
 @Observable
 class RecipeListViewModel {
-    let recipeManager: RecipeManagerProtocol
+    private let recipeManager: RecipeManagerProtocol
     
     var recipes: [Recipe] = []
     var errorMessage: String?
