@@ -12,11 +12,14 @@ struct API {
     
     enum Endpoint: String {
         case all = ".json"
-        case malformed = "-malformed.json"
-        case empty = "-empty.json"
+        case malformed = "malformed.json"
+        case empty = "empty.json"
     }
     
     static func url(for endpoint: Endpoint = .all) -> URL {
-        return baseURL.appending(path: endpoint.rawValue)
+        let base = baseURL.deletingLastPathComponent()
+        let modifiedPath = baseURL.lastPathComponent + (endpoint.rawValue.hasPrefix(".") ? endpoint.rawValue : "-" + endpoint.rawValue)
+        print(url)
+        return base.appending(component: modifiedPath)
     }
 }
