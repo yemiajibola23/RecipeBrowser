@@ -1,5 +1,5 @@
 //
-//  ImageCacheManager.swift
+//  ImageManager.swift
 //  RecipeBrowser
 //
 //  Created by Amira Ajibola  on 2/19/25.

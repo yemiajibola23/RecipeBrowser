@@ -19,7 +19,7 @@ final class ImageManagerTests: XCTestCase {
         sut?.clearCache()
     }
     
-    func testImageCacheManagerLoadsImageFromRAM() async {
+    func testImageManagerLoadsImageFromRAM() async {
         // Given
         let expectedImage = UIImage(systemName: "star")!
         
@@ -34,7 +34,7 @@ final class ImageManagerTests: XCTestCase {
         XCTAssertNotNil(memoryImage)
     }
     
-    func testImageCacheManagerLoadsImageFromDiskIfNotInRAM() async {
+    func testImageNanagerLoadsImageFromDiskIfNotInRAM() async {
         // Given
         let expectedImage = UIImage(systemName: "star")!
         
@@ -49,7 +49,7 @@ final class ImageManagerTests: XCTestCase {
         XCTAssertNotNil(diskImage)
     }
     
-    func testImageCacheDownloadsImageIfNotInRAMorDisk() async {
+    func testImageManagerDownloadsImageIfNotInRAMorDisk() async {
         // Given
         let expectedImage = UIImage(systemName: "star")!
 
@@ -63,7 +63,7 @@ final class ImageManagerTests: XCTestCase {
         XCTAssertNotNil(downloadedImage, "Image should be downloaded since not in cache.")
     }
     
-    func testImageCacheManagerSavesImageInRAMOrDiskIfDownloaded() async {
+    func testImageManagerSavesImageInRAMOrDiskIfDownloaded() async {
         // Given
         let expectedImage = UIImage(systemName: "star")!
 

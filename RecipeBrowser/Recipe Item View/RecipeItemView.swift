@@ -23,5 +23,5 @@ struct RecipeItemView: View {
 }
 
 #Preview {
-    RecipeItemView(viewModel: RecipeItemViewModel(recipe: .mock.first!, cacheManager: MockImageManager()))
+    RecipeItemView(viewModel: RecipeItemViewModel(recipe: .mock.first!, imageManager: MockImageManager()))
 }
