@@ -8,20 +8,24 @@
 import SwiftUI
 
 struct RecipeListView: View {
+    let container = DependencyContainer.shared
     @Bindable var viewModel: RecipeListViewModel
     
+    //    init(viewModel: RecipeListViewModel) {
+    //        self.viewModel = viewModel
+    //    }
+    
     var body: some View {
-        NavigationStack {
-            List {
-                ForEach($recipes) { recipe in
-//                    RecipeItemView(recipe: recipe)
-                }
-            }
+        List(viewModel.recipes) { recipe in
+            RecipeItemView(viewModel: container.makeRecipeItemViewModel(recipe: recipe))
+        }
+        .onAppear {
+            Task { await viewModel.loadRecipes(from: API.url()) }
         }
         .padding()
     }
 }
 
-#Preview {
-    RecipeListView()
-}
+//#Preview {
+//    RecipeListView(viewModel: container.makeRecipeListViewModel())
+//}

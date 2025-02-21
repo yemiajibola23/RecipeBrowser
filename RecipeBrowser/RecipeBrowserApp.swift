@@ -9,9 +9,10 @@ import SwiftUI
 
 @main
 struct RecipeBrowserApp: App {
+    let container = DependencyContainer.shared
     var body: some Scene {
         WindowGroup {
-            RecipeListView()
+            RecipeListView(viewModel: container.makeRecipeListViewModel())
         }
     }
 }
