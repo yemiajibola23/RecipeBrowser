@@ -10,8 +10,7 @@ import Observation
 
 @Observable
 class RecipeItemViewModel {
-    
-    private var cacheManager: ImageManagerProtocol
+    private var imageManager: ImageManagerProtocol
     
     var image: UIImage?
     var isLoading = false
@@ -22,9 +21,9 @@ class RecipeItemViewModel {
     
     let recipe: Recipe
     
-    init(recipe: Recipe, cacheManager: ImageManagerProtocol) {
+    init(recipe: Recipe, imageManager: ImageManagerProtocol) {
         self.recipe = recipe
-        self.cacheManager = cacheManager
+        self.imageManager = imageManager
     }
     
     func loadImage() async {
@@ -34,7 +33,7 @@ class RecipeItemViewModel {
         do {
             if let urlString = recipe.smallPhotoURL,
                 let url = URL(string: urlString),
-                let fetchedImage = try await cacheManager.loadImage(from: url) {
+                let fetchedImage = try await imageManager.loadImage(from: url) {
                 image = fetchedImage
             } else {
                 errorMessage = "Failed to load image."
