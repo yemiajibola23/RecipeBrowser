@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol NetworkServiceProtocol {
+protocol NetworkServiceProtocol: AnyObject {
     func handleRequest(for url: URL) async throws -> Data
 }
 
