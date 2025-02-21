@@ -23,6 +23,8 @@ class DependencyContainer {
     }
     
     func makeRecipeManager() -> RecipeManager { RecipeManager(networkService: networkService) }
+    
+    func makeRecipeItemViewModel(recipe: Recipe) -> RecipeItemViewModel { RecipeItemViewModel(recipe: recipe, imageManager: imageManager) }
 }
 
 final class DependencyContainerTests: XCTestCase {
@@ -49,6 +51,16 @@ final class DependencyContainerTests: XCTestCase {
         
         let instance1 = container.makeRecipeManager()
         let instance2 = container.makeRecipeManager()
+        
+        XCTAssertFalse(instance1 === instance2, "Recipe manager should have separate instance.")
+    }
+    
+    func testDependencyContainerMakeRecrpeItemViewModelMakesSeparateInstances() {
+        let container = DependencyContainer.shared
+        let recipe = Recipe(id: "1", name: "Test", cuisine: "American")
+        
+        let instance1 = container.makeRecipeItemViewModel(recipe: recipe)
+        let instance2 = container.makeRecipeItemViewModel(recipe: recipe)
         
         XCTAssertFalse(instance1 === instance2, "Recipe manager should have separate instance.")
     }
