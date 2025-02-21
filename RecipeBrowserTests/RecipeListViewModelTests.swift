@@ -19,8 +19,13 @@ class RecipeListViewModel {
     }
     
     func loadRecipes(from url: URL) async {
-        guard let receivedRecipes = try? await recipeManager.fetchRecipes(from: url) else { return }
-        recipes = receivedRecipes
+        do {
+            recipes = try await recipeManager.fetchRecipes(from: url)
+            errorMessage = nil
+        } catch {
+            recipes = []
+            errorMessage = error.localizedDescription
+        }
     }
 }
 
@@ -38,6 +43,20 @@ final class RecipeListViewModelTests: XCTestCase {
         XCTAssertNil(sut.errorMessage)
         XCTAssertEqual(sut.recipes, expectedRecipes)
         
+    }
+    
+    func testLoadRecipeFailure() async {
+        // Given
+        let expectedError = RecipeManager.Error.network(.networkFailure(statusCode: 404))
+        let mockRecipeManager = MockRecipeManager(mockError: expectedError)
+        let sut = RecipeListViewModel(recipeManager: mockRecipeManager)
+        
+        // When
+        await sut.loadRecipes(from: testURL())
+        
+        // Then
+        XCTAssertNotNil(sut.errorMessage)
+        XCTAssertEqual(sut.recipes, [])
     }
 }
 
