@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct RecipeListView: View {
-    @State var recipes = Recipe.mock
+    @Bindable var viewModel: RecipeListViewModel
     
     var body: some View {
         NavigationStack {

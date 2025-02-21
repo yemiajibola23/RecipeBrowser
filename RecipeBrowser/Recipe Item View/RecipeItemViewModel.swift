@@ -32,7 +32,9 @@ class RecipeItemViewModel {
         errorMessage = nil
         
         do {
-            if let urlString = recipe.smallPhotoURL, let url = URL(string: urlString), let fetchedImage = try await cacheManager.loadImage(from: url) {
+            if let urlString = recipe.smallPhotoURL,
+                let url = URL(string: urlString),
+                let fetchedImage = try await cacheManager.loadImage(from: url) {
                 image = fetchedImage
             } else {
                 errorMessage = "Failed to load image."
