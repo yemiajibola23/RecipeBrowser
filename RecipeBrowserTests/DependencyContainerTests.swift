@@ -28,40 +28,47 @@ class DependencyContainer {
 }
 
 final class DependencyContainerTests: XCTestCase {
+    let sut = DependencyContainer.shared
+
+    
     func testDependencyContainerNetworkServiceIsOnlyOneInstance() {
-        let container = DependencyContainer.shared
-        
-        let instance1 = container.networkService
-        let instance2 = container.networkService
-        
-        XCTAssertTrue(instance1 === instance2, "Network service should be a singleton instance.")
+        assertSingletonInstance(instanceProvider: { sut.networkService as AnyObject }, message: "Network service should be a singleton instance.")
     }
     
     func testDependencyContainerImageManagerIsOnlyOneInstance() {
-        let container = DependencyContainer.shared
-        
-        let instance1 = container.imageManager
-        let instance2 = container.imageManager
-        
-        XCTAssertTrue(instance1 === instance2, "Image manager should be a singleton instance.")
+        assertSingletonInstance(instanceProvider: {sut.imageManager as AnyObject }, message: "Image manager should be a singleton instance.")
     }
     
     func testDependencyContainerMakeRecipeManagerMakesSeparateInstances() {
-        let container = DependencyContainer.shared
-        
-        let instance1 = container.makeRecipeManager()
-        let instance2 = container.makeRecipeManager()
-        
-        XCTAssertFalse(instance1 === instance2, "Recipe manager should have separate instance.")
+        assertSeparateInstances(instanceProvider: { sut.makeRecipeManager() }, message: "Recipe manager should have separate instances.")
     }
     
     func testDependencyContainerMakeRecrpeItemViewModelMakesSeparateInstances() {
-        let container = DependencyContainer.shared
         let recipe = Recipe(id: "1", name: "Test", cuisine: "American")
+        assertSeparateInstances(instanceProvider: { sut.makeRecipeItemViewModel(recipe: recipe) }, message: "Recipe item view model should have separate instances.")
+    }
+}
+
+
+private extension DependencyContainerTests {
+    func assertSingletonInstance<T: AnyObject>(instanceProvider: () -> T,
+                                               message: String,
+                                               file: StaticString = #file,
+                                               line: UInt = #line) {
+        let instance1 = instanceProvider()
+        let instance2 = instanceProvider()
         
-        let instance1 = container.makeRecipeItemViewModel(recipe: recipe)
-        let instance2 = container.makeRecipeItemViewModel(recipe: recipe)
+        XCTAssertTrue(instance1 === instance2, message, file: file, line: line)
+
+    }
+    
+    func assertSeparateInstances<T: AnyObject>(instanceProvider: () -> T,
+                                    message: String,
+                                    file: StaticString = #file,
+                                    line: UInt = #line) {
+        let instance1 = instanceProvider()
+        let instance2 = instanceProvider()
         
-        XCTAssertFalse(instance1 === instance2, "Recipe manager should have separate instance.")
+        XCTAssertFalse(instance1 === instance2, message, file: file, line: line)
     }
 }
