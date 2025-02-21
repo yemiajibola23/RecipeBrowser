@@ -13,8 +13,9 @@ protocol ImageDownloadable {
 
 final class ImageDownloader: ImageDownloadable {
     enum Error: Swift.Error {
-        case imageDecodeFailure
+        case imageDecoding
         case network(NetworkService.Error)
+        case unknown(Swift.Error)
     }
     
     let networkService: NetworkServiceProtocol
@@ -23,17 +24,17 @@ final class ImageDownloader: ImageDownloadable {
         self.networkService = networkService
     }
     
-    func fetchImage(from url: URL) async throws -> UIImage? {
+    func fetchImage(from url: URL) async throws(Error) -> UIImage? {
         do {
             let data = try await networkService.handleRequest(for: url)
-            guard let image = UIImage(data: data) else {
-                throw Error.imageDecodeFailure
-            }
+            guard let image = UIImage(data: data) else { throw Error.imageDecoding }
             return image
-        } catch let imageDownloadError as Error {
-            throw imageDownloadError
-        } catch {
-            throw error
+        } catch let networkError as NetworkService.Error {
+            throw .network(networkError)
+        } catch let selfError as ImageDownloader.Error {
+            throw selfError
+        }catch {
+            throw .unknown(error)
         }
     }
 }

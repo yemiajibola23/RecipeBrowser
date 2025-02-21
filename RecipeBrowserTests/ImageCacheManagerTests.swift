@@ -107,7 +107,7 @@ private extension ImageCacheManagerTests {
             }
             
             guard let image = mockImage else {
-                throw ImageDownloader.Error.imageDecodeFailure
+                throw ImageDownloader.Error.imageDecoding
             }
             
             return image
