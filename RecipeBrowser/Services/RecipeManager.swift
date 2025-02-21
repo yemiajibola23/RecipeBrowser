@@ -24,7 +24,7 @@ final class RecipeManager: RecipeManagerProtocol {
         self.networkService = networkService
     }
     
-    func fetchRecipes(from url: URL) async throws(Error) -> [Recipe] {
+    func fetchRecipes(from url: URL = API.url()) async throws(Error) -> [Recipe] {
         do {
             let data = try await networkService.handleRequest(for: url)
             let root = try JSONDecoder().decode(RecipeRepository.self, from: data)
