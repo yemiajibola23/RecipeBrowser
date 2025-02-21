@@ -28,7 +28,9 @@ class RecipeManager {
             return root.recipes
         } catch let networkError as NetworkService.Error {
             throw Error.network(networkError)
-        } catch {
+        } catch let decodingError as DecodingError {
+            throw .decoding(decodingError)
+        }catch {
             print(error.localizedDescription)
             throw .unknown(error)
         }
@@ -68,8 +70,8 @@ final class RecipeManagerTests: XCTestCase {
     
     func testRecipeManagerThrowsNetworkErrorWhenNetworkServiceFails() async {
         // Given
-        let networkError = NetworkService.Error.networkFailure(statusCode: 404)
-        let sut = makeSUT(andError: networkError)
+        let expectedNetworkError = NetworkService.Error.networkFailure(statusCode: 404)
+        let sut = makeSUT(andError: expectedNetworkError)
         
         // When
         do {
@@ -77,11 +79,31 @@ final class RecipeManagerTests: XCTestCase {
             XCTFail("Expected to fail with network failure but succeeded.")
         } catch {
             switch error {
-            case let .network(networkError):
+            case let .network(actualNetworkError):
                 // Then
-                XCTAssertEqual(networkError, .networkFailure(statusCode: 404))
+                XCTAssertEqual(actualNetworkError, expectedNetworkError)
             default:
                 XCTFail("Expected to fail with network failure but failed with \(error)")
+            }
+        }
+    }
+    
+    func testRecipeManagerThrowsDecodingErrorWhenJSONFailsToDecodeCorrectly() async {
+        // Given
+        let invalidJSONString = "{ recipes : \"invalid\" }"
+        let invalidData = Data(invalidJSONString.utf8)
+        let sut = makeSUT(with: invalidData)
+        
+        // When
+        do {
+            let _ = try await sut.fetchRecipes(from: testURL())
+            XCTFail("Expected to fail with decoding error but succeeded.")
+        } catch {
+            // Then
+            switch error {
+            case .decoding: return
+            default:
+                XCTFail("Expected to fail with decoding error but failed with \(error).")
             }
         }
     }
@@ -91,7 +113,6 @@ final class RecipeManagerTests: XCTestCase {
 extension RecipeManagerTests {
     func makeSUT(with data: Data? = nil, andError error: NetworkService.Error? = nil) -> RecipeManager {
         let mockNetworkService = MockNetworkService(mockData: data, mockError: error)
-        
         return  RecipeManager(networkService: mockNetworkService)
     }
     
