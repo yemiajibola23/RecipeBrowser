@@ -50,19 +50,24 @@ class MockURLProtocol: URLProtocol {
 
 
 class MockNetworkService: NetworkServiceProtocol {
-    var mockResponse: Result<(HTTPURLResponse?, Data), Error>
+    var mockData: Data?
+    var mockError: NetworkService.Error?
     
-    init(result: Result<(HTTPURLResponse?, Data), Error>) {
-        mockResponse = result
+    init(mockData: Data? = nil, mockError: NetworkService.Error? = nil) {
+        self.mockData = mockData
+        self.mockError = mockError
     }
     
     func handleRequest(for url: URL) async throws -> Data {
-        switch mockResponse {
-        case let .success((response, data)):
-            guard response?.statusCode == 200 else { throw NSError(domain: "bad response", code: 1) }
-            return data
-        case let .failure(error): throw error
+        if let error = mockError {
+            throw error
         }
+        
+        guard let data = mockData else {
+            throw NSError(domain: "MockNetworkService", code: 0)
+        }
+        
+        return data
     }
     
     
