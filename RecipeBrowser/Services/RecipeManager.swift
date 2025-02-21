@@ -7,7 +7,11 @@
 
 import Foundation
 
-final class RecipeManager {
+protocol RecipeManagerProtocol {
+    func fetchRecipes(from url: URL) async throws -> [Recipe]
+}
+
+final class RecipeManager: RecipeManagerProtocol {
     enum Error: Swift.Error {
         case network(NetworkService.Error)
         case decoding(Swift.Error)

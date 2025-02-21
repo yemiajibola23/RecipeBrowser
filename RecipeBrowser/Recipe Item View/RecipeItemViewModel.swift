@@ -12,18 +12,20 @@ import Observation
 class RecipeItemViewModel {
     
     private var cacheManager: ImageCacheProtocol
+    
     var image: UIImage?
     var isLoading = false
     var errorMessage: String?
     
+    var name: String { recipe.name }
+    var cuisine: String { recipe.cuisine }
+    
     let recipe: Recipe
+    
     init(recipe: Recipe, cacheManager: ImageCacheProtocol) {
         self.recipe = recipe
         self.cacheManager = cacheManager
     }
-    
-    var name: String { recipe.name }
-    var cuisine: String { recipe.cuisine }
     
     func loadImage() async {
         isLoading = true
