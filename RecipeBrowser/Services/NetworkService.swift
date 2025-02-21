@@ -49,3 +49,15 @@ final class NetworkService: NetworkServiceProtocol {
         }
     }
 }
+
+extension NetworkService.Error: Equatable {
+    static func ==(lhs: NetworkService.Error, rhs: NetworkService.Error)  -> Bool {
+        switch (lhs, rhs) {
+        case (.invalidURL, .invalidURL): return true
+        case let(.networkFailure(lCode), .networkFailure(rCode)): return lCode == rCode
+        case let(.unknown(lError), .unknown(rError)): return lError.localizedDescription == rError.localizedDescription
+        default: return false
+        }
+        
+    }
+}

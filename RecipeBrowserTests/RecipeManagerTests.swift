@@ -10,7 +10,9 @@ import XCTest
 
 class RecipeManager {
     enum Error: Swift.Error {
-        case unknown(reason: Swift.Error)
+        case network(NetworkService.Error)
+        case decoding(Swift.Error)
+        case unknown(Swift.Error)
     }
     
     let networkService: NetworkServiceProtocol
@@ -24,9 +26,22 @@ class RecipeManager {
             let data = try await networkService.handleRequest(for: url)
             let root = try JSONDecoder().decode(RecipeRepository.self, from: data)
             return root.recipes
+        } catch let networkError as NetworkService.Error {
+            throw Error.network(networkError)
         } catch {
             print(error.localizedDescription)
-            throw .unknown(reason: error)
+            throw .unknown(error)
+        }
+    }
+}
+
+extension RecipeManager.Error: Equatable {
+    static func ==(lhs: RecipeManager.Error, rhs: RecipeManager.Error) -> Bool {
+        switch (lhs, rhs) {
+        case let (.network(lError), .network(rError)): return lError == rError
+        case (.decoding, .decoding): return true
+        case let (.unknown(lError), .unknown(rError)): return lError.localizedDescription ==  rError.localizedDescription
+        default: return false
         }
     }
 }
@@ -34,14 +49,13 @@ class RecipeManager {
 final class RecipeManagerTests: XCTestCase {
     func testRecipeManagerFetchRecipesSucceedsReturnsRecipes() async {
         // Given
-        let successfulResponse = HTTPURLResponse(url: testURL(), statusCode: 200, httpVersion: nil, headerFields: nil)
         let (recipe1, recipe1JSON) = makeRecipe(id: UUID(), name: "Recipe 1", cuisine: "American")
         let (recipe2, recipe2JSON) = makeRecipe(id: UUID(), name: "Recipe 2", cuisine: "Malaysian")
         let (recipe3, recipe3JSON) = makeRecipe(id: UUID(), name: "Recipe 3", cuisine: "British")
         
         let expectedData = makeRecipesJSON([recipe1JSON, recipe2JSON, recipe3JSON])
         
-        let sut = makeSUT(result: .success((successfulResponse, expectedData)))
+        let sut = makeSUT(with: expectedData)
 
         // When
         do {
@@ -51,12 +65,32 @@ final class RecipeManagerTests: XCTestCase {
             XCTFail("Expected to succeed but failed with \(error)")
         }
     }
+    
+    func testRecipeManagerThrowsNetworkErrorWhenNetworkServiceFails() async {
+        // Given
+        let networkError = NetworkService.Error.networkFailure(statusCode: 404)
+        let sut = makeSUT(andError: networkError)
+        
+        // When
+        do {
+            let _ = try await sut.fetchRecipes(from: testURL())
+            XCTFail("Expected to fail with network failure but succeeded.")
+        } catch {
+            switch error {
+            case let .network(networkError):
+                // Then
+                XCTAssertEqual(networkError, .networkFailure(statusCode: 404))
+            default:
+                XCTFail("Expected to fail with network failure but failed with \(error)")
+            }
+        }
+    }
 }
 
 
 extension RecipeManagerTests {
-    func makeSUT(result: Result<(HTTPURLResponse?, Data), Error>) -> RecipeManager {
-        let mockNetworkService = MockNetworkService(result: result)
+    func makeSUT(with data: Data? = nil, andError error: NetworkService.Error? = nil) -> RecipeManager {
+        let mockNetworkService = MockNetworkService(mockData: data, mockError: error)
         
         return  RecipeManager(networkService: mockNetworkService)
     }

@@ -14,6 +14,7 @@ protocol ImageDownloadable {
 final class ImageDownloader: ImageDownloadable {
     enum Error: Swift.Error {
         case imageDecodeFailure
+        case network(NetworkService.Error)
     }
     
     let networkService: NetworkServiceProtocol
