@@ -11,22 +11,35 @@ import XCTest
 class DependencyContainer {
     static let shared = DependencyContainer()
     
-    var networkService: NetworkServiceProtocol
+    let networkService: NetworkServiceProtocol
+    let imageManager: ImageManagerProtocol
     
     private init() {
         networkService = NetworkService(session: .shared)
+        imageManager = ImageManager(
+            diskCache: DiskCache(),
+            memoryCache: InMemoryCache(),
+            downloader: ImageDownloader(networkService: networkService))
     }
     
 }
 
 final class DependencyContainerTests: XCTestCase {
-    
-    func testNetworkServiceIsOnlyOneInstance() {
+    func testDependencyContainerNetworkServiceIsOnlyOneInstance() {
         let container = DependencyContainer.shared
         
         let instance1 = container.networkService
         let instance2 = container.networkService
         
-        XCTAssertTrue(instance1 === instance2, "Network container should be a singleton instance.")
+        XCTAssertTrue(instance1 === instance2, "Network service should be a singleton instance.")
+    }
+    
+    func testDependencyContainerImageManagerIsOnlyOneInstance() {
+        let container = DependencyContainer.shared
+        
+        let instance1 = container.imageManager
+        let instance2 = container.imageManager
+        
+        XCTAssertTrue(instance1 === instance2, "Image manager should be a singleton instance.")
     }
 }
