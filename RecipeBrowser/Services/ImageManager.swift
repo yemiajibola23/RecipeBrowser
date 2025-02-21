@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol ImageManagerProtocol {
+protocol ImageManagerProtocol: AnyObject {
     func loadImage(from url: URL) async throws -> UIImage?
     func clearCache()
 }
