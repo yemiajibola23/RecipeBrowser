@@ -11,9 +11,8 @@ import XCTest
 final class ImageDownloaderTests: XCTestCase {
     func testImageDownloaderFailsWithImageDecodeFailure() async {
         let invalidData = Data("this-is-invalid".utf8)
-        let successfulResponse = httpSuccessfulResponse()
         
-        let sut = makeSUT(result: .success((successfulResponse, invalidData)))
+        let sut = makeSUT(data: invalidData)
         
         // when
         do {
@@ -30,9 +29,7 @@ final class ImageDownloaderTests: XCTestCase {
         let expectedImage = UIImage(systemName: "star")!
         let expectedData = expectedImage.pngData()!
         
-        let successfulResponse = httpSuccessfulResponse()
-
-        let sut = makeSUT(result: .success((successfulResponse, expectedData)))
+        let sut = makeSUT(data: expectedData)
         
         // when
         do {
@@ -48,8 +45,8 @@ final class ImageDownloaderTests: XCTestCase {
 
 private extension ImageDownloaderTests {
     
-    func makeSUT(result: Result<(HTTPURLResponse?, Data), Error>) -> ImageDownloader {
-        let mockNetworkService = MockNetworkService(result: result)
+    func makeSUT(data: Data?, error: NetworkService.Error? = nil) -> ImageDownloader {
+        let mockNetworkService = MockNetworkService(mockData: data, mockError: error)
         return ImageDownloader(networkService: mockNetworkService)
     }
     

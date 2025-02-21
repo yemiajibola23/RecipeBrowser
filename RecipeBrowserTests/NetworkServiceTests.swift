@@ -35,9 +35,9 @@ final class NetworkServiceTests: XCTestCase {
         }
     }
     
-    func testImageDownladerFailsWithInvalidURL() async {
+    func testNetworkServiceHandleRequestFailsWithInvalidURL() async {
         let invalidURL = URL(string: "ftp://test.com/sample.jpg")!
-        let successResponse = HTTPURLResponse(url: invalidURL, statusCode: 200, httpVersion: nil, headerFields: nil)
+        let successResponse = httpSuccessfulResponse(invalidURL)
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [MockURLProtocol.self]
         let session = URLSession(configuration: configuration)
