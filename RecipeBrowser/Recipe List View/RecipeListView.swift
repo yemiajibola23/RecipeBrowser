@@ -32,7 +32,7 @@ struct RecipeListView: View {
             
         }
         .onAppear {
-            Task { await viewModel.loadRecipes(from: API.url(for: .empty)) }
+            Task { await viewModel.loadRecipes(from:.all) }
         }
 
     }
