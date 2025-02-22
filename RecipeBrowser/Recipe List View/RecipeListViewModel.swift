@@ -14,18 +14,31 @@ class RecipeListViewModel {
     
     var recipes: [Recipe] = []
     var errorMessage: String?
+    var isLoading = false
     
     init(recipeManager: RecipeManagerProtocol) {
         self.recipeManager = recipeManager
     }
     
+    enum ErrorMessages: String {
+        case empty = "No recipes available."
+        case failed = "Failed to load recipes."
+    }
+    
     func loadRecipes(from url: URL) async {
+        isLoading = true
         do {
-            recipes = try await recipeManager.fetchRecipes(from: url)
-            errorMessage = nil
+            let fetchedRecipes = try await recipeManager.fetchRecipes(from: url)
+            if fetchedRecipes.isEmpty {
+                errorMessage = ErrorMessages.empty.rawValue
+            } else {
+                recipes = fetchedRecipes
+            }
         } catch {
             recipes = []
-            errorMessage = error.localizedDescription
+            errorMessage = ErrorMessages.failed.rawValue
         }
+        
+        isLoading = false
     }
 }
