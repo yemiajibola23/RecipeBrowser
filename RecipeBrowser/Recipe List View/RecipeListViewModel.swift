@@ -29,9 +29,12 @@ class RecipeListViewModel {
         isLoading = true
         do {
             recipes = try await recipeManager.fetchRecipes(from: API.url(for: endpoint))
+            errorMessage = nil
+            print("✅ Recipes updated: \(recipes.count)")
         } catch {
-            recipes = []
+            recipes.removeAll()
             errorMessage = ErrorMessages.failed.rawValue
+            print("❌ Error fetching recipes: \(error.localizedDescription)")
         }
         
         isLoading = false

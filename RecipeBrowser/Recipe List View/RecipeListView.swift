@@ -15,7 +15,7 @@ struct RecipeListView: View {
     var body: some View {
         Group {
             if viewModel.isLoading {
-                ProgressView()
+                ProgressView("Loading recipes...")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if let errorMessage = viewModel.errorMessage {
                 ErrorView(message: errorMessage) {
@@ -32,7 +32,7 @@ struct RecipeListView: View {
             
         }
         .onAppear {
-            Task { await viewModel.loadRecipes(from:.all) }
+            Task { await viewModel.loadRecipes(from: .malformed) }
         }
 
     }
