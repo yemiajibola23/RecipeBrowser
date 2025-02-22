@@ -12,7 +12,7 @@ final class RecipeListViewModelTests: XCTestCase {
     func testLoadRecipesSuccess() async {
         // Given
         let expectedRecipes = Recipe.mock
-        let sut = makeSUT(recipes: expectedRecipes)
+        let (sut, _) = makeSUT(recipes: expectedRecipes)
         
         // When
         await sut.loadRecipes(from: .mock)
@@ -27,7 +27,7 @@ final class RecipeListViewModelTests: XCTestCase {
     func testLoadRecipeFailure() async {
         // Given
         let expectedError = RecipeManager.Error.network(.networkFailure(statusCode: 404))
-        let sut = makeSUT(error: expectedError)
+        let (sut, _) = makeSUT(error: expectedError)
         
         // When
         await sut.loadRecipes(from: .mock)
@@ -37,13 +37,37 @@ final class RecipeListViewModelTests: XCTestCase {
         XCTAssertEqual(sut.errorMessage, RecipeListViewModel.ErrorMessages.failed.rawValue, "Should have returned load failure message.")
         XCTAssertEqual(sut.recipes, [])
     }
+    
+    func testRecipeListViewModelClearsErrorIfRefreshed() async {
+        
+        // Given
+        let decodingError = DecodingError.keyNotFound(Recipe.CodingKeys.cuisine, .init(codingPath: [], debugDescription: "Could not find cuisine"))
+        let expectedError = RecipeManager.Error.decoding(decodingError)
+        let (sut, recipeManager) = makeSUT(error: expectedError)
+        
+        // When
+        await sut.loadRecipes(from: .mock)
+        XCTAssertEqual(sut.errorMessage, RecipeListViewModel.ErrorMessages.failed.rawValue, "Should have returned load failure message.")
+        XCTAssertEqual(sut.recipes, [])
+        
+        let expectedRecipes = Recipe.mock
+        recipeManager.mockRecipes = expectedRecipes
+        recipeManager.mockError = nil
+        
+        await sut.loadRecipes(from: .mock)
+        
+        // Then
+        XCTAssertNil(sut.errorMessage, "Should not have error message")
+        XCTAssertEqual(sut.recipes, expectedRecipes)
+        
+    }
 }
 
 private extension RecipeListViewModelTests {
-    func makeSUT(recipes: [Recipe] = [], error: RecipeManager.Error? = nil) -> RecipeListViewModel {
+    func makeSUT(recipes: [Recipe] = [], error: RecipeManager.Error? = nil) -> (RecipeListViewModel, MockRecipeManager) {
         let mockRecipeManager = MockRecipeManager(mockRecipes: recipes, mockError: error)
         
-        return RecipeListViewModel(recipeManager: mockRecipeManager)
+        return (RecipeListViewModel(recipeManager: mockRecipeManager), mockRecipeManager)
     }
     
     class MockRecipeManager: RecipeManagerProtocol {
