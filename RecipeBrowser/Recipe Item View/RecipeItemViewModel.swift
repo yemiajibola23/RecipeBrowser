@@ -13,8 +13,8 @@ class RecipeItemViewModel {
     private var imageManager: ImageManagerProtocol
     
     var image: UIImage?
-    var isLoading = false
     var errorMessage: String?
+    var isLoading = false
     
     var name: String { recipe.name }
     var cuisine: String { recipe.cuisine }
@@ -30,13 +30,17 @@ class RecipeItemViewModel {
         isLoading = true
         errorMessage = nil
         
+        print("Load image was called!")
+        
         do {
             if let urlString = recipe.smallPhotoURL,
                 let url = URL(string: urlString),
                 let fetchedImage = try await imageManager.loadImage(from: url) {
                 image = fetchedImage
+                errorMessage = nil
             } else {
                 errorMessage = "Failed to load image."
+                image = nil
             }
         } catch {
             errorMessage = error.localizedDescription

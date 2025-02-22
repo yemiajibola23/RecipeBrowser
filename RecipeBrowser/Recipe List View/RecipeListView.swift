@@ -11,10 +11,6 @@ struct RecipeListView: View {
     let container = DependencyContainer.shared
     @Bindable var viewModel: RecipeListViewModel
     
-    //    init(viewModel: RecipeListViewModel) {
-    //        self.viewModel = viewModel
-    //    }
-    
     var body: some View {
         List(viewModel.recipes) { recipe in
             RecipeItemView(viewModel: container.makeRecipeItemViewModel(recipe: recipe))
