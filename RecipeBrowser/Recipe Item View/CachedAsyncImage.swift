@@ -24,12 +24,17 @@ struct CachedAsyncImage: View {
                 Text(errorMessage)
                     .backgroundStyle(Color.red)
                     .multilineTextAlignment(.center)
+            } else {
+                Text("No Image available.")
             }
         }
-        
         .onAppear {
+            print("✅ CachedAsyncImage appeared")
             Task {
+                print("🟢 Attempting to call loadImage()")
                 await viewModel.loadImage()
+                print("🟢 loadImage() has finished executing")
+
             }
         }
     }
