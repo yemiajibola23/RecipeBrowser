@@ -18,7 +18,9 @@ struct RecipeListView: View {
                 ProgressView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if let errorMessage = viewModel.errorMessage {
-                // TODO: - Error View
+                ErrorView(message: errorMessage) {
+                    Task { await viewModel.loadRecipes() }
+                }
             } else if viewModel.recipes.isEmpty {
                 // TODO: - Empty state view
             } else {
