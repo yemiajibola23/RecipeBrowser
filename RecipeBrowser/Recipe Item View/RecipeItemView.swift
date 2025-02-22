@@ -11,9 +11,6 @@ struct RecipeItemView: View {
     @Bindable var viewModel: RecipeItemViewModel
     
     var body: some View {
-//        if viewModel.image == nil {
-//            Text("No image yet.")
-//        }
         VStack {
             CachedAsyncImage(viewModel: viewModel)
             Text(viewModel.name)
