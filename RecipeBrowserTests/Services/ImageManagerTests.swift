@@ -132,6 +132,8 @@ private extension ImageManagerTests {
         func clearCache() {
             mockImage = nil
         }
+        
+        func cachePath(for url: URL) -> String { "" }
     }
     
     class MockDiskCache: ImageCachable {
@@ -152,5 +154,7 @@ private extension ImageManagerTests {
         func clearCache() {
             mockImage = nil
         }
+        
+        func cachePath(for url: URL) -> String { "" }
     }
 }

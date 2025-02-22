@@ -28,10 +28,12 @@ final class ImageDownloader: ImageDownloadable {
         do {
             let data = try await networkService.handleRequest(for: url)
             guard let image = UIImage(data: data) else { throw Error.imageDecoding }
+            print("✅ Image successfully loaded from: \(url.absoluteString)")
             return image
         } catch let networkError as NetworkService.Error {
             throw .network(networkError)
         } catch let selfError as ImageDownloader.Error {
+            print("❌ Failed to decode image from: \(url.absoluteString)")
             throw selfError
         }catch {
             throw .unknown(error)

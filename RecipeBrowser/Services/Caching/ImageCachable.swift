@@ -12,4 +12,5 @@ protocol ImageCachable {
     func loadImage(for url: URL) -> UIImage?
     func containsImage(for url: URL) -> Bool
     func clearCache()
+    func cachePath(for url: URL) -> String
 }
