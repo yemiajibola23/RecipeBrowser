@@ -35,6 +35,18 @@ final class RecipeListViewModelTests: XCTestCase {
         XCTAssertNotNil(sut.errorMessage)
         XCTAssertEqual(sut.recipes, [])
     }
+    
+    func testRecipeListViewModelLoadRecipesShowsErrorMessageWhenNoRecipesAvailable() async {
+        // Given
+        let sut = makeSUT()
+        
+        // When
+        await sut.loadRecipes(from: testURL())
+        
+        // Then
+        XCTAssertEqual(sut.errorMessage, RecipeListViewModel.ErrorMessages.empty.rawValue)
+        XCTAssertEqual(sut.recipes, [])
+    }
 }
 
 private extension RecipeListViewModelTests {
