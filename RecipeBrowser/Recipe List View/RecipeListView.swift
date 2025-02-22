@@ -7,18 +7,32 @@
 
 import SwiftUI
 
+let container = DependencyContainer.shared
+
 struct RecipeListView: View {
-    let container = DependencyContainer.shared
     @Bindable var viewModel: RecipeListViewModel
     
     var body: some View {
-        List(viewModel.recipes) { recipe in
-            RecipeItemView(viewModel: container.makeRecipeItemViewModel(recipe: recipe))
+        Group {
+            if viewModel.isLoading {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if let errorMessage = viewModel.errorMessage {
+                // TODO: - Error View
+            } else if viewModel.recipes.isEmpty {
+                // TODO: - Empty state view
+            } else {
+                List(viewModel.recipes) { recipe in
+                    RecipeItemView(viewModel: container.makeRecipeItemViewModel(recipe: recipe))
+                }
+                .padding()
+            }
+            
         }
         .onAppear {
-            Task { await viewModel.loadRecipes(from: API.url()) }
+            Task { await viewModel.loadRecipes() }
         }
-        .padding()
+
     }
 }
 
