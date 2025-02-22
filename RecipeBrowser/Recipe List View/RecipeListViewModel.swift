@@ -25,7 +25,7 @@ class RecipeListViewModel {
         case failed = "Failed to load recipes."
     }
     
-    func loadRecipes(from url: URL) async {
+    func loadRecipes(from url: URL = API.url()) async {
         isLoading = true
         do {
             let fetchedRecipes = try await recipeManager.fetchRecipes(from: url)
