@@ -27,14 +27,15 @@ struct RecipeListView: View {
                 List(viewModel.recipes) { recipe in
                     RecipeItemView(viewModel: container.makeRecipeItemViewModel(recipe: recipe))
                 }
+                .refreshable {
+                    await viewModel.loadRecipes()
+                }
                 .padding()
             }
-            
         }
         .onAppear {
             Task { await viewModel.loadRecipes(from: .malformed) }
         }
-
     }
 }
 
