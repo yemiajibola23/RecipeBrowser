@@ -12,8 +12,7 @@ final class RecipeListViewModelTests: XCTestCase {
     func testLoadRecipesSuccess() async {
         // Given
         let expectedRecipes = Recipe.mock
-        let mockRecipeManager = MockRecipeManager(mockRecipes: expectedRecipes)
-        let sut = RecipeListViewModel(recipeManager: mockRecipeManager)
+        let sut = makeSUT(recipes: expectedRecipes)
         
         // When
         await sut.loadRecipes(from: testURL())
@@ -27,8 +26,7 @@ final class RecipeListViewModelTests: XCTestCase {
     func testLoadRecipeFailure() async {
         // Given
         let expectedError = RecipeManager.Error.network(.networkFailure(statusCode: 404))
-        let mockRecipeManager = MockRecipeManager(mockError: expectedError)
-        let sut = RecipeListViewModel(recipeManager: mockRecipeManager)
+        let sut = makeSUT(error: expectedError)
         
         // When
         await sut.loadRecipes(from: testURL())
@@ -40,11 +38,17 @@ final class RecipeListViewModelTests: XCTestCase {
 }
 
 private extension RecipeListViewModelTests {
+    func makeSUT(recipes: [Recipe] = [], error: RecipeManager.Error? = nil) -> RecipeListViewModel {
+        let mockRecipeManager = MockRecipeManager(mockRecipes: recipes, mockError: error)
+        
+        return RecipeListViewModel(recipeManager: mockRecipeManager)
+    }
+    
     class MockRecipeManager: RecipeManagerProtocol {
-        var mockRecipes: [Recipe]?
+        var mockRecipes: [Recipe]
         var mockError: RecipeManager.Error?
         
-        init(mockRecipes: [Recipe]? = nil, mockError: RecipeManager.Error? = nil) {
+        init(mockRecipes: [Recipe] = [], mockError: RecipeManager.Error? = nil) {
             self.mockRecipes = mockRecipes
             self.mockError = mockError
         }
@@ -52,9 +56,7 @@ private extension RecipeListViewModelTests {
         func fetchRecipes(from url: URL) async throws -> [Recipe] {
             if let error = mockError { throw error }
             
-            guard let recipes = mockRecipes else { throw NSError(domain: "MockRecipeManager", code: 0) }
-            
-            return recipes
+            return mockRecipes
         }
     }
 }
