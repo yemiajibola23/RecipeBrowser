@@ -15,7 +15,7 @@ final class RecipeListViewModelTests: XCTestCase {
         let sut = makeSUT(recipes: expectedRecipes)
         
         // When
-        await sut.loadRecipes(from: testURL())
+        await sut.loadRecipes(from: .mock)
         
         // Then
         XCTAssertFalse(sut.isLoading)
@@ -30,7 +30,7 @@ final class RecipeListViewModelTests: XCTestCase {
         let sut = makeSUT(error: expectedError)
         
         // When
-        await sut.loadRecipes(from: testURL())
+        await sut.loadRecipes(from: .mock)
         
         // Then
         XCTAssertFalse(sut.isLoading)

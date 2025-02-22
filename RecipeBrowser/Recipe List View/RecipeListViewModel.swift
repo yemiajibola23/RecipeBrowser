@@ -25,10 +25,10 @@ class RecipeListViewModel {
         case failed = "Failed to load recipes."
     }
     
-    func loadRecipes(from url: URL = API.url()) async {
+    func loadRecipes(from endpoint: API.Endpoint = .all) async {
         isLoading = true
         do {
-            recipes = try await recipeManager.fetchRecipes(from: url)
+            recipes = try await recipeManager.fetchRecipes(from: API.url(for: endpoint))
         } catch {
             recipes = []
             errorMessage = ErrorMessages.failed.rawValue
