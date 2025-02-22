@@ -33,6 +33,7 @@ class RecipeItemViewModel {
         print("Load image was called!")
         
         do {
+//            try await Task.sleep(nanoseconds: 3_000_000_000)
             if let urlString = recipe.smallPhotoURL,
                 let url = URL(string: urlString),
                 let fetchedImage = try await imageManager.loadImage(from: url) {
