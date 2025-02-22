@@ -11,18 +11,28 @@ final class InMemoryCache: ImageCachable {
     private let cache = NSCache<NSString, UIImage>()
     
     func saveImage(_ image: UIImage, for url: URL) {
-        cache.setObject(image, forKey: url.absoluteString as NSString)
+        let path = cachePath(for: url)
+        print("Saving to RAM under name: \(path)")
+        cache.setObject(image, forKey: path as NSString)
     }
     
     func loadImage(for url: URL) -> UIImage? {
-        cache.object(forKey: url.absoluteString as NSString)
+        cache.object(forKey: cachePath(for: url) as NSString)
     }
     
     func containsImage(for url: URL) -> Bool {
-        return cache.object(forKey: url.absoluteString as NSString) != nil
+        let path = cachePath(for: url)
+        return cache.object(forKey: path as NSString) != nil
     }
     
     func clearCache() {
         cache.removeAllObjects()
+    }
+    
+    func cachePath(for url: URL) -> String {
+        let pathComponents = url.pathComponents
+        guard pathComponents.count > 2 else { return UUID().uuidString }
+        
+        return pathComponents[pathComponents.count - 2]
     }
 }
