@@ -18,7 +18,8 @@ final class RecipeListViewModelTests: XCTestCase {
         await sut.loadRecipes(from: testURL())
         
         // Then
-        XCTAssertNil(sut.errorMessage)
+        XCTAssertFalse(sut.isLoading)
+        XCTAssertNil(sut.errorMessage, "Should not have error message")
         XCTAssertEqual(sut.recipes, expectedRecipes)
         
     }
@@ -32,7 +33,8 @@ final class RecipeListViewModelTests: XCTestCase {
         await sut.loadRecipes(from: testURL())
         
         // Then
-        XCTAssertNotNil(sut.errorMessage)
+        XCTAssertFalse(sut.isLoading)
+        XCTAssertEqual(sut.errorMessage, RecipeListViewModel.ErrorMessages.failed.rawValue, "Should have returned load failure message.")
         XCTAssertEqual(sut.recipes, [])
     }
     
@@ -44,7 +46,8 @@ final class RecipeListViewModelTests: XCTestCase {
         await sut.loadRecipes(from: testURL())
         
         // Then
-        XCTAssertEqual(sut.errorMessage, RecipeListViewModel.ErrorMessages.empty.rawValue)
+        XCTAssertFalse(sut.isLoading)
+        XCTAssertEqual(sut.errorMessage, RecipeListViewModel.ErrorMessages.empty.rawValue, "Should have returned empty messsage.")
         XCTAssertEqual(sut.recipes, [])
     }
 }
