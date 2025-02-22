@@ -36,6 +36,13 @@ struct RecipeListView: View {
         .onAppear {
             Task { await viewModel.loadRecipes(from: .malformed) }
         }
+        .alert(isPresented: $viewModel.showAlert) {
+            Alert(
+                title: Text("Error"),
+                message: Text(viewModel.errorMessage ?? "An unexpected error occurred."),
+                dismissButton: .default(Text("OK"))
+            )
+        }
     }
 }
 

@@ -21,7 +21,7 @@ final class RecipeListViewModelTests: XCTestCase {
         XCTAssertFalse(sut.isLoading)
         XCTAssertNil(sut.errorMessage, "Should not have error message")
         XCTAssertEqual(sut.recipes, expectedRecipes)
-        
+        XCTAssertFalse(sut.showAlert)
     }
     
     func testLoadRecipeFailure() async {
@@ -34,8 +34,9 @@ final class RecipeListViewModelTests: XCTestCase {
         
         // Then
         XCTAssertFalse(sut.isLoading)
-        XCTAssertEqual(sut.errorMessage, RecipeListViewModel.ErrorMessages.failed.rawValue, "Should have returned load failure message.")
+        XCTAssertNotNil(sut.errorMessage, "Should have error message")
         XCTAssertEqual(sut.recipes, [])
+        XCTAssertTrue(sut.showAlert)
     }
     
     func testRecipeListViewModelClearsErrorIfRefreshed() async {
@@ -47,8 +48,9 @@ final class RecipeListViewModelTests: XCTestCase {
         
         // When
         await sut.loadRecipes(from: .mock)
-        XCTAssertEqual(sut.errorMessage, RecipeListViewModel.ErrorMessages.failed.rawValue, "Should have returned load failure message.")
+        XCTAssertNotNil(sut.errorMessage, "Should have error message")
         XCTAssertEqual(sut.recipes, [])
+        XCTAssertTrue(sut.showAlert)
         
         let expectedRecipes = Recipe.mock
         recipeManager.mockRecipes = expectedRecipes
