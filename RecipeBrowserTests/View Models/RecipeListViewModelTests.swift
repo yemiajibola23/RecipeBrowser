@@ -37,19 +37,6 @@ final class RecipeListViewModelTests: XCTestCase {
         XCTAssertEqual(sut.errorMessage, RecipeListViewModel.ErrorMessages.failed.rawValue, "Should have returned load failure message.")
         XCTAssertEqual(sut.recipes, [])
     }
-    
-    func testRecipeListViewModelLoadRecipesShowsErrorMessageWhenNoRecipesAvailable() async {
-        // Given
-        let sut = makeSUT()
-        
-        // When
-        await sut.loadRecipes(from: testURL())
-        
-        // Then
-        XCTAssertFalse(sut.isLoading)
-        XCTAssertEqual(sut.errorMessage, RecipeListViewModel.ErrorMessages.empty.rawValue, "Should have returned empty messsage.")
-        XCTAssertEqual(sut.recipes, [])
-    }
 }
 
 private extension RecipeListViewModelTests {

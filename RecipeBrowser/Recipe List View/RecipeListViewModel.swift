@@ -28,12 +28,7 @@ class RecipeListViewModel {
     func loadRecipes(from url: URL = API.url()) async {
         isLoading = true
         do {
-            let fetchedRecipes = try await recipeManager.fetchRecipes(from: url)
-            if fetchedRecipes.isEmpty {
-                errorMessage = ErrorMessages.empty.rawValue
-            } else {
-                recipes = fetchedRecipes
-            }
+            recipes = try await recipeManager.fetchRecipes(from: url)
         } catch {
             recipes = []
             errorMessage = ErrorMessages.failed.rawValue
