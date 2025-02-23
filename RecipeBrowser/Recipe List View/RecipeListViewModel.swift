@@ -16,17 +16,27 @@ class RecipeListViewModel {
     var errorMessage: String?
     var isLoading = false
     var showAlert = false
+    var lastFetchTime: Date?
     
     init(recipeManager: RecipeManagerProtocol) {
         self.recipeManager = recipeManager
     }
 
-    func loadRecipes(from endpoint: API.Endpoint = .all) async {
+    func loadRecipes(from endpoint: API.Endpoint = .all, forceRefresh: Bool = false) async {
+        if let lastFetch = lastFetchTime, !forceRefresh {
+            let timeElapsed = Date().timeIntervalSince(lastFetch)
+            if timeElapsed < 60 {
+                print("Using cached recipes (last fetched: \(timeElapsed) seconds ago)")
+                return
+            }
+        }
+        
         isLoading = true
         do {
             recipes = try await recipeManager.fetchRecipes(from: API.url(for: endpoint))
             errorMessage = nil
             showAlert = false
+            lastFetchTime = Date()
             print("✅ Recipes updated: \(recipes.count)")
         } catch {
             recipes.removeAll()
