@@ -22,7 +22,7 @@ struct RecipeListView: View {
                     Task { await viewModel.loadRecipes() }
                 }
             } else if viewModel.recipes.isEmpty {
-                EmptyStateView(message: RecipeListViewModel.ErrorMessages.empty.rawValue)
+                EmptyStateView(message: "No recipes available")
             } else {
                 List(viewModel.recipes) { recipe in
                     RecipeItemView(viewModel: container.makeRecipeItemViewModel(recipe: recipe))

@@ -20,12 +20,7 @@ class RecipeListViewModel {
     init(recipeManager: RecipeManagerProtocol) {
         self.recipeManager = recipeManager
     }
-    
-    enum ErrorMessages: String {
-        case empty = "No recipes available."
-        case failed = "Failed to load recipes."
-    }
-    
+
     func loadRecipes(from endpoint: API.Endpoint = .all) async {
         isLoading = true
         do {
