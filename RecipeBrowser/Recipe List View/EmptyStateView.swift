@@ -26,5 +26,5 @@ struct EmptyStateView: View {
 }
 
 #Preview {
-    EmptyStateView(message: RecipeListViewModel.ErrorMessages.empty.rawValue)
+    EmptyStateView(message: "No recipes available.")
 }
