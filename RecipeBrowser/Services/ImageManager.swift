@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 protocol ImageManagerProtocol: AnyObject {
     func loadImage(from url: URL) async throws -> UIImage?
@@ -16,6 +17,9 @@ class ImageManager: ImageManagerProtocol {
     private let diskCache: ImageCachable
     private let memoryCache: ImageCachable
     private let downloader: ImageDownloadable
+    
+    static var emptyImage: Image { Image(systemName: "tray") }
+    static var reloadImage: Image { Image(systemName: "arrow.clockwise.circle.fill") }
     
     init(diskCache: ImageCachable, memoryCache: ImageCachable, downloader: ImageDownloadable) {
         self.diskCache = diskCache
