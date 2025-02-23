@@ -28,14 +28,9 @@ class RecipeListViewModel {
             errorMessage = nil
             showAlert = false
             print("✅ Recipes updated: \(recipes.count)")
-        } catch let error as RecipeManager.Error{
-            recipes.removeAll()
-            errorMessage = getErrorMessage(for: error)
-            showAlert = true
-            print("❌ Error fetching recipes: \(error.localizedDescription)")
         } catch {
             recipes.removeAll()
-            errorMessage = getErrorMessage(for: .unknown)
+            errorMessage = getErrorMessage(for: error as? RecipeManager.Error ?? .unknown)
             showAlert = true
             print("❌ Error fetching recipes: \(error.localizedDescription)")
         }
