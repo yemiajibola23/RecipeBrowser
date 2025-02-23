@@ -40,7 +40,6 @@ final class RecipeListViewModelTests: XCTestCase {
     }
     
     func testRecipeListViewModelClearsErrorIfRefreshed() async {
-        
         // Given
         let decodingError = DecodingError.keyNotFound(Recipe.CodingKeys.cuisine, .init(codingPath: [], debugDescription: "Could not find cuisine"))
         let expectedError = RecipeManager.Error.decoding(decodingError)
@@ -61,7 +60,55 @@ final class RecipeListViewModelTests: XCTestCase {
         // Then
         XCTAssertNil(sut.errorMessage, "Should not have error message")
         XCTAssertEqual(sut.recipes, expectedRecipes)
+    }
+    
+    func testRecipeListViewModelFetchRecipesUsesCacheWhenLessThan1MinuteOld() async {
+        // Given
+        let (sut, _) = makeSUT(recipes: Recipe.mock)
         
+        await sut.loadRecipes(from: .mock)
+        let firstFetchTime = sut.lastFetchTime
+        
+        // When
+        try? await Task.sleep(nanoseconds: 3_000_000)
+        await sut.loadRecipes(from: .mock)
+        
+        // Then
+        XCTAssertEqual(sut.recipes.count, 3)
+        XCTAssertEqual(sut.lastFetchTime, firstFetchTime, "Last fetch time should not change when using cache.")
+    }
+    
+    func testRecipeListViewModelFetchRecipesCallsNetworkWhenCacheIsMoreThan1MinuteOld() async {
+        // Given
+        let (sut, _) = makeSUT(recipes: Recipe.mock)
+        
+        await sut.loadRecipes(from: .mock)
+        let firstFetchTime = sut.lastFetchTime
+        
+        // When
+        sut.lastFetchTime = Date().addingTimeInterval(-90)
+        await sut.loadRecipes(from: .mock)
+        
+        // Then
+        XCTAssertEqual(sut.recipes.count, 3)
+        XCTAssertNotEqual(sut.lastFetchTime, firstFetchTime, "Last fetch time should change because of update.")
+    }
+    
+    func testRecipeListViewModelFetchRecipesCallsNetworkWhenForcedToRefresh() async {
+        // Given
+        let (sut, manager) = makeSUT(recipes: Recipe.mock)
+        
+        // When
+        await sut.loadRecipes(from: .mock)
+        let firstFetchTime = sut.lastFetchTime
+        
+        manager.mockRecipes = [Recipe(id: "2", name: "Cool Recipe", cuisine: "Mandarin")]
+        try? await Task.sleep(nanoseconds: 3_000_000)
+        await sut.loadRecipes(from: .mock, forceRefresh: true)
+        
+        // Then
+        XCTAssertEqual(sut.recipes.count, 1)
+        XCTAssertNotEqual(firstFetchTime, sut.lastFetchTime, "Last fetch time should change because of update.")
     }
 }
 

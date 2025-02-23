@@ -19,7 +19,7 @@ struct RecipeListView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if let errorMessage = viewModel.errorMessage {
                 ErrorView(message: errorMessage) {
-                    Task { await viewModel.loadRecipes() }
+                    Task { await viewModel.loadRecipes(forceRefresh: true) }
                 }
             } else if viewModel.recipes.isEmpty {
                 EmptyStateView(message: "No recipes available")
@@ -28,7 +28,7 @@ struct RecipeListView: View {
                     RecipeItemView(viewModel: container.makeRecipeItemViewModel(recipe: recipe))
                 }
                 .refreshable {
-                    await viewModel.loadRecipes()
+                    await viewModel.loadRecipes(forceRefresh: true)
                 }
                 .padding()
             }
