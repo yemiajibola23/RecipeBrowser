@@ -42,30 +42,30 @@ final class RecipeItemViewModelTests: XCTestCase {
         XCTAssertNotNil(sut.errorMessage, "View model should have error message. ")
     }
     
-        func testImageViewModelIsLoadingStateChange() async {
-            // Given
-            let expectedImage = UIImage(systemName: "star")!
-            let mockImageManager = MockImageManager()
-            mockImageManager.mockImage = expectedImage
-            let expectation = expectation(description: "Expected to load image.")
-            
-            let sut = makeSUT(url: testURL(), imageManager: mockImageManager)
-            
-            // when
-            Task {
-                await sut.loadImage()
-                expectation.fulfill()
-            }
-            
-            await waitForCondition(timeout: 0.2) { sut.isLoading }
-            
-            XCTAssertTrue(sut.isLoading, "isLoading should be true while image is loading.")
-            
-            await fulfillment(of: [expectation], timeout: 1.0)
-            
-            XCTAssertFalse(sut.isLoading, "isLoading should be false after loading is finished.")
-            
+    func testImageViewModelIsLoadingStateChange() async {
+        // Given
+        let expectedImage = UIImage(systemName: "star")!
+        let mockImageManager = MockImageManager()
+        mockImageManager.mockImage = expectedImage
+        let expectation = expectation(description: "Expected to load image.")
+        
+        let sut = makeSUT(url: testURL(), imageManager: mockImageManager)
+        
+        // when
+        Task {
+            await sut.loadImage()
+            expectation.fulfill()
         }
+        
+        await waitForCondition(timeout: 0.2) { sut.isLoading }
+        
+        XCTAssertTrue(sut.isLoading, "isLoading should be true while image is loading.")
+        
+        await fulfillment(of: [expectation], timeout: 1.0)
+        
+        XCTAssertFalse(sut.isLoading, "isLoading should be false after loading is finished.")
+        
+    }
 }
 
 private extension RecipeItemViewModelTests {

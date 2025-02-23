@@ -21,11 +21,12 @@ struct ErrorView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 10))
            
             Button(action: retryAction) {
-                Text("Retry")
+                ImageManager.reloadImage
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 50, height: 50)
+                    .foregroundColor(.blue)
                     .padding()
-                    .background(Color.blue)
-                    .foregroundStyle(Color.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
