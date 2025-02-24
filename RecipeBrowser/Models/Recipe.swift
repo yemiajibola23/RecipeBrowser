@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct RecipeRepository: Decodable {
+struct RecipeRepository: Codable {
     var recipes: [Recipe]
 }
 
@@ -31,7 +31,7 @@ struct Recipe: Identifiable {
 }
 
 
-extension Recipe: Decodable {
+extension Recipe: Codable {
     enum CodingKeys: String, CodingKey {
         case id = "uuid"
         case name = "name"

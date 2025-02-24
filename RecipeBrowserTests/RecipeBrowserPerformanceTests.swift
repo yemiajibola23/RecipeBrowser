@@ -26,8 +26,7 @@ final class RecipeBrowserPerformanceTests: XCTestCase {
     
     func testAPIResponseTime() async {
         // Given
-        let (_, recipeJSON) = makeRecipe(name: "Test Recipe", cuisine: "Test Cuisine")
-        mockNetworkService.mockData = makeRecipesJSON([recipeJSON])
+        mockNetworkService.mockData = generateMockRecipeData(count: 2)
         
         let expectation = expectation(description: "API response time test.")
         let startTime = Date()
@@ -47,6 +46,20 @@ final class RecipeBrowserPerformanceTests: XCTestCase {
         await fulfillment(of: [expectation], timeout: 5.0)
     }
     
+    func testRecipeFetchingPerformance() async {
+        mockNetworkService.mockData = generateMockRecipeData(count: 1000)
+        
+        measure {
+            Task {
+                do {
+                    _ = try await recipeManager.fetchRecipes()
+                } catch {
+                    XCTFail("Fetching large dataset failed: \(error)")
+                }
+            }
+        }
+    }
+    
     func testImageLoadingMemoryUsage() async {
         let initialMemoryUsage = getMemoryUsage()
         
@@ -62,14 +75,22 @@ final class RecipeBrowserPerformanceTests: XCTestCase {
 private extension RecipeBrowserPerformanceTests {
     func getMemoryUsage() -> Int {
         var info = task_basic_info()
-        var count = mach_msg_type_number_t(MemoryLayout.size(ofValue: info) / MemoryLayout<Int32>.size) // ✅ Corrected count calculation
+        var count = mach_msg_type_number_t(MemoryLayout.size(ofValue: info) / MemoryLayout<Int32>.size)
         
         let result = withUnsafeMutablePointer(to: &info) {
             $0.withMemoryRebound(to: integer_t.self, capacity: 1) { ptr in
-                task_info(mach_task_self_, task_flavor_t(TASK_BASIC_INFO), ptr, &count) // ✅ Corrected type conversion
+                task_info(mach_task_self_, task_flavor_t(TASK_BASIC_INFO), ptr, &count)
             }
         }
         
-        return result == KERN_SUCCESS ? Int(info.resident_size / 1024 / 1024) : -1 // ✅ Con
+        return result == KERN_SUCCESS ? Int(info.resident_size / 1024 / 1024) : -1
+    }
+    
+    func generateMockRecipeData(count: Int) -> Data {
+        let recipes = (1...count).map { i in
+            Recipe(id: "\(i)", name: "Recipe \(i)", cuisine: "Test cuisine", smallPhotoURL: "https://example.com/image\(i).jpg")
+        }
+        
+        return try! JSONEncoder().encode(RecipeRepository(recipes: recipes))
     }
 }
