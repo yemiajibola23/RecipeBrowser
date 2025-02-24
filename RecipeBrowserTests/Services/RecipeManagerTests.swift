@@ -76,23 +76,5 @@ extension RecipeManagerTests {
         return  RecipeManager(networkService: mockNetworkService)
     }
     
-    private func makeRecipe(id: UUID, name: String, cuisine: String, imageURL: URL = testURL()) -> (Recipe, [String : Any]) {
-        (
-            Recipe(id: id.uuidString,
-                   name: name,
-                   cuisine: cuisine,
-                   smallPhotoURL: imageURL.absoluteString),
-            [
-                "uuid": id.uuidString,
-                "name":  name,
-                "cuisine": cuisine,
-                "photo_url_small": imageURL.absoluteString
-            ].compactMapValues { $0 }
-        )
-    }
-    
-    private func makeRecipesJSON(_ items: [[String: Any]]) -> Data {
-        let json = ["recipes" : items]
-        return try! JSONSerialization.data(withJSONObject: json)
-    }
+   
 }

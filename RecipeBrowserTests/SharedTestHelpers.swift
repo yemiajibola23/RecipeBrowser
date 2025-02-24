@@ -24,6 +24,26 @@ private func httpURLResponse(url: URL, statusCode: Int) -> HTTPURLResponse {
     return HTTPURLResponse(url: url, statusCode: statusCode, httpVersion: nil, headerFields: nil)!
 }
 
+func makeRecipe(id: UUID = UUID(), name: String, cuisine: String, imageURL: URL = testURL()) -> (Recipe, [String : Any]) {
+    (
+        Recipe(id: id.uuidString,
+               name: name,
+               cuisine: cuisine,
+               smallPhotoURL: imageURL.absoluteString),
+        [
+            "uuid": id.uuidString,
+            "name":  name,
+            "cuisine": cuisine,
+            "photo_url_small": imageURL.absoluteString
+        ].compactMapValues { $0 }
+    )
+}
+
+func makeRecipesJSON(_ items: [[String: Any]]) -> Data {
+    let json = ["recipes" : items]
+    return try! JSONSerialization.data(withJSONObject: json)
+}
+
 class MockURLProtocol: URLProtocol {
     static var mockResponses: [URL: Result<(HTTPURLResponse?, Data), Error>] = [:]
     
@@ -69,6 +89,4 @@ class MockNetworkService: NetworkServiceProtocol {
         
         return data
     }
-    
-    
 }
