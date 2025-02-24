@@ -33,7 +33,7 @@ class RecipeListViewModel {
         
         isLoading = true
         do {
-            recipes = try await recipeManager.fetchRecipes(from: API.url(for: endpoint))
+            recipes = try await recipeManager.fetchRecipes(from: endpoint)
             errorMessage = nil
             showAlert = false
             lastFetchTime = Date()

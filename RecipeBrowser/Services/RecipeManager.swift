@@ -8,7 +8,7 @@
 import Foundation
 
 protocol RecipeManagerProtocol {
-    func fetchRecipes(from url: URL) async throws -> [Recipe]
+    func fetchRecipes(from endpoint: API.Endpoint) async throws -> [Recipe]
 }
 
 final class RecipeManager: RecipeManagerProtocol {
@@ -24,7 +24,9 @@ final class RecipeManager: RecipeManagerProtocol {
         self.networkService = networkService
     }
     
-    func fetchRecipes(from url: URL = API.url()) async throws(Error) -> [Recipe] {
+    func fetchRecipes(from endpoint: API.Endpoint = .all) async throws(Error) -> [Recipe] {
+        let url = API.url(for: endpoint)
+        
         do {
             let data = try await networkService.handleRequest(for: url)
             let root = try JSONDecoder().decode(RecipeRepository.self, from: data)
