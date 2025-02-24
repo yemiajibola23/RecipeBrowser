@@ -75,6 +75,4 @@ extension RecipeManagerTests {
         let mockNetworkService = MockNetworkService(mockData: data, mockError: error)
         return  RecipeManager(networkService: mockNetworkService)
     }
-    
-   
 }
