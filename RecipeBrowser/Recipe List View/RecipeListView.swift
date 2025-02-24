@@ -24,13 +24,39 @@ struct RecipeListView: View {
             } else if viewModel.recipes.isEmpty {
                 EmptyStateView(message: "No recipes available")
             } else {
-                List(viewModel.recipes) { recipe in
-                    RecipeItemView(viewModel: container.makeRecipeItemViewModel(recipe: recipe))
+                NavigationView {
+                    List(viewModel.filteredRecipes) { recipe in
+                        RecipeItemView(viewModel: container.makeRecipeItemViewModel(recipe: recipe))
+                    }
+                    .padding()
+                    .navigationTitle("Recipes")
+                    .refreshable { await viewModel.loadRecipes(forceRefresh: true) }
+                    .searchable(text: $viewModel.searchQuery, prompt: "Search recipes...")
+                    .toolbar {
+                        ToolbarItem(placement: .topBarLeading) {
+                            Menu {
+                                Button("All", action: { viewModel.selectedCuisine = nil})
+                                
+                                ForEach(viewModel.availableCuisines, id: \.self) { cuisine in
+                                    Button(cuisine, action: { viewModel.selectedCuisine = cuisine })
+                                }
+                            } label: {
+                                Label("Filter", systemImage: "line.horizontal.3.decrease.circle")
+                            }
+                        }
+                        //
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Menu {
+                                Button("Name A-Z", action: { viewModel.sortOption = .nameAscending })
+                                Button("Name Z-A", action: { viewModel.sortOption = .nameDescending })
+                                Button("Cuisine A-Z", action: { viewModel.sortOption = .cuisineAscending })
+                                Button("Cuisine Z-A", action: { viewModel.sortOption = .cuisineDescending })
+                            } label: {
+                                Label("Sort", systemImage: "arrow.up.arrow.down.circle")
+                            }
+                        }
+                    }
                 }
-                .refreshable {
-                    await viewModel.loadRecipes(forceRefresh: true)
-                }
-                .padding()
             }
         }
         .onAppear {
