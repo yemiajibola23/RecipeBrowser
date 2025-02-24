@@ -18,6 +18,17 @@ class RecipeListViewModel {
     var showAlert = false
     var lastFetchTime: Date?
     
+    var searchQuery = ""
+    var selectedCuisine: String? = nil
+    var sortOption: SortOption = .nameAscending
+    
+    enum SortOption {
+        case nameAscending, nameDescending, cuisineAscending, cuisineDescending
+    }
+    
+    var filteredRecipes: [Recipe] { applySort(to: applyFilter(to: applySearch(to: recipes)))}
+    var availableCuisines: [String] { Array(Set(recipes.map { $0.cuisine } ))}
+    
     init(recipeManager: RecipeManagerProtocol) {
         self.recipeManager = recipeManager
     }
@@ -61,6 +72,33 @@ class RecipeListViewModel {
         case .invalidURL: return "The server's URL is incorrect. Please contact support."
         case .networkFailure(let statusCode): return "Network error (\(statusCode)). Please check your internet connection."
         case .unknown: return "An unknown error occurred. Please try again later."
+        }
+    }
+    
+    private func applySearch(to recipes: [Recipe]) -> [Recipe] {
+        guard !searchQuery.isEmpty else { return recipes }
+        
+        return recipes.filter { $0.name.localizedCaseInsensitiveContains(searchQuery) }
+    }
+    
+    private func applyFilter(to recipes: [Recipe]) -> [Recipe] {
+        guard let cuisine = selectedCuisine else { return recipes }
+        
+        return recipes.filter {$0.cuisine == cuisine }
+    }
+    
+    private func applySort(to recipes: [Recipe]) -> [Recipe] {
+        let sortedRecipes = recipes
+        
+        switch sortOption {
+        case .nameAscending:
+            return sortedRecipes.sorted { $0.name < $1.name }
+        case .nameDescending:
+            return sortedRecipes.sorted { $0.name > $1.name }
+        case .cuisineAscending:
+            return sortedRecipes.sorted { $0.cuisine < $1.cuisine }
+        case .cuisineDescending:
+            return sortedRecipes.sorted { $0.cuisine > $1.cuisine }
         }
     }
 }

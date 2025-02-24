@@ -110,6 +110,26 @@ final class RecipeListViewModelTests: XCTestCase {
         XCTAssertEqual(sut.recipes.count, 1)
         XCTAssertNotEqual(firstFetchTime, sut.lastFetchTime, "Last fetch time should change because of update.")
     }
+    
+    func testRecipeListViewModelApplyFilterReturnsFilteredRecipes() async {
+        let mockRecipes = [
+            Recipe(id: "1", name: "Spaghetti", cuisine: "Italian", smallPhotoURL: "https://example.com/image1.jpg"),
+                   Recipe(id: "2", name: "Pizza", cuisine: "Italian", smallPhotoURL: "https://example.com/image2.jpg"),
+                   Recipe(id: "3", name: "Sushi", cuisine: "Japanese", smallPhotoURL: "https://example.com/image3.jpg"),
+                   Recipe(id: "4", name: "Tacos", cuisine: "Mexican", smallPhotoURL: "https://example.com/image4.jpg"),
+                   Recipe(id: "5", name: "Burger", cuisine: "American", smallPhotoURL: "https://example.com/image5.jpg")
+               ]
+        
+        let (sut, _) = makeSUT(recipes: mockRecipes)
+        
+        await sut.loadRecipes(from: .mock)
+        
+        sut.searchQuery = "su"
+        
+        let filteredRecipes = sut.filteredRecipes
+        XCTAssertEqual(filteredRecipes.count, 1, "Should only return 1 recipe.")
+        XCTAssertEqual(filteredRecipes.first?.name, "Sushi", "Search should return Sushi.")
+    }
 }
 
 private extension RecipeListViewModelTests {
