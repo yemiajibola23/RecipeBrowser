@@ -84,6 +84,16 @@ final class RecipeBrowserPerformanceTests: XCTestCase {
         diskCache.clearCache()
     }
     
+    func testPullToRefreshSpeed() {
+        mockNetworkService.mockData = generateMockRecipeData(count: 10)
+        let viewModel = RecipeListViewModel(recipeManager: recipeManager)
+        measure {
+            Task {
+                _ = await viewModel.loadRecipes(forceRefresh: true)
+            }
+        }
+    }
+    
     func testImageLoadingMemoryUsage() async {
         let initialMemoryUsage = getMemoryUsage()
         
