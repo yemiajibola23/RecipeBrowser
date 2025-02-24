@@ -21,7 +21,7 @@ final class RecipeManagerTests: XCTestCase {
 
         // When
         do {
-            let actualRecipes = try await sut.fetchRecipes(from: testURL())
+            let actualRecipes = try await sut.fetchRecipes(from: .mock)
             XCTAssertEqual([recipe1, recipe2, recipe3], actualRecipes)
         } catch {
             XCTFail("Expected to succeed but failed with \(error)")
@@ -35,7 +35,7 @@ final class RecipeManagerTests: XCTestCase {
         
         // When
         do {
-            let _ = try await sut.fetchRecipes(from: testURL())
+            let _ = try await sut.fetchRecipes(from: .mock)
             XCTFail("Expected to fail with network failure but succeeded.")
         } catch {
             switch error {
@@ -56,7 +56,7 @@ final class RecipeManagerTests: XCTestCase {
         
         // When
         do {
-            let _ = try await sut.fetchRecipes(from: testURL())
+            let _ = try await sut.fetchRecipes(from: .mock)
             XCTFail("Expected to fail with decoding error but succeeded.")
         } catch {
             // Then

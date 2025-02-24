@@ -128,7 +128,7 @@ private extension RecipeListViewModelTests {
             self.mockError = mockError
         }
         
-        func fetchRecipes(from url: URL) async throws -> [Recipe] {
+        func fetchRecipes(from endpoint: API.Endpoint) async throws -> [Recipe] {
             if let error = mockError { throw error }
             
             return mockRecipes
