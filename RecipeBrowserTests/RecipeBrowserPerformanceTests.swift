@@ -60,6 +60,30 @@ final class RecipeBrowserPerformanceTests: XCTestCase {
         }
     }
     
+    func testDiskCacheWriteSpeeds() {
+        let diskCache = DiskCache()
+        let testImage = UIImage(systemName: "star")!
+        
+        measure {
+            diskCache.saveImage(testImage, for: testURL())
+        }
+        
+        diskCache.clearCache()
+    }
+    
+    func testDiskCacheReadSpeeds() {
+        let diskCache = DiskCache()
+        let testImage = UIImage(systemName: "star")!
+        
+        diskCache.saveImage(testImage, for: testURL())
+        
+        measure {
+            _ = diskCache.loadImage(for: testURL())
+        }
+        
+        diskCache.clearCache()
+    }
+    
     func testImageLoadingMemoryUsage() async {
         let initialMemoryUsage = getMemoryUsage()
         
