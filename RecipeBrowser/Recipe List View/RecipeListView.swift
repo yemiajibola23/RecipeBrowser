@@ -25,7 +25,7 @@ struct RecipeListView: View {
                 EmptyStateView(message: "No recipes available")
             } else {
                 NavigationView {
-                    List(viewModel.filteredRecipes) { recipe in
+                    List(viewModel.filteredRecipes, id: \.id) { recipe in
                         RecipeItemView(viewModel: container.makeRecipeItemViewModel(recipe: recipe))
                     }
                     .padding()
@@ -47,10 +47,12 @@ struct RecipeListView: View {
                         //
                         ToolbarItem(placement: .topBarTrailing) {
                             Menu {
-                                Button("Name A-Z", action: { viewModel.sortOption = .nameAscending })
-                                Button("Name Z-A", action: { viewModel.sortOption = .nameDescending })
-                                Button("Cuisine A-Z", action: { viewModel.sortOption = .cuisineAscending })
-                                Button("Cuisine Z-A", action: { viewModel.sortOption = .cuisineDescending })
+                                Picker("Sort By", selection: $viewModel.sortOption) {
+                                    Text("Name").tag(RecipeListViewModel.SortBy.name)
+                                    Text("Cuisine").tag(RecipeListViewModel.SortBy.cuisine)
+                                }
+                                
+                                Toggle("Ascending", isOn: $viewModel.isAscending)
                             } label: {
                                 Label("Sort", systemImage: "arrow.up.arrow.down.circle")
                             }
@@ -60,7 +62,8 @@ struct RecipeListView: View {
             }
         }
         .onAppear {
-            Task { await viewModel.loadRecipes(from: .malformed) }
+            // Change here for different json options.
+            Task { await viewModel.loadRecipes(from: .all) }
         }
         .alert(isPresented: $viewModel.showAlert) {
             Alert(

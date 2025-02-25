@@ -36,13 +36,13 @@ struct CachedAsyncImage: View {
                     .foregroundStyle(.gray.opacity(0.5))
             }
         }
-//            .id(viewModel.image)
+        .id(UUID())
         .onAppear {
-            //                print("✅ CachedAsyncImage appeared")
+            print("✅ CachedAsyncImage appeared")
             Task {
-                //                    print("🟢 Attempting to call loadImage()")
+                print("🟢 Attempting to call loadImage()")
                 await viewModel.loadImage()
-                //                    print("🟢 loadImage() has finished executing")
+                print("🟢 loadImage() has finished executing")
                 
             }
         }
