@@ -24,6 +24,11 @@ class RecipeItemViewModel {
     init(recipe: Recipe, imageManager: ImageManagerProtocol) {
         self.recipe = recipe
         self.imageManager = imageManager
+        print("Recipe Item View Model was initialized!")
+    }
+    
+    deinit {
+        print("Recipe Item View Model was deinitialized!")
     }
     
     func loadImage() async {
@@ -33,7 +38,7 @@ class RecipeItemViewModel {
         print("Load image was called!")
         
         do {
-//            try await Task.sleep(nanoseconds: 3_000_000_000)
+//            try await Task.sleep(nanoseconds: 3_000_000_000) // Used to simulate a delay 
             if let urlString = recipe.smallPhotoURL,
                 let url = URL(string: urlString),
                 let fetchedImage = try await imageManager.loadImage(from: url) {
