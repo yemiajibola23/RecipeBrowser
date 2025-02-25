@@ -12,8 +12,7 @@ final class RecipeListViewModelTests: XCTestCase {
     
     func testLoadRecipesSuccess() async {
         // Given
-        let expectedRecipes = Recipe.mock
-        let (sut, _) = makeSUT(recipes: expectedRecipes)
+        let (sut, _) = makeSUT(recipes: mockRecipes)
         
         // When
         await sut.loadRecipes(from: .mock)
@@ -21,7 +20,7 @@ final class RecipeListViewModelTests: XCTestCase {
         // Then
         XCTAssertFalse(sut.isLoading)
         XCTAssertNil(sut.errorMessage, "Should not have error message")
-        XCTAssertEqual(sut.recipes, expectedRecipes)
+        XCTAssertEqual(sut.recipes, mockRecipes)
         XCTAssertFalse(sut.showAlert)
     }
     
@@ -113,43 +112,99 @@ final class RecipeListViewModelTests: XCTestCase {
     }
     
     func testRecipeListViewModelApplyFilterReturnsFilteredRecipes() async {
-        let mockRecipes = [
-            Recipe(id: "1", name: "Spaghetti", cuisine: "Italian", smallPhotoURL: "https://example.com/image1.jpg"),
-                   Recipe(id: "2", name: "Pizza", cuisine: "Italian", smallPhotoURL: "https://example.com/image2.jpg"),
-                   Recipe(id: "3", name: "Sushi", cuisine: "Japanese", smallPhotoURL: "https://example.com/image3.jpg"),
-                   Recipe(id: "4", name: "Tacos", cuisine: "Mexican", smallPhotoURL: "https://example.com/image4.jpg"),
-                   Recipe(id: "5", name: "Burger", cuisine: "American", smallPhotoURL: "https://example.com/image5.jpg")
-               ]
-        
+        // Given
         let (sut, _) = makeSUT(recipes: mockRecipes)
         
+        // When
         await sut.loadRecipes(from: .mock)
         
         sut.searchQuery = "su"
         
+        // Then
         let filteredRecipes = sut.filteredRecipes
         XCTAssertEqual(filteredRecipes.count, 1, "Should only return 1 recipe.")
         XCTAssertEqual(filteredRecipes.first?.name, "Sushi", "Search should return Sushi.")
     }
     
     func testRecipeListViewModelApplyFilterToCuisineReturnsFilteredRecipes() async {
-        let mockRecipes = [
-            Recipe(id: "1", name: "Spaghetti", cuisine: "Italian", smallPhotoURL: "https://example.com/image1.jpg"),
-                   Recipe(id: "2", name: "Pizza", cuisine: "Italian", smallPhotoURL: "https://example.com/image2.jpg"),
-                   Recipe(id: "3", name: "Sushi", cuisine: "Japanese", smallPhotoURL: "https://example.com/image3.jpg"),
-                   Recipe(id: "4", name: "Tacos", cuisine: "Mexican", smallPhotoURL: "https://example.com/image4.jpg"),
-                   Recipe(id: "5", name: "Burger", cuisine: "American", smallPhotoURL: "https://example.com/image5.jpg")
-               ]
+        // Given
         
         let (sut, _) = makeSUT(recipes: mockRecipes)
         
+        // When
         await sut.loadRecipes(from: .mock)
         
         sut.selectedCuisine = "Italian"
         
+        // Then
         let filteredRecipes = sut.filteredRecipes
         XCTAssertEqual(filteredRecipes.count, 2, "Should only return 2 recipe.")
         XCTAssertTrue(filteredRecipes.allSatisfy {$0.cuisine == "Italian"},  "All results should have italian cuisine.")
+    }
+    
+    func testRecipeListViewModelApplySortingWithNameAscendingReturnsSortedRecipes() async {
+        let (sut, _) = makeSUT(recipes: mockRecipes)
+        
+        // When
+        await sut.loadRecipes(from: .mock)
+        
+        sut.sortOption = .nameAscending
+        
+        // Then
+        let sortedRecipes = sut.filteredRecipes
+        XCTAssertEqual(sortedRecipes.map { $0.name }, ["Burger", "Pizza", "Spaghetti", "Sushi", "Tacos"])
+    }
+    
+    func testRecipeListViewModelApplySortingWithNameDescendingReturnsSortedRecipes() async {
+        // Given
+        let (sut, _) = makeSUT(recipes: mockRecipes)
+        
+        // When
+        await sut.loadRecipes(from: .mock)
+        
+        sut.sortOption = .nameDescending
+        
+        // Then
+        let sortedRecipes = sut.filteredRecipes
+        XCTAssertEqual(sortedRecipes.map { $0.name }, ["Tacos", "Sushi", "Spaghetti", "Pizza", "Burger"])
+    }
+    
+    func testRecipeListViewModelApplySortingWithCuisineAscendingReturnsSortedRecipes() async {
+        /// Given
+        let (sut, _) = makeSUT(recipes: mockRecipes)
+        
+        // When
+        await sut.loadRecipes(from: .mock)
+        
+        sut.sortOption = .cuisineAscending
+        
+        // Then
+        let sortedRecipes = sut.filteredRecipes
+        XCTAssertEqual(sortedRecipes.map { $0.cuisine }, ["American", "Italian", "Italian", "Japanese", "Mexican"])
+    }
+    
+    func testRecipeListViewModelApplySortingWithCuisineDescendingReturnsSortedRecipes() async {
+        // Given
+        let (sut, _) = makeSUT(recipes: mockRecipes)
+        
+        // When
+        await sut.loadRecipes(from: .mock)
+        
+        sut.sortOption = .cuisineDescending
+        
+        // Then
+        let sortedRecipes = sut.filteredRecipes
+        XCTAssertEqual(sortedRecipes.map { $0.cuisine }, ["Mexican", "Japanese", "Italian", "Italian", "American"])
+    }
+    
+    func testRecipeListViewModelAvailableCuisinesAreUniqueAndSorted() async {
+        // Given
+        let (sut, _) = makeSUT(recipes: mockRecipes)
+        
+        // When
+        await sut.loadRecipes(from: .mock)
+        
+        XCTAssertEqual(sut.availableCuisines, ["American", "Italian", "Japanese", "Mexican"], "Available cuisines should be unique and sorted.")
     }
 }
 
@@ -174,5 +229,15 @@ private extension RecipeListViewModelTests {
             
             return mockRecipes
         }
+    }
+    
+    var mockRecipes: [Recipe] {
+        [
+            Recipe(id: "1", name: "Spaghetti", cuisine: "Italian", smallPhotoURL: "https://example.com/image1.jpg"),
+            Recipe(id: "2", name: "Pizza", cuisine: "Italian", smallPhotoURL: "https://example.com/image2.jpg"),
+            Recipe(id: "3", name: "Sushi", cuisine: "Japanese", smallPhotoURL: "https://example.com/image3.jpg"),
+            Recipe(id: "4", name: "Tacos", cuisine: "Mexican", smallPhotoURL: "https://example.com/image4.jpg"),
+            Recipe(id: "5", name: "Burger", cuisine: "American", smallPhotoURL: "https://example.com/image5.jpg")
+        ]
     }
 }
