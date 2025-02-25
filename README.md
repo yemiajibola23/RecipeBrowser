@@ -26,6 +26,9 @@ I chose to show alerts for errors to grab the users attention immediately and it
 Trade-off 3: Pull-to-refresh vs Manual Refresh
 I chose to use a pull to refresh system over a manual refresh because it worked well with List.
 
+Trade-off 4: Dependency Container
+I chose to use a dependency container when creating major dependencies within the app because I wanted a central location for them.
+
 ### Weakest Part of the Project: What do you think is the weakest part of your project?
 I believe the weakest part of the project is the UI. I de-emphasized UI work because I wanted to focus on testability and maintainability.
 
