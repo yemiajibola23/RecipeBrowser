@@ -9,6 +9,7 @@ import XCTest
 @testable import RecipeBrowser
 
 final class RecipeListViewModelTests: XCTestCase {
+    
     func testLoadRecipesSuccess() async {
         // Given
         let expectedRecipes = Recipe.mock
@@ -129,6 +130,26 @@ final class RecipeListViewModelTests: XCTestCase {
         let filteredRecipes = sut.filteredRecipes
         XCTAssertEqual(filteredRecipes.count, 1, "Should only return 1 recipe.")
         XCTAssertEqual(filteredRecipes.first?.name, "Sushi", "Search should return Sushi.")
+    }
+    
+    func testRecipeListViewModelApplyFilterToCuisineReturnsFilteredRecipes() async {
+        let mockRecipes = [
+            Recipe(id: "1", name: "Spaghetti", cuisine: "Italian", smallPhotoURL: "https://example.com/image1.jpg"),
+                   Recipe(id: "2", name: "Pizza", cuisine: "Italian", smallPhotoURL: "https://example.com/image2.jpg"),
+                   Recipe(id: "3", name: "Sushi", cuisine: "Japanese", smallPhotoURL: "https://example.com/image3.jpg"),
+                   Recipe(id: "4", name: "Tacos", cuisine: "Mexican", smallPhotoURL: "https://example.com/image4.jpg"),
+                   Recipe(id: "5", name: "Burger", cuisine: "American", smallPhotoURL: "https://example.com/image5.jpg")
+               ]
+        
+        let (sut, _) = makeSUT(recipes: mockRecipes)
+        
+        await sut.loadRecipes(from: .mock)
+        
+        sut.selectedCuisine = "Italian"
+        
+        let filteredRecipes = sut.filteredRecipes
+        XCTAssertEqual(filteredRecipes.count, 2, "Should only return 2 recipe.")
+        XCTAssertTrue(filteredRecipes.allSatisfy {$0.cuisine == "Italian"},  "All results should have italian cuisine.")
     }
 }
 
