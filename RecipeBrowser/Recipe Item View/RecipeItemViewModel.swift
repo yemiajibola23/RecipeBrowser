@@ -24,6 +24,12 @@ class RecipeItemViewModel {
     init(recipe: Recipe, imageManager: ImageManagerProtocol) {
         self.recipe = recipe
         self.imageManager = imageManager
+        
+        // Work around for images not loading when filter/sort shows up
+        if let urlString = recipe.smallPhotoURL, let url = URL(string: urlString) {
+            image = imageManager.getCachedImage(for: url)
+        }
+        
         print("Recipe Item View Model was initialized!")
     }
     

@@ -9,6 +9,7 @@ import UIKit
 import SwiftUI
 
 protocol ImageManagerProtocol: AnyObject {
+    func getCachedImage(for url: URL) -> UIImage?
     func loadImage(from url: URL) async throws -> UIImage?
     func clearCache()
 }
@@ -28,14 +29,20 @@ class ImageManager: ImageManagerProtocol {
         self.downloader = downloader
     }
     
-    func loadImage(from url: URL) async throws -> UIImage? {
-        print("🟡 Attempting to fetch image from: \(url.absoluteString)")
+    func getCachedImage(for url: URL) -> UIImage? {
         if let memoryImage = memoryCache.loadImage(for: url) {
             print("✅ Returning ram cached image for: \(url.absoluteString)")
             return memoryImage
         } else if let diskImage = diskCache.loadImage(for: url) {
             print("✅ Returning disk cached image for: \(url.absoluteString)")
             return diskImage
+        } else { return nil }
+    }
+    
+    func loadImage(from url: URL) async throws -> UIImage? {
+        print("🟡 Attempting to fetch image from: \(url.absoluteString)")
+        if let cachedImage = getCachedImage(for: url) {
+            return cachedImage
         } else {
             do {
                 let image = try await downloader.fetchImage(from: url)
