@@ -27,7 +27,7 @@ class RecipeListViewModel {
     }
     
     var filteredRecipes: [Recipe] { applySort(to: applyFilter(to: applySearch(to: recipes)))}
-    var availableCuisines: [String] { Array(Set(recipes.map { $0.cuisine } ))}
+    var availableCuisines: [String] { Array(Set(recipes.map { $0.cuisine }.sorted() ))}
     
     init(recipeManager: RecipeManagerProtocol) {
         self.recipeManager = recipeManager
