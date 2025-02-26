@@ -148,7 +148,8 @@ final class RecipeListViewModelTests: XCTestCase {
         // When
         await sut.loadRecipes(from: .mock)
         
-        sut.sortOption = .nameAscending
+        sut.sortOption = .name
+        sut.isAscending = true
         
         // Then
         let sortedRecipes = sut.filteredRecipes
@@ -162,7 +163,8 @@ final class RecipeListViewModelTests: XCTestCase {
         // When
         await sut.loadRecipes(from: .mock)
         
-        sut.sortOption = .nameDescending
+        sut.sortOption = .name
+        sut.isAscending = false
         
         // Then
         let sortedRecipes = sut.filteredRecipes
@@ -176,7 +178,8 @@ final class RecipeListViewModelTests: XCTestCase {
         // When
         await sut.loadRecipes(from: .mock)
         
-        sut.sortOption = .cuisineAscending
+        sut.sortOption = .cuisine
+        sut.isAscending = true
         
         // Then
         let sortedRecipes = sut.filteredRecipes
@@ -190,7 +193,8 @@ final class RecipeListViewModelTests: XCTestCase {
         // When
         await sut.loadRecipes(from: .mock)
         
-        sut.sortOption = .cuisineDescending
+        sut.sortOption = .cuisine
+        sut.isAscending = false
         
         // Then
         let sortedRecipes = sut.filteredRecipes
@@ -201,9 +205,11 @@ final class RecipeListViewModelTests: XCTestCase {
         // Given
         let (sut, _) = makeSUT(recipes: mockRecipes)
         
+        
         // When
         await sut.loadRecipes(from: .mock)
         
+        // Then
         XCTAssertEqual(sut.availableCuisines, ["American", "Italian", "Japanese", "Mexican"], "Available cuisines should be unique and sorted.")
     }
 }

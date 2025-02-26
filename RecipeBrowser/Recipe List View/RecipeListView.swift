@@ -44,7 +44,7 @@ struct RecipeListView: View {
                                 Label("Filter", systemImage: "line.horizontal.3.decrease.circle")
                             }
                         }
-                        //
+
                         ToolbarItem(placement: .topBarTrailing) {
                             Menu {
                                 Picker("Sort By", selection: $viewModel.sortOption) {
