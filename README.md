@@ -6,7 +6,12 @@
 For this project I focused on architecture, testing, and error handling management.
 ### Architecture
 I used the MVVM design pattern because it's a common pattern to use on small projects. It helps to separate concerns and not bloat files. I also adhered to SOLID principles to create a maintainable, scalable project.
-### 
+### Testing
+I have roughly 83% code coverage. I wanted to have a robust number of tests because I believe that is the best way to keep code secure and even more so maintainable.
+
+### Error handling
+I wanted to make sure the user understands why there could be errors completely.
+
 
 ### Time Spent: Approximately how long did you spend working on this project? How did you allocate your time? 
 I spent roughly 15-20 hours creating this app:
