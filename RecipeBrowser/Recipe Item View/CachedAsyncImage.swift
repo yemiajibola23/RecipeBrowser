@@ -9,14 +9,16 @@ import SwiftUI
 
 struct CachedAsyncImage: View {
     @Bindable var viewModel: RecipeItemViewModel
-
+    let width: CGFloat
+    let height: CGFloat
+    
     var body: some View {
         ZStack {
             if let image = viewModel.image {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 300, height: 300)
+                    .frame(width: width, height: height)
                     .clipShape(RoundedRectangle(cornerRadius: 25.0))
                     .foregroundStyle(.primary)
             } else if viewModel.isLoading {
@@ -31,7 +33,7 @@ struct CachedAsyncImage: View {
                 ImageManager.placeholderImage
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 300, height: 300)
+                    .frame(width: width, height: height)
                     .clipShape(RoundedRectangle(cornerRadius: 25.0))
                     .foregroundStyle(.gray.opacity(0.5))
             }

@@ -12,7 +12,7 @@ struct RecipeItemView: View {
     
     var body: some View {
         VStack {
-            CachedAsyncImage(viewModel: viewModel)
+            CachedAsyncImage(viewModel: viewModel, width: 300, height: 300)
             Text(viewModel.name)
                 .font(.title)
                 .bold()

@@ -25,8 +25,14 @@ struct RecipeListView: View {
                 EmptyStateView(message: "No recipes available")
             } else {
                 NavigationView {
-                    List(viewModel.filteredRecipes, id: \.id) { recipe in
-                        RecipeItemView(viewModel: container.makeRecipeItemViewModel(recipe: recipe))
+                    ScrollView(.horizontal) {
+                        LazyHStack(spacing: 16) {
+                            ForEach(viewModel.filteredRecipes, id: \.id) { recipe in
+                                let viewModel = container.makeRecipeItemViewModel(recipe: recipe)
+//                                RecipeItemView(viewModel: container.makeRecipeItemViewModel(recipe: recipe))
+                                RecipeCardView(viewModel: viewModel)
+                            }
+                        }
                     }
                     .padding()
                     .navigationTitle("Recipes")

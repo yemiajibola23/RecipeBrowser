@@ -18,8 +18,10 @@ class RecipeItemViewModel {
     
     var name: String { recipe.name }
     var cuisine: String { recipe.cuisine }
+    var youtubeLink: String { recipe.youtubeURL ?? "N/A" }
+    var sourceLink: String { recipe.sourceURL ?? "N/A" }
     
-    let recipe: Recipe
+    private let recipe: Recipe
     
     init(recipe: Recipe, imageManager: ImageManagerProtocol) {
         self.recipe = recipe

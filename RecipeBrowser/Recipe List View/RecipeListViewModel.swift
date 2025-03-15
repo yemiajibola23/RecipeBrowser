@@ -45,6 +45,8 @@ class RecipeListViewModel {
         }
         
         isLoading = true
+        defer { isLoading = false }
+        
         do {
             recipes = try await recipeManager.fetchRecipes(from: endpoint)
             errorMessage = nil
@@ -57,8 +59,6 @@ class RecipeListViewModel {
             showAlert = true
             print("❌ Error fetching recipes: \(error.localizedDescription)")
         }
-        
-        isLoading = false
     }
     
     private func getErrorMessage(for error: RecipeManager.Error) -> String {
