@@ -10,9 +10,15 @@ import UIKit
 final class InMemoryCache: ImageCachable {
     private let cache = NSCache<NSString, CacheEntry>()
     private let expirationTime: TimeInterval = 24 * 60 * 60
+    private let maxCacheSize = 10
     
     func saveImage(_ image: UIImage, for url: URL, dateSaved: Date = Date()) {
         let path = cachePath(for: url)
+        
+        if cache.countLimit >= maxCacheSize {
+            cache.removeObject(forKey: cache.name as NSString)
+        }
+        
         print("Saving to RAM under name: \(path)")
         cache.setObject(CacheEntry(image: image, date: dateSaved), forKey: path as NSString)
     }
