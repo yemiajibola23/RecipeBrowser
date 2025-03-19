@@ -121,7 +121,7 @@ private extension ImageManagerTests {
             self.mockImage = image
         }
         
-        func saveImage(_ image: UIImage, for url: URL) {
+        func saveImage(_ image: UIImage, for url: URL, dateSaved: Date) {
             self.mockImage = image
         }
         
@@ -143,7 +143,7 @@ private extension ImageManagerTests {
             self.mockImage = image
         }
         
-        func saveImage(_ image: UIImage, for url: URL) {
+        func saveImage(_ image: UIImage, for url: URL, dateSaved: Date) {
             self.mockImage = image
         }
         

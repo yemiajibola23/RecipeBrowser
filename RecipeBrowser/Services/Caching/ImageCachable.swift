@@ -8,7 +8,7 @@
 import UIKit
 
 protocol ImageCachable {
-    func saveImage(_ image: UIImage, for url: URL)
+    func saveImage(_ image: UIImage, for url: URL, dateSaved: Date)
     func loadImage(for url: URL) -> UIImage?
     func containsImage(for url: URL) -> Bool
     func clearCache()

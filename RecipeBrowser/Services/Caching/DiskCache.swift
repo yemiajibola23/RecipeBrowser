@@ -34,11 +34,11 @@ final class DiskCache: ImageCachable {
     
     private func cacheURL(for url: URL) -> URL { cacheDirectory.appending(component: cachePath(for: url)) }
     
-    func saveImage(_ image: UIImage, for url: URL) {
+    func saveImage(_ image: UIImage, for url: URL, dateSaved: Date = Date()) {
         let fileURL = cacheURL(for: url)
         if let imageData = image.pngData() {
             try? imageData.write(to: fileURL)
-            setExpirationDate(for: fileURL)
+            setExpirationDate(for: fileURL, savedDate: dateSaved)
             enforceStorageLimit()
         }
     }
@@ -60,20 +60,23 @@ final class DiskCache: ImageCachable {
         try? fileManager.createDirectory(at: cacheDirectory, withIntermediateDirectories: true, attributes: nil)
     }
     
-    private func setExpirationDate(for fileURL: URL) {
-        let attributes = [FileAttributeKey.modificationDate: Date()]
+    private func setExpirationDate(for fileURL: URL, savedDate: Date = Date()) {
+        let attributes = [FileAttributeKey.modificationDate: savedDate]
         
         try? fileManager.setAttributes(attributes, ofItemAtPath: fileURL.path())
     }
     
     private func removeExpiredFiles() {
         let expirationDate = Date().addingTimeInterval(-expirationTime)
+        print("Expiration date calculated at: \(expirationDate)")
         
         if let files = try? fileManager.contentsOfDirectory(at: cacheDirectory, includingPropertiesForKeys: [.contentModificationDateKey]) {
             for file in files {
+                print("👀 Looking into file: \(file.absoluteString)")
                 if let attributes = try? file.resourceValues(forKeys: [.contentModificationDateKey]),
-                   let modificationDate = attributes.contentModificationDate,
-                   modificationDate < expirationDate {
+                   let modifiedDate = attributes.contentModificationDate,
+                   modifiedDate < expirationDate {
+                    print("Removing file at url: \(file.absoluteString)")
                     try? fileManager.removeItem(at: file)
                 }
             }
@@ -102,5 +105,14 @@ final class DiskCache: ImageCachable {
         }
     }
     
+    // Testing metnods
+    func cleanupExpiredImages() {
+        removeExpiredFiles()
+    }
     
+    func fileModificationDate(for url: URL) -> Date? {
+        let fileURL = cacheURL(for: url)
+        let attributes = try? fileManager.attributesOfItem(atPath: fileURL.path)
+        return attributes?[.modificationDate] as? Date
+    }
 }

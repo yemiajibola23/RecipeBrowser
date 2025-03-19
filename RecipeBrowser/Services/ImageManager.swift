@@ -47,8 +47,8 @@ class ImageManager: ImageManagerProtocol {
             do {
                 let image = try await downloader.fetchImage(from: url)
                 if let downloadedImage = image {
-                    memoryCache.saveImage(downloadedImage, for: url)
-                    diskCache.saveImage(downloadedImage, for: url)
+                    memoryCache.saveImage(downloadedImage, for: url, dateSaved: Date())
+                    diskCache.saveImage(downloadedImage, for: url, dateSaved: Date())
                 }
                 
                 return image

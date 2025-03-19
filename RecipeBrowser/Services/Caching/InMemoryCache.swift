@@ -11,10 +11,10 @@ final class InMemoryCache: ImageCachable {
     private let cache = NSCache<NSString, CacheEntry>()
     private let expirationTime: TimeInterval = 24 * 60 * 60
     
-    func saveImage(_ image: UIImage, for url: URL) {
+    func saveImage(_ image: UIImage, for url: URL, dateSaved: Date = Date()) {
         let path = cachePath(for: url)
         print("Saving to RAM under name: \(path)")
-        cache.setObject(CacheEntry(image: image, date: Date()), forKey: path as NSString)
+        cache.setObject(CacheEntry(image: image, date: dateSaved), forKey: path as NSString)
     }
     
     func loadImage(for url: URL) -> UIImage? {

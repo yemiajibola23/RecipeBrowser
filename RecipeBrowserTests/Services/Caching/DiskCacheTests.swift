@@ -64,4 +64,29 @@ final class DiskCacheTests: XCTestCase {
         XCTAssertNotNil(retrievedImage2, "Expected second image to be retrievable.")
         XCTAssertNotEqual(retrievedImage1?.pngData(), retrievedImage2?.pngData(), "Images should be different.")
     }
+    
+    func testDiskCacheDeletesImagesIfOlderThanCacheExpirationDate() {
+        // Given
+        let testImage = UIImage(systemName: "star")!
+        let testURL = URL(string: "https://d3jbb8n5wk0qxi.cloudfront.net/photos/b9ab0071-b281-4bee-b361-ec340d405320/small.jpg")!
+        
+        // When
+        let expirationTime: Double = 24 * 60 * 60
+        let oldDate = Date().addingTimeInterval(-expirationTime - 1)
+        sut.saveImage(testImage, for: testURL, dateSaved: oldDate)
+        
+        if let modifiedDate = sut.fileModificationDate(for: testURL) {
+            print("📸 File saved at: \(modifiedDate)")
+        } else {
+            XCTFail("Failed to retrieve modification date.")
+        }
+        
+        sleep(2)
+        sut.cleanupExpiredImages()
+        
+        // Then
+        let expiredImage = sut.loadImage(for: testURL)
+        XCTAssertNil(expiredImage, "Expired image should be removed")
+        
+    }
 }
