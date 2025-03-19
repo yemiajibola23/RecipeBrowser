@@ -8,16 +8,23 @@
 import UIKit
 
 final class InMemoryCache: ImageCachable {
-    private let cache = NSCache<NSString, UIImage>()
+    private let cache = NSCache<NSString, CacheEntry>()
+    private let expirationTime: TimeInterval = 24 * 60 * 60
     
     func saveImage(_ image: UIImage, for url: URL) {
         let path = cachePath(for: url)
         print("Saving to RAM under name: \(path)")
-        cache.setObject(image, forKey: path as NSString)
+        cache.setObject(CacheEntry(image: image, date: Date()), forKey: path as NSString)
     }
     
     func loadImage(for url: URL) -> UIImage? {
-        cache.object(forKey: cachePath(for: url) as NSString)
+        let path = cachePath(for: url) 
+        if let entry = cache.object(forKey:  path as NSString), Date().timeIntervalSince(entry.date) < expirationTime {
+            return entry.image
+        } else {
+            cache.removeObject(forKey: path as NSString)
+            return nil
+        }
     }
     
     func containsImage(for url: URL) -> Bool {
@@ -34,5 +41,15 @@ final class InMemoryCache: ImageCachable {
         guard pathComponents.count > 2 else { return UUID().uuidString }
         
         return pathComponents[pathComponents.count - 2]
+    }
+}
+
+private class  CacheEntry: NSObject {
+    let image: UIImage
+    let date: Date
+    
+    init(image: UIImage, date: Date) {
+        self.image = image
+        self.date = date
     }
 }
