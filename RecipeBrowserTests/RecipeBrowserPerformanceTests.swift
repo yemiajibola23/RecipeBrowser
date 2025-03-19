@@ -22,6 +22,7 @@ final class RecipeBrowserPerformanceTests: XCTestCase {
     override func tearDown() {
         mockNetworkService = nil
         recipeManager = nil
+        super.tearDown()
     }
     
     func testAPIResponseTime() async {
@@ -47,15 +48,16 @@ final class RecipeBrowserPerformanceTests: XCTestCase {
     }
     
     func testRecipeFetchingPerformance() async {
+        print("Debug: recipeManager is \(recipeManager == nil ? "nil" : "initialized")")
+        print("Debug: mockNetworkService is \(mockNetworkService == nil ? "nil" : "initialized")")
+        
         mockNetworkService.mockData = generateMockRecipeData(count: 1000)
         
-        measure {
-            Task {
-                do {
-                    _ = try await recipeManager.fetchRecipes()
-                } catch {
-                    XCTFail("Fetching large dataset failed: \(error)")
-                }
+        await measureAsync { [weak self] in
+            do {
+                _ = try await self?.recipeManager.fetchRecipes()
+            } catch {
+                XCTFail("Fetching large dataset failed: \(error)")
             }
         }
     }
@@ -107,6 +109,13 @@ final class RecipeBrowserPerformanceTests: XCTestCase {
 }
 
 private extension RecipeBrowserPerformanceTests {
+    func measureAsync(block: @escaping () async -> Void) async {
+        let start = Date()
+        await block()
+        let end = Date()
+        print("⏱ Execution time: \(end.timeIntervalSince(start)) seconds")
+    }
+    
     func getMemoryUsage() -> Int {
         var info = task_basic_info()
         var count = mach_msg_type_number_t(MemoryLayout.size(ofValue: info) / MemoryLayout<Int32>.size)
