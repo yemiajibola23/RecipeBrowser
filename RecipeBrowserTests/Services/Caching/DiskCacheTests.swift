@@ -108,4 +108,21 @@ final class DiskCacheTests: XCTestCase {
         
         XCTAssertLessThanOrEqual(totalFileSize, 50 * 1024 * 1024, "DiskCache should enforce 50 MB storage limit.")
     }
+    
+    func testDiskCachePersistsAcrossAppLaunches() {
+        // Given
+        var diskCache = DiskCache(cacheDirectory: tempDirectory)
+        let url = URL(string: "https://example.com/image/1/small.jpg")!
+        let testImage = UIImage(systemName: "star.fill")!
+
+        diskCache.saveImage(testImage, for: url)
+        
+        diskCache = DiskCache(cacheDirectory: tempDirectory)
+        
+        // When
+        let loadedImage = diskCache.loadImage(for: url)
+        
+        // Then
+        XCTAssertNotNil(loadedImage, "Disk cache should persist accross app launches.")
+    }
 }
