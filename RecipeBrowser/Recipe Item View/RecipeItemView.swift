@@ -11,20 +11,25 @@ struct RecipeItemView: View {
     @Bindable var viewModel: RecipeItemViewModel
     
     var body: some View {
-        VStack {
-            CachedAsyncImage(viewModel: viewModel, width: 300, height: 300)
+        VStack(alignment: .leading, spacing: 8) {
+            CachedAsyncImage(viewModel: viewModel)
             Text(viewModel.name)
-                .font(.title)
-                .bold()
-            Text(viewModel.cuisine)
                 .font(.title2)
+                .fontWeight(.semibold)
+                .foregroundStyle(.primary)
+                .padding(.horizontal, 10)
+            Text(viewModel.cuisine)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 10)
         }
+        .padding(.vertical, 8)
         .onAppear {
             print("✅ Recipe item view is rendered for \(viewModel.name)")
         }
     }
 }
 
-#Preview {
-    RecipeItemView(viewModel: RecipeItemViewModel(recipe: .mock.first!, imageManager: MockImageManager()))
-}
+//#Preview {
+//    RecipeItemView(viewModel: RecipeItemViewModel(recipe: .mock.first!, imageManager: MockImageManager()))
+//}

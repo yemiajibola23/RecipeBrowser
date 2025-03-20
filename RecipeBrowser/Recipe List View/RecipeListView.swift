@@ -36,21 +36,24 @@ struct RecipeListView: View {
                     List(viewModel.filteredRecipes, id: \.id) { recipe in
                         let viewModel = container.makeRecipeItemViewModel(recipe: recipe)
                         RecipeItemView(viewModel: viewModel)
+                            .padding(.horizontal, 16)
                     }
-                    .padding()
+                    .listStyle(.plain)
                     .navigationTitle("Recipes")
                     .refreshable { await viewModel.loadRecipes(forceRefresh: true) }
                     .searchable(text: $viewModel.searchQuery, prompt: "Search recipes...")
                     .toolbar {
                         ToolbarItem(placement: .topBarLeading) {
                             Menu {
-                                Button("All", action: { viewModel.selectedCuisine = nil})
+                                Button("All", action: { viewModel.selectedCuisine = nil })
                                 
                                 ForEach(viewModel.availableCuisines, id: \.self) { cuisine in
                                     Button(cuisine, action: { viewModel.selectedCuisine = cuisine })
                                 }
                             } label: {
-                                Label("Filter", systemImage: "line.horizontal.3.decrease.circle")
+                                Image(systemName: "line.horizontal.3.decrease.circle.fill")
+                                    .font(.title2)
+                                    .foregroundStyle(.blue)
                             }
                         }
 
@@ -63,7 +66,9 @@ struct RecipeListView: View {
                                 
                                 Toggle("Ascending", isOn: $viewModel.isAscending)
                             } label: {
-                                Label("Sort", systemImage: "arrow.up.arrow.down.circle")
+                                Image(systemName: "arrow.up.arrow.down.circle.fill")
+                                    .font(.title2)
+                                    .foregroundStyle(.blue)
                             }
                         }
                     }

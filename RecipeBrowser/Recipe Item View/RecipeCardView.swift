@@ -39,7 +39,7 @@ struct RecipeCardView: View {
             } else {
                 // Front of card
                 ZStack {
-                    CachedAsyncImage(viewModel: viewModel, width: 200, height: 300)
+                    CachedAsyncImage(viewModel: viewModel)
                     
                     VStack {
                         Text(viewModel.name)
