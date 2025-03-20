@@ -57,6 +57,17 @@ final class InMemoryCacheTests: XCTestCase {
        
         // Then
         XCTAssertNil(expiredImage, "Expired image should be removed")
+    }
+    
+    func testInMemoryCacheEnforcesStorageLimit() {
+        // Given
+        for i in 1...15 {
+            let url = URL(string: "https://example.com/image/\(i)/small.jpg")!
+            // When
+            sut.saveImage(sampleImage, for: url)
+        }
         
+        // Then
+        XCTAssertLessThanOrEqual(sut.countLimit, 10)
     }
 }

@@ -12,6 +12,8 @@ final class InMemoryCache: ImageCachable {
     private let expirationTime: TimeInterval = 24 * 60 * 60
     private let maxCacheSize = 10
     
+    var countLimit: Int { cache.countLimit }
+    
     func saveImage(_ image: UIImage, for url: URL, dateSaved: Date = Date()) {
         let path = cachePath(for: url)
         
