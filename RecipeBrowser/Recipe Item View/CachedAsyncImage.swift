@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CachedAsyncImage: View {
     @Bindable var viewModel: RecipeItemViewModel
+    @State var hasImageLoaded = false
     
     var body: some View {
         ZStack {
@@ -19,6 +20,11 @@ struct CachedAsyncImage: View {
                     .frame(width: UIScreen.main.bounds.width * 0.9, height: 220)
                     .clipShape(RoundedRectangle(cornerRadius: 25))
                     .foregroundStyle(.primary)
+                    .opacity(hasImageLoaded ? 1 : 0)
+                    .animation(.easeIn(duration: 0.5), value: hasImageLoaded)
+                    .onAppear {
+                        hasImageLoaded = true
+                    }
             } else if viewModel.isLoading {
                 ShimmerView()
                     .frame(width: UIScreen.main.bounds.width * 0.9, height: 220)
