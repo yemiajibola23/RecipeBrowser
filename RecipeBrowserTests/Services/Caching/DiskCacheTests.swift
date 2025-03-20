@@ -11,11 +11,11 @@ import XCTest
 final class DiskCacheTests: XCTestCase {
     var sut: DiskCache!
     let sampleImage = UIImage(systemName: "star")!
-    
+    let tempDirectory = FileManager.default.temporaryDirectory.appending(path: "TestimageCache", directoryHint: .isDirectory)
     override func setUp() {
         super.setUp()
         // Given
-        sut = DiskCache()
+        sut = DiskCache(cacheDirectory: tempDirectory)
     }
     
     override func tearDown() {
@@ -88,5 +88,24 @@ final class DiskCacheTests: XCTestCase {
         let expiredImage = sut.loadImage(for: testURL)
         XCTAssertNil(expiredImage, "Expired image should be removed")
         
+    }
+    
+    func testDiskCacheEnforcesStorageLimit() {
+        // Given
+        let testImage = UIImage(systemName: "star.fill")!
+        for i in 1...20 {
+            // When
+            let url = URL(string: "https://example.com/image/\(i)/small.jpg")!
+            sut.saveImage(testImage, for: url)
+        }
+        
+        // Then
+        let remainingFiles = try? FileManager.default.contentsOfDirectory(at: tempDirectory, includingPropertiesForKeys: [.fileSizeKey])
+        let totalFileSize = remainingFiles?.reduce(0, { (sum, file) -> Int in
+            let attributes = try? file.resourceValues(forKeys: [.fileSizeKey])
+            return sum + (attributes?.fileSize ?? 0)
+        }) ?? 0
+        
+        XCTAssertLessThanOrEqual(totalFileSize, 50 * 1024 * 1024, "DiskCache should enforce 50 MB storage limit.")
     }
 }

@@ -25,6 +25,16 @@ final class DiskCache: ImageCachable {
         removeExpiredFiles()
     }
     
+    init(cacheDirectory: URL) {
+        self.cacheDirectory = cacheDirectory
+        
+        if !fileManager.fileExists(atPath: cacheDirectory.path()) {
+            try? fileManager.createDirectory(at: cacheDirectory, withIntermediateDirectories: true, attributes: nil)
+        }
+        
+        removeExpiredFiles()
+    }
+    
     func cachePath(for url: URL) -> String {
         let pathComponents = url.pathComponents
         guard pathComponents.count > 2 else { return UUID().uuidString }
