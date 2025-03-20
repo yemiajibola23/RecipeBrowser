@@ -8,7 +8,6 @@
 import XCTest
 @testable import RecipeBrowser
 
-
 final class NetworkServiceTests: XCTestCase {
     func testHandleRequestFailsWithNetworkFailureWhenNon200HTTPURLResponse() async {
         // Given
@@ -81,6 +80,31 @@ final class NetworkServiceTests: XCTestCase {
     }
     
     func testNetworkServiceHandleRequesSucceedsAndReturnsData() async {
+        let expectedData = Data("this-is-data".utf8)
+        
+        let testURL = testURL()
+        let successResponse = HTTPURLResponse(url: testURL, statusCode: 200, httpVersion: nil, headerFields: nil)
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [MockURLProtocol.self]
+        let session = URLSession(configuration: configuration)
+        
+
+        MockURLProtocol.mockResponses[testURL] = .success((successResponse, expectedData))
+        
+        let sut = NetworkService(session: session)
+        
+        // when
+        do {
+            let actualData = try await sut.handleRequest(for: testURL)
+            XCTAssertEqual(expectedData, actualData)
+        } catch {
+            XCTFail("Expected to succeed but failed with \(error)")
+        }
+    }
+    
+    func testNetworkServiceSlowResponse() async {
+        MockURLProtocol.responseDelay = 5.0
+        
         let expectedData = Data("this-is-data".utf8)
         
         let testURL = testURL()

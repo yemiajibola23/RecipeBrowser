@@ -45,6 +45,8 @@ func makeRecipesJSON(_ items: [[String: Any]]) -> Data {
 }
 
 class MockURLProtocol: URLProtocol {
+    static var responseDelay: TimeInterval = 0
+    
     static var mockResponses: [URL: Result<(HTTPURLResponse?, Data), Error>] = [:]
     
     override class func canInit(with request: URLRequest) -> Bool { true }
@@ -52,17 +54,28 @@ class MockURLProtocol: URLProtocol {
     override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
     
     override func startLoading() {
-        if let url = request.url, let response = MockURLProtocol.mockResponses[url] {
-            switch response {
-            case .success(let (response, data)):
-                self.client?.urlProtocol(self, didReceive: response!, cacheStoragePolicy: .notAllowed)
-                self.client?.urlProtocol(self, didLoad: data)
-            case .failure(let error):
-                self.client?.urlProtocol(self, didFailWithError: error)
-            }
+        guard let url = request.url else {
+            self.client?.urlProtocol(self, didFailWithError: URLError(.badURL))
+            return
         }
         
-        self.client?.urlProtocolDidFinishLoading(self)
+        DispatchQueue.global().asyncAfter(deadline: .now() + MockURLProtocol.responseDelay) {
+            if let response = MockURLProtocol.mockResponses[url] {
+                switch response {
+                case .success(let (hrtpResponse, data)):
+                    if let httpResponse = hrtpResponse {
+                        self.client?.urlProtocol(self, didReceive: httpResponse, cacheStoragePolicy: .notAllowed)
+                    }
+                    self.client?.urlProtocol(self, didLoad: data)
+                case .failure(let error):
+                    self.client?.urlProtocol(self, didFailWithError: error)
+                }
+            } else {
+                self.client?.urlProtocol(self, didFailWithError: URLError(.resourceUnavailable))
+            }
+            
+            self.client?.urlProtocolDidFinishLoading(self)
+        }
     }
     
     override func stopLoading() {}
