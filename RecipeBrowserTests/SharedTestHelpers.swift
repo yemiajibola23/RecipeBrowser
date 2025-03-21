@@ -12,8 +12,8 @@ func testURL() -> URL {
     URL(string: "https://test.com/")!
 }
 
-func httpFailedResponse(_ url: URL = testURL()) -> HTTPURLResponse {
-    httpURLResponse(url: url, statusCode: 404)
+func httpFailedResponse(_ url: URL = testURL(), statusCode: Int = 404) -> HTTPURLResponse {
+    httpURLResponse(url: url, statusCode: statusCode)
 }
 
 func httpSuccessfulResponse(_ url: URL = testURL()) -> HTTPURLResponse {
