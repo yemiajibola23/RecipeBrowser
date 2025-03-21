@@ -9,19 +9,24 @@ import XCTest
 @testable import RecipeBrowser
 
 final class NetworkServiceTests: XCTestCase {
+    var sut: NetworkService!
+    
+    override func setUp() {
+        super.setUp()
+        sut = makeSUT()
+    }
+    
+    override func tearDown() {
+        sut = nil
+        super.tearDown()
+    }
+    
     func testHandleRequestFailsWithNetworkFailureWhenNon200HTTPURLResponse() async {
         // Given
         let testURL = testURL()
         let failureResponse = httpFailedResponse(testURL)
         
-        let configuration = URLSessionConfiguration.ephemeral
-        configuration.protocolClasses = [MockURLProtocol.self]
-        let session = URLSession(configuration: configuration)
-        
-
         MockURLProtocol.mockResponses[testURL] = .success((failureResponse, Data()))
-        
-        let sut = NetworkService(session: session)
         
         // when
         do {
@@ -35,16 +40,11 @@ final class NetworkServiceTests: XCTestCase {
     }
     
     func testNetworkServiceHandleRequestFailsWithInvalidURL() async {
+        // Given
         let invalidURL = URL(string: "ftp://test.com/sample.jpg")!
         let successResponse = httpSuccessfulResponse(invalidURL)
-        let configuration = URLSessionConfiguration.ephemeral
-        configuration.protocolClasses = [MockURLProtocol.self]
-        let session = URLSession(configuration: configuration)
-        
 
         MockURLProtocol.mockResponses[invalidURL] = .success((successResponse, Data()))
-        
-        let sut = NetworkService(session: session)
         
         // when
         do {
@@ -59,15 +59,8 @@ final class NetworkServiceTests: XCTestCase {
     
     func testImageDownladerFailsWithUnknowError() async {
         let testURL = testURL()
-        let configuration = URLSessionConfiguration.ephemeral
-        configuration.protocolClasses = [MockURLProtocol.self]
-        let session = URLSession(configuration: configuration)
-        
-
         MockURLProtocol.mockResponses[testURL] = .failure(URLError(.notConnectedToInternet))
-        
-        let sut = NetworkService(session: session)
-        
+                
         // when
         do {
             _ = try await sut.handleRequest(for: testURL)
@@ -80,19 +73,13 @@ final class NetworkServiceTests: XCTestCase {
     }
     
     func testNetworkServiceHandleRequesSucceedsAndReturnsData() async {
-        let expectedData = Data("this-is-data".utf8)
-        
+        // Given
         let testURL = testURL()
+        let expectedData = Data("this-is-data".utf8)
         let successResponse = HTTPURLResponse(url: testURL, statusCode: 200, httpVersion: nil, headerFields: nil)
-        let configuration = URLSessionConfiguration.ephemeral
-        configuration.protocolClasses = [MockURLProtocol.self]
-        let session = URLSession(configuration: configuration)
-        
 
         MockURLProtocol.mockResponses[testURL] = .success((successResponse, expectedData))
-        
-        let sut = NetworkService(session: session)
-        
+                
         // when
         do {
             let actualData = try await sut.handleRequest(for: testURL)
@@ -103,21 +90,16 @@ final class NetworkServiceTests: XCTestCase {
     }
     
     func testNetworkServiceSlowResponse() async {
+        // Given
         MockURLProtocol.responseDelay = 5.0
         
         let expectedData = Data("this-is-data".utf8)
         
         let testURL = testURL()
         let successResponse = HTTPURLResponse(url: testURL, statusCode: 200, httpVersion: nil, headerFields: nil)
-        let configuration = URLSessionConfiguration.ephemeral
-        configuration.protocolClasses = [MockURLProtocol.self]
-        let session = URLSession(configuration: configuration)
-        
 
         MockURLProtocol.mockResponses[testURL] = .success((successResponse, expectedData))
-        
-        let sut = NetworkService(session: session)
-        
+                
         // when
         do {
             let actualData = try await sut.handleRequest(for: testURL)
@@ -125,5 +107,15 @@ final class NetworkServiceTests: XCTestCase {
         } catch {
             XCTFail("Expected to succeed but failed with \(error)")
         }
+    }
+}
+
+private extension NetworkServiceTests {
+    func makeSUT() -> NetworkService {
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [MockURLProtocol.self]
+        let session = URLSession(configuration: configuration)
+        
+        return NetworkService(session: session)
     }
 }
