@@ -62,7 +62,7 @@ final class RecipeListViewModelTests: XCTestCase {
         XCTAssertEqual(sut.recipes, expectedRecipes)
     }
     
-    func testRecipeListViewModelFetchRecipesUsesCacheWhenLessThan1MinuteOld() async {
+    func testRecipeListViewModelLoadRecipesUsesCacheWhenLessThan1MinuteOld() async {
         // Given
         let (sut, _) = makeSUT(recipes: Recipe.mock)
         
@@ -78,7 +78,7 @@ final class RecipeListViewModelTests: XCTestCase {
         XCTAssertEqual(sut.lastFetchTime, firstFetchTime, "Last fetch time should not change when using cache.")
     }
     
-    func testRecipeListViewModelFetchRecipesCallsNetworkWhenCacheIsMoreThan1MinuteOld() async {
+    func testRecipeListViewModelLoadRecipesCallsNetworkWhenCacheIsMoreThan1MinuteOld() async {
         // Given
         let (sut, _) = makeSUT(recipes: Recipe.mock)
         
@@ -94,7 +94,7 @@ final class RecipeListViewModelTests: XCTestCase {
         XCTAssertNotEqual(sut.lastFetchTime, firstFetchTime, "Last fetch time should change because of update.")
     }
     
-    func testRecipeListViewModelFetchRecipesCallsNetworkWhenForcedToRefresh() async {
+    func testRecipeListViewModelLoadRecipesCallsNetworkWhenForcedToRefresh() async {
         // Given
         let (sut, manager) = makeSUT(recipes: Recipe.mock)
         
