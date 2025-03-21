@@ -3,9 +3,12 @@
 # gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
 
 Media.zip
+*.xctestplan
 
 ## User settings
 xcuserdata/
+Xcshareddata/
+xcschememanagement.plist
 
 ## Obj-C/Swift specific
 *.hmap
@@ -22,8 +25,8 @@ playground.xcworkspace
 # Swift Package Manager
 #
 # Add this line if you want to avoid checking in source code from Swift Package Manager dependencies.
-# Packages/
-# Package.pins
+Packages/
+Package.pins
 # Package.resolved
 # *.xcodeproj
 #
