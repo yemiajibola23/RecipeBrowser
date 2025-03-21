@@ -80,7 +80,3 @@ struct RecipeListView: View {
         }
     }
 }
-
-//#Preview {
-//    RecipeListView(viewModel: container.makeRecipeListViewModel())
-//}

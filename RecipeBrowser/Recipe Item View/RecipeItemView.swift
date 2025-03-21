@@ -29,7 +29,3 @@ struct RecipeItemView: View {
         }
     }
 }
-
-//#Preview {
-//    RecipeItemView(viewModel: RecipeItemViewModel(recipe: .mock.first!, imageManager: MockImageManager()))
-//}
