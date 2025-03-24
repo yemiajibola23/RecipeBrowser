@@ -23,12 +23,15 @@ final class NetworkServiceTests: XCTestCase {
     
     func testHandleRequestFailsWithNetworkFailureWhenNon200HTTPURLResponse() async {
         // Given
+        let statusCodes = [400, 401, 403, 404, 500]
         let testURL = testURL()
-        let failureResponse = httpFailedResponse(testURL)
-        setMockResponse(for: testURL, response: failureResponse)
         
         // when
-        await performRequestAndAssertError(request: { [weak self] in try await self?.sut.handleRequest(for: testURL)}, expectedError: .networkFailure(statusCode: 404))
+        for code in statusCodes {
+            let failureResponse = httpFailedResponse(testURL, statusCode: code)
+            setMockResponse(for: testURL, response: failureResponse)
+            await performRequestAndAssertError(request: { [weak self] in try await self?.sut.handleRequest(for: testURL)}, expectedError: .networkFailure(statusCode: code))
+        }
     }
     
     func testNetworkServiceHandleRequestFailsWithInvalidURL() async {
@@ -90,6 +93,18 @@ private extension NetworkServiceTests {
         let session = URLSession(configuration: configuration)
         
         return NetworkService(session: session)
+    }
+    
+    func assertNetworkFailure(statusCode: Int,
+                              file: StaticString = #file,
+                              line: UInt = #line) async {
+        let url = testURL()
+        let response = HTTPURLResponse(url: url, statusCode: statusCode, httpVersion: nil, headerFields: nil)!
+        
+        setMockResponse(for: url, response: response, data: Data())
+        
+        await performRequestAndAssertError(request: { [weak self] in try await self?.sut.handleRequest(for: url)}, expectedError: .networkFailure(statusCode: statusCode), file: file, line: line)
+        
     }
     
     func performRequestAndAssertError<T>(
