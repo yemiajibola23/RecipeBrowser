@@ -30,7 +30,7 @@ final class NetworkServiceTests: XCTestCase {
         for code in statusCodes {
             let failureResponse = httpFailedResponse(testURL, statusCode: code)
             setMockResponse(for: testURL, response: failureResponse)
-            await performRequestAndAssertError(request: { [weak self] in try await self?.sut.handleRequest(for: testURL)}, expectedError: .networkFailure(statusCode: code))
+            await performRequestAndAssertError(request: { try await self.sut.handleRequest(for: testURL)}, expectedError: .networkFailure(statusCode: code))
         }
     }
     
@@ -42,7 +42,7 @@ final class NetworkServiceTests: XCTestCase {
         MockURLProtocol.mockResponses[invalidURL] = .success((successResponse, Data()))
         
         // when
-        await performRequestAndAssertError(request: { [weak self] in try await self?.sut.handleRequest(for: invalidURL) }, expectedError: .invalidURL)
+        await performRequestAndAssertError(request: { try await self.sut.handleRequest(for: invalidURL) }, expectedError: .invalidURL)
     }
     
     func testImageDownladerFailsWithUnknownError() async {
@@ -50,7 +50,7 @@ final class NetworkServiceTests: XCTestCase {
         let error = URLError(.notConnectedToInternet)
         setMockResponse(for: testURL, response: httpSuccessfulResponse(), error: error)
         // when
-        await performRequestAndAssertError(request: { [weak self] in try await self?.sut.handleRequest(for: testURL) }, expectedError: .unknown(error))
+        await performRequestAndAssertError(request: { try await self.sut.handleRequest(for: testURL) }, expectedError: .unknown(error))
         
     }
     
