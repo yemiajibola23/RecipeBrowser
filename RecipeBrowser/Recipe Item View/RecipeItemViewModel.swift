@@ -12,14 +12,15 @@ import Observation
 class RecipeItemViewModel {
     private var imageManager: ImageManagerProtocol
     
-    var image: UIImage?
+    var smallImage: UIImage?
+    var largeImage: UIImage?
     var errorMessage: String?
-    var isLoading = false
+   
+    var isLoadingSmallImage = false
+    var isLoadingLargeImage = false
     
     var name: String { recipe.name }
     var cuisine: String { recipe.cuisine }
-    var youtubeLink: String { recipe.youtubeURL ?? "N/A" }
-    var sourceLink: String { recipe.sourceURL ?? "N/A" }
     
     private let recipe: Recipe
     
@@ -29,37 +30,41 @@ class RecipeItemViewModel {
         
         // Work around for images not loading when filter/sort shows up
         if let urlString = recipe.smallPhotoURL, let url = URL(string: urlString) {
-            image = imageManager.getCachedImage(for: url)
+            smallImage = imageManager.getCachedImage(for: url)
         }
         
-        print("Recipe Item View Model was initialized!")
+//        print("Recipe Item View Model was initialized!")
     }
     
-    deinit {
-        print("Recipe Item View Model was deinitialized!")
+    func loadSmallImage() async {
+        await loadImage(for: recipe.smallPhotoURL, into: \.smallImage, loadingFlag: \.isLoadingSmallImage)
     }
     
-    func loadImage() async {
-        isLoading = true
-        errorMessage = nil
+    func loadLargeImage() async {
+        await loadImage(for: recipe.largePhotoURL, into: \.largeImage, loadingFlag: \.isLoadingLargeImage)
+
+    }
+
+    private func loadImage(for urlString: String?, into imageKey: ReferenceWritableKeyPath<RecipeItemViewModel, UIImage?>, loadingFlag: ReferenceWritableKeyPath<RecipeItemViewModel, Bool>) async {
+        guard let urlString = urlString, let url = URL(string: urlString) else {
+            errorMessage = "Invalid image url"
+            return
+        }
         
         print("Load image was called!")
+        self[keyPath: loadingFlag] = true
+        
+        defer { self[keyPath: loadingFlag] = false }
         
         do {
 //            try await Task.sleep(nanoseconds: 3_000_000_000) // Used to simulate a delay 
-            if let urlString = recipe.smallPhotoURL,
-                let url = URL(string: urlString),
-                let fetchedImage = try await imageManager.loadImage(from: url) {
-                image = fetchedImage
-                errorMessage = nil
+               if let fetchedImage = try await imageManager.loadImage(from: url) {
+                   self[keyPath: imageKey] = fetchedImage
             } else {
                 errorMessage = "Failed to load image."
-                image = nil
             }
         } catch {
             errorMessage = error.localizedDescription
         }
-        
-        isLoading = false
     }
 }

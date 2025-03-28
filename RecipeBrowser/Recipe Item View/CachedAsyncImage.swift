@@ -9,23 +9,26 @@ import SwiftUI
 
 struct CachedAsyncImage: View {
     @Bindable var viewModel: RecipeItemViewModel
-    @State var hasImageLoaded = false
-    
+    let imageKeyPath: KeyPath<RecipeItemViewModel, UIImage?>
+    let loadingKeyPath: KeyPath<RecipeItemViewModel, Bool>
+    let width: CGFloat?
+    let height: CGFloat?
+    let contentMode: ContentMode
+    let loadingImageTask: () async -> Void
+
     var body: some View {
         ZStack {
-            if let image = viewModel.image {
+            if let image = viewModel[keyPath: imageKeyPath] {
                 Image(uiImage: image)
                     .resizable()
-                    .aspectRatio(contentMode: .fill)
+                    .aspectRatio(contentMode: contentMode)
                     .frame(width: UIScreen.main.bounds.width * 0.9, height: 220)
                     .clipShape(RoundedRectangle(cornerRadius: 25))
                     .foregroundStyle(.primary)
-                    .opacity(hasImageLoaded ? 1 : 0)
-                    .animation(.easeIn(duration: 0.5), value: hasImageLoaded)
-                    .onAppear {
-                        hasImageLoaded = true
-                    }
-            } else if viewModel.isLoading {
+                    .opacity(1)
+                    .transition(.opacity)
+                    .animation(.easeIn(duration: 0.5), value: image)
+            } else if viewModel[keyPath: loadingKeyPath] {
                 ShimmerView()
                     .frame(width: UIScreen.main.bounds.width * 0.9, height: 220)
                     .clipShape(RoundedRectangle(cornerRadius: 20))
@@ -49,7 +52,7 @@ struct CachedAsyncImage: View {
 //            print("✅ CachedAsyncImage appeared")
             Task {
 //                print("🟢 Attempting to call loadImage()")
-                await viewModel.loadImage()
+                await loadingImageTask()
 //                print("🟢 loadImage() has finished executing")
                 
             }

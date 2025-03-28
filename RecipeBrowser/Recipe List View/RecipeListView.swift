@@ -28,7 +28,7 @@ struct RecipeListView: View {
                     List(viewModel.filteredRecipes, id: \.id) { recipe in
                         let viewModel = container.makeRecipeItemViewModel(recipe: recipe)
                         NavigationLink {
-                            RecipeDetailView()
+                            RecipeDetailView(viewModel: viewModel)
                         } label: {
                             RecipeItemView(viewModel: viewModel)
                                 .padding(.horizontal, 16)
