@@ -14,18 +14,41 @@ struct RecipeItemView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             CachedAsyncImage(viewModel: viewModel, imageKeyPath: \.smallImage, loadingKeyPath: \.isLoadingSmallImage, width: UIScreen.main.bounds.width * 0.9, height: 220, contentMode: .fill, loadingImageTask: { await viewModel.loadSmallImage() }, namespace: namespace)
+                .frame(height: 200)
+                .clipShape(RoundedRectangle(cornerRadius: 20))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(Color.gray.opacity(0.1), lineWidth: 1)
+                }
+                .shadow(color: .black, radius: 4, x: 0, y: 2)
+            
             VStack(alignment: .leading, spacing: 4) {
                 Text(viewModel.name)
                     .font(.title2)
                     .fontWeight(.semibold)
                     .foregroundStyle(.primary)
-                Text(viewModel.cuisine)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+//                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                
+                Text(viewModel.cuisine.uppercased())
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .padding(.vertical, 4)
+                    .padding(.horizontal, 10)
+                    .background(Color.blue.opacity(0.1))
+                    .foregroundStyle(.blue)
+                    .clipShape(Capsule())
             }
-            .frame(width: UIScreen.main.bounds.width * 0.9, alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.vertical, 8)
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 25)
+                .fill(Color(.systemBackground))
+                .shadow(color: .black.opacity(0.08), radius: 6, x: 0, y: 4)
+        )
+        .padding(.horizontal)
+        .padding(.vertical, 6)
         .onAppear {
             print("✅ Recipe item view is rendered for \(viewModel.name)")
         }
