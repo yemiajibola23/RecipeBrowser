@@ -1,12 +1,17 @@
 # RecipeBrowser
 
 ### Summary: Include screen shots or a video of your app highlighting its features
+The app loads a list of recipes and the user can tap on a recipe and be taken to a detail page where an embedded youtube link is shown (if available).
 
 ### Focus Areas: What specific areas of the project did you prioritize? Why did you choose to focus on these areas?
 For this project I focused on architecture, testing, and error handling management.
 ### Architecture
 I used the MVVM design pattern because it's a common pattern to use on small projects. It helps to separate concerns and not bloat files. I also adhered to SOLID principles to create a maintainable, scalable project.
-### 
+### Testing
+I unit tested all service and view model classes as well as the API class to ensure code is working as expected. I tested multiple scenarios and edge cases to increase testability,
+
+### Error Management
+I wanted to have a strong UX so showing the users errors where needed and also giving the option to retry was importan to em. 
 
 ### Time Spent: Approximately how long did you spend working on this project? How did you allocate your time? 
 I spent roughly 15-20 hours creating this app:
