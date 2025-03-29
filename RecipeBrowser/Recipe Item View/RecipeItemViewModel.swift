@@ -22,6 +22,7 @@ class RecipeItemViewModel {
     var name: String { recipe.name }
     var cuisine: String { recipe.cuisine }
     var recipeID: String { recipe.id }
+    var youtubeURL: URL? { recipe.youtubeURL?.toYouTubeEmbedURL() }
     
     private let recipe: Recipe
     
@@ -67,5 +68,16 @@ class RecipeItemViewModel {
         } catch {
             errorMessage = error.localizedDescription
         }
+    }
+}
+
+extension String {
+    func toYouTubeEmbedURL() -> URL? {
+        guard let url = URL(string: self),
+              let query = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems,
+              let videoID = query.first(where: { $0.name == "v" })?.value else {
+            return nil
+        }
+        return URL(string: "https://www.youtube.com/embed/\(videoID)")
     }
 }
