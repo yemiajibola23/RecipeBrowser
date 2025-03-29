@@ -14,15 +14,16 @@ struct RecipeItemView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             CachedAsyncImage(viewModel: viewModel, imageKeyPath: \.smallImage, loadingKeyPath: \.isLoadingSmallImage, width: UIScreen.main.bounds.width * 0.9, height: 220, contentMode: .fill, loadingImageTask: { await viewModel.loadSmallImage() }, namespace: namespace)
-            Text(viewModel.name)
-                .font(.title2)
-                .fontWeight(.semibold)
-                .foregroundStyle(.primary)
-                .padding(.horizontal, 10)
-            Text(viewModel.cuisine)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .padding(.horizontal, 10)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(viewModel.name)
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.primary)
+                Text(viewModel.cuisine)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+            .frame(width: UIScreen.main.bounds.width * 0.9, alignment: .leading)
         }
         .padding(.vertical, 8)
         .onAppear {
