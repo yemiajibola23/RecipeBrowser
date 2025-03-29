@@ -53,9 +53,9 @@ final class RecipeBrowserPerformanceTests: XCTestCase {
         
         mockNetworkService.mockData = generateMockRecipeData(count: 1000)
         
-        await measureAsync { [weak self] in
+        await measureAsync {
             do {
-                _ = try await self?.recipeManager.fetchRecipes()
+                _ = try await self.recipeManager.fetchRecipes()
             } catch {
                 XCTFail("Fetching large dataset failed: \(error)")
             }
@@ -86,13 +86,12 @@ final class RecipeBrowserPerformanceTests: XCTestCase {
         diskCache.clearCache()
     }
     
-    func testPullToRefreshSpeed() {
+    func testPullToRefreshSpeed() async {
         mockNetworkService.mockData = generateMockRecipeData(count: 10)
         let viewModel = RecipeListViewModel(recipeManager: recipeManager)
-        measure {
-            Task {
-                _ = await viewModel.loadRecipes(forceRefresh: true)
-            }
+        
+        await measureAsync {
+            _ = await viewModel.loadRecipes(forceRefresh: true)
         }
     }
     
