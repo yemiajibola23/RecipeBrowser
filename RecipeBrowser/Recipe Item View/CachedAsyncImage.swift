@@ -23,7 +23,7 @@ struct CachedAsyncImage: View {
                 Image(uiImage: image)
                     .resizable()
                     .aspectRatio(contentMode: contentMode)
-                    .frame(width: UIScreen.main.bounds.width * 0.9, height: 220)
+                    .frame(width: width, height: height)
                     .clipShape(RoundedRectangle(cornerRadius: 25))
                     .applyMatchingGeometryEffect(id: viewModel.recipeID, namespace: namespace)
                     .foregroundStyle(.primary)
@@ -32,7 +32,7 @@ struct CachedAsyncImage: View {
                     .animation(.easeIn(duration: 0.5), value: image)
             } else if viewModel[keyPath: loadingKeyPath] {
                 ShimmerView()
-                    .frame(width: UIScreen.main.bounds.width * 0.9, height: 220)
+                    .frame(width: width, height: height)
                     .clipShape(RoundedRectangle(cornerRadius: 20))
             } else if let errorMessage = viewModel.errorMessage {
                 Text(errorMessage)
@@ -44,7 +44,7 @@ struct CachedAsyncImage: View {
                 ImageManager.placeholderImage
                     .resizable()
                     .scaledToFit()
-                    .frame(width: UIScreen.main.bounds.width * 0.9, height: 220)
+                    .frame(width: width, height: height)
                     .clipped()
                     .clipShape(RoundedRectangle(cornerRadius: 20))
                     .foregroundStyle(.gray.opacity(0.5))
