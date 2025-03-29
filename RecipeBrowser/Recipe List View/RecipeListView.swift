@@ -11,7 +11,8 @@ let container = DependencyContainer.shared
 
 struct RecipeListView: View {
     @Bindable var viewModel: RecipeListViewModel
-    
+    @Namespace private var imageNamespace
+
     var body: some View {
         Group {
             if viewModel.isLoading {
@@ -28,9 +29,9 @@ struct RecipeListView: View {
                     List(viewModel.filteredRecipes, id: \.id) { recipe in
                         let viewModel = container.makeRecipeItemViewModel(recipe: recipe)
                         NavigationLink {
-                            RecipeDetailView(viewModel: viewModel)
+                            RecipeDetailView(viewModel: viewModel, namespace: imageNamespace)
                         } label: {
-                            RecipeItemView(viewModel: viewModel)
+                            RecipeItemView(viewModel: viewModel, namespace: imageNamespace)
                                 .padding(.horizontal, 16)
                         }
 

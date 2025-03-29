@@ -8,10 +8,17 @@
 import SwiftUI
 
 struct RecipeDetailView: View {
-    let viewModel: RecipeItemViewModel
+    @Bindable var viewModel: RecipeItemViewModel
+    var namespace: Namespace.ID
     
     var body: some View {
-        CachedAsyncImage(viewModel: viewModel, imageKeyPath: \.largeImage, loadingKeyPath: \.isLoadingLargeImage, width: 300, height: 300, contentMode: .fill, loadingImageTask: { await viewModel.loadLargeImage() })
+        ScrollView {
+            VStack(spacing: 16) {
+                CachedAsyncImage(viewModel: viewModel, imageKeyPath: \.largeImage, loadingKeyPath: \.isLoadingLargeImage, width: nil, height: 250, contentMode: .fill, loadingImageTask: { await viewModel.loadLargeImage() }, namespace: namespace)
+                    .frame(maxWidth: .infinity)
+            }
+        }
+       
     }
 }
 

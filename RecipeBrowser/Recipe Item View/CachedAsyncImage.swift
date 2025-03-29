@@ -15,6 +15,7 @@ struct CachedAsyncImage: View {
     let height: CGFloat?
     let contentMode: ContentMode
     let loadingImageTask: () async -> Void
+    let namespace: Namespace.ID
 
     var body: some View {
         ZStack {
@@ -24,6 +25,7 @@ struct CachedAsyncImage: View {
                     .aspectRatio(contentMode: contentMode)
                     .frame(width: UIScreen.main.bounds.width * 0.9, height: 220)
                     .clipShape(RoundedRectangle(cornerRadius: 25))
+                    .applyMatchingGeometryEffect(id: viewModel.recipeID, namespace: namespace)
                     .foregroundStyle(.primary)
                     .opacity(1)
                     .transition(.opacity)

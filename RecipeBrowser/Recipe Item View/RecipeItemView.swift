@@ -9,10 +9,11 @@ import SwiftUI
 
 struct RecipeItemView: View {
     @Bindable var viewModel: RecipeItemViewModel
+    var namespace: Namespace.ID
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            CachedAsyncImage(viewModel: viewModel, imageKeyPath: \.smallImage, loadingKeyPath: \.isLoadingSmallImage, width: UIScreen.main.bounds.width * 0.9, height: 220, contentMode: .fill, loadingImageTask: { await viewModel.loadSmallImage() })
+            CachedAsyncImage(viewModel: viewModel, imageKeyPath: \.smallImage, loadingKeyPath: \.isLoadingSmallImage, width: UIScreen.main.bounds.width * 0.9, height: 220, contentMode: .fill, loadingImageTask: { await viewModel.loadSmallImage() }, namespace: namespace)
             Text(viewModel.name)
                 .font(.title2)
                 .fontWeight(.semibold)

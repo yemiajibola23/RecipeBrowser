@@ -21,6 +21,7 @@ class RecipeItemViewModel {
     
     var name: String { recipe.name }
     var cuisine: String { recipe.cuisine }
+    var recipeID: String { recipe.id }
     
     private let recipe: Recipe
     
