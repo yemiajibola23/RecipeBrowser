@@ -9,7 +9,7 @@ import UIKit
 import Observation
 
 @Observable
-class RecipeItemViewModel {
+class RecipeViewModel {
     private var imageManager: ImageManagerProtocol
     
     var smallImage: UIImage?
@@ -47,7 +47,7 @@ class RecipeItemViewModel {
 
     }
 
-    private func loadImage(for urlString: String?, into imageKey: ReferenceWritableKeyPath<RecipeItemViewModel, UIImage?>, loadingFlag: ReferenceWritableKeyPath<RecipeItemViewModel, Bool>) async {
+    private func loadImage(for urlString: String?, into imageKey: ReferenceWritableKeyPath<RecipeViewModel, UIImage?>, loadingFlag: ReferenceWritableKeyPath<RecipeViewModel, Bool>) async {
         guard let urlString = urlString, let url = URL(string: urlString) else {
             errorMessage = "Invalid image url"
             return

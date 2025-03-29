@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct RecipeItemView: View {
-    @Bindable var viewModel: RecipeItemViewModel
+    @Bindable var viewModel: RecipeViewModel
     var namespace: Namespace.ID
     
     var body: some View {

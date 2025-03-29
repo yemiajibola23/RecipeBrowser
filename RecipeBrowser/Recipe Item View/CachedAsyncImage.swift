@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct CachedAsyncImage: View {
-    @Bindable var viewModel: RecipeItemViewModel
-    let imageKeyPath: KeyPath<RecipeItemViewModel, UIImage?>
-    let loadingKeyPath: KeyPath<RecipeItemViewModel, Bool>
+    @Bindable var viewModel: RecipeViewModel
+    let imageKeyPath: KeyPath<RecipeViewModel, UIImage?>
+    let loadingKeyPath: KeyPath<RecipeViewModel, Bool>
     let width: CGFloat?
     let height: CGFloat?
     let contentMode: ContentMode

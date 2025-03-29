@@ -27,7 +27,7 @@ struct RecipeListView: View {
             } else {
                 NavigationView {
                     List(viewModel.filteredRecipes, id: \.id) { recipe in
-                        let viewModel = container.makeRecipeItemViewModel(recipe: recipe)
+                        let viewModel = container.makeRecipeViewModel(recipe: recipe)
                         NavigationLink {
                             RecipeDetailView(viewModel: viewModel, namespace: imageNamespace)
                         } label: {

@@ -24,7 +24,7 @@ class DependencyContainer {
     
     func makeRecipeManager() -> RecipeManager { RecipeManager(networkService: networkService) }
     
-    func makeRecipeItemViewModel(recipe: Recipe) -> RecipeItemViewModel { RecipeItemViewModel(recipe: recipe, imageManager: imageManager) }
+    func makeRecipeViewModel(recipe: Recipe) -> RecipeViewModel { RecipeViewModel(recipe: recipe, imageManager: imageManager) }
     
     func makeRecipeListViewModel() -> RecipeListViewModel { RecipeListViewModel(recipeManager: makeRecipeManager()) }
 }

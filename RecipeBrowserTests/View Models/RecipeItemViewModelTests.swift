@@ -8,7 +8,7 @@
 import XCTest
 @testable import RecipeBrowser
 
-final class RecipeItemViewModelTests: XCTestCase {
+final class RecipeViewModelTests: XCTestCase {
     
     func testRecipeItemiewModelLoadSmallImageUpdatesSmallImageOnSuccess() async {
         // Given
@@ -25,23 +25,23 @@ final class RecipeItemViewModelTests: XCTestCase {
         await assert(expectedImage: expectedImage, load: { await $0.loadLargeImage() }, imageKeyPath: \.largeImage, loadingFlagKeyPath: \.isLoadingLargeImage)
     }
     
-    func testRecipeItemViewModelLoadSmallImageSetsErrorMessageOnFailure() async {
+    func testRecipeViewModelLoadSmallImageSetsErrorMessageOnFailure() async {
         await assert(load: { await $0.loadSmallImage() }, imageKeyPath: \.smallImage, expectedErrorMessage: "Failed to load image.")
     }
     
-    func testRecipeItemViewModelLoadLargeImageSetsErrorMessageOnFailure() async {
+    func testRecipeViewModelLoadLargeImageSetsErrorMessageOnFailure() async {
         await assert(load: { await $0.loadLargeImage() }, imageKeyPath: \.largeImage, expectedErrorMessage: "Failed to load image.")
     }
     
 }
 
-private extension RecipeItemViewModelTests {
-    func makeSUT(url: URL, imageManager: MockImageManager) -> RecipeItemViewModel {
-        RecipeItemViewModel(recipe: Recipe.mock.first!, imageManager: imageManager)
+private extension RecipeViewModelTests {
+    func makeSUT(url: URL, imageManager: MockImageManager) -> RecipeViewModel {
+        RecipeViewModel(recipe: Recipe.mock.first!, imageManager: imageManager)
     }
     
-    func assert( load: @escaping (RecipeItemViewModel) async -> Void,
-        imageKeyPath: KeyPath<RecipeItemViewModel, UIImage?>,
+    func assert( load: @escaping (RecipeViewModel) async -> Void,
+        imageKeyPath: KeyPath<RecipeViewModel, UIImage?>,
         expectedErrorMessage: String = "This operation could not be completed",
         file: StaticString = #file,
         line: UInt = #line) async {
@@ -59,9 +59,9 @@ private extension RecipeItemViewModelTests {
     }
     
     func assert(expectedImage: UIImage,
-                load: @escaping (RecipeItemViewModel) async -> Void,
-                imageKeyPath: KeyPath<RecipeItemViewModel, UIImage?>,
-                loadingFlagKeyPath: KeyPath<RecipeItemViewModel, Bool>,
+                load: @escaping (RecipeViewModel) async -> Void,
+                imageKeyPath: KeyPath<RecipeViewModel, UIImage?>,
+                loadingFlagKeyPath: KeyPath<RecipeViewModel, Bool>,
                 file: StaticString = #file,
                 line: UInt = #line) async {
         let mockImageManager = MockImageManager()
