@@ -28,7 +28,7 @@ func makeRecipe(id: UUID = UUID(), name: String, cuisine: String, imageURL: URL 
     (
         Recipe(id: id.uuidString,
                name: name,
-               cuisine: cuisine,
+               cuisine: Cuisine(rawValue: cuisine.lowercased()) ?? .unknown,
                smallPhotoURL: imageURL.absoluteString),
         [
             "uuid": id.uuidString,

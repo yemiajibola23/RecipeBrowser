@@ -19,16 +19,16 @@ class RecipeListViewModel {
     var lastFetchTime: Date?
     
     var searchQuery = ""
-    var selectedCuisine: String? = nil
+    var selectedCuisine: Cuisine? = nil
     var sortOption: SortBy = .name
     var isAscending = true
     
     enum SortBy { case name, cuisine }
     
     var filteredRecipes: [Recipe] { applySort(to: applyFilter(to: applySearch(to: recipes)))}
-    var availableCuisines: [String] {
+    var availableCuisines: [Cuisine] {
         let cuisineSet = Set(recipes.map { $0.cuisine })
-        return Array(cuisineSet).sorted()
+        return Array(cuisineSet).sorted { $0.displayName < $1.displayName }
     }
     
     init(recipeManager: RecipeManagerProtocol) {
@@ -95,7 +95,7 @@ class RecipeListViewModel {
         
         switch sortOption {
         case .name: sortedRecipes.sort { isAscending ? $0.name < $1.name : $0.name > $1.name }
-        case .cuisine: sortedRecipes.sort { isAscending ? $0.cuisine < $1.cuisine : $0.cuisine > $1.cuisine }
+        case .cuisine: sortedRecipes.sort { isAscending ? $0.cuisine.rawValue < $1.cuisine.rawValue : $0.cuisine.rawValue > $1.cuisine.rawValue }
         }
         print("Returning recipes sorted by: \(sortOption)")
         return sortedRecipes

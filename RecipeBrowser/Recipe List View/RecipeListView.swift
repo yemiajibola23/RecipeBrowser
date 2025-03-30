@@ -46,7 +46,7 @@ struct RecipeListView: View {
                                 Button("All", action: { viewModel.selectedCuisine = nil })
                                 
                                 ForEach(viewModel.availableCuisines, id: \.self) { cuisine in
-                                    Button(cuisine, action: { viewModel.selectedCuisine = cuisine })
+                                    Button(cuisine.displayName, action: { viewModel.selectedCuisine = cuisine })
                                 }
                             } label: {
                                 Image(systemName: "line.horizontal.3.decrease.circle.fill")

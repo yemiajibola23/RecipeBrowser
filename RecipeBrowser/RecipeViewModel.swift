@@ -1,5 +1,5 @@
 //
-//  ImageViewModel.swift
+//  RecipeViewModel.swift
 //  RecipeBrowser
 //
 //  Created by Amira Ajibola  on 2/19/25.
@@ -20,7 +20,7 @@ class RecipeViewModel {
     var isLoadingLargeImage = false
     
     var name: String { recipe.name }
-    var cuisine: String { recipe.cuisine }
+    var cuisine: Cuisine { recipe.cuisine }
     var recipeID: String { recipe.id }
     var youtubeURL: URL? { recipe.youtubeURL?.toYouTubeEmbedURL() }
     

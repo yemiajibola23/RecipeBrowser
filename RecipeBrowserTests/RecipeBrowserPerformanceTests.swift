@@ -130,7 +130,7 @@ private extension RecipeBrowserPerformanceTests {
     
     func generateMockRecipeData(count: Int) -> Data {
         let recipes = (1...count).map { i in
-            Recipe(id: "\(i)", name: "Recipe \(i)", cuisine: "Test cuisine", smallPhotoURL: "https://example.com/image\(i).jpg")
+            Recipe(id: "\(i)", name: "Recipe \(i)", cuisine: .american, smallPhotoURL: "https://example.com/image\(i).jpg")
         }
         
         return try! JSONEncoder().encode(RecipeRepository(recipes: recipes))

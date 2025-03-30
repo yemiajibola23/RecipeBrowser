@@ -102,7 +102,7 @@ final class RecipeListViewModelTests: XCTestCase {
         await sut.loadRecipes(from: .mock)
         let firstFetchTime = sut.lastFetchTime
         
-        manager.mockRecipes = [Recipe(id: "2", name: "Cool Recipe", cuisine: "Mandarin")]
+        manager.mockRecipes = [Recipe(id: "2", name: "Cool Recipe", cuisine: Cuisine(rawValue: "Mandarin") ?? .unknown)]
         try? await Task.sleep(nanoseconds: 3_000_000)
         await sut.loadRecipes(from: .mock, forceRefresh: true)
         
@@ -134,12 +134,12 @@ final class RecipeListViewModelTests: XCTestCase {
         // When
         await sut.loadRecipes(from: .mock)
         
-        sut.selectedCuisine = "Italian"
+        sut.selectedCuisine = .italian
         
         // Then
         let filteredRecipes = sut.filteredRecipes
         XCTAssertEqual(filteredRecipes.count, 2, "Should only return 2 recipe.")
-        XCTAssertTrue(filteredRecipes.allSatisfy {$0.cuisine == "Italian"},  "All results should have italian cuisine.")
+        XCTAssertTrue(filteredRecipes.allSatisfy { $0.cuisine == .italian },  "All results should have italian cuisine.")
     }
     
     func testRecipeListViewModelApplySortingWithNameAscendingReturnsSortedRecipes() async {
@@ -183,7 +183,7 @@ final class RecipeListViewModelTests: XCTestCase {
         
         // Then
         let sortedRecipes = sut.filteredRecipes
-        XCTAssertEqual(sortedRecipes.map { $0.cuisine }, ["American", "Italian", "Italian", "Japanese", "Mexican"])
+        XCTAssertEqual(sortedRecipes.map { $0.cuisine }, [.american, .italian, .italian, .japanese, .mexican])
     }
     
     func testRecipeListViewModelApplySortingWithCuisineDescendingReturnsSortedRecipes() async {
@@ -198,7 +198,7 @@ final class RecipeListViewModelTests: XCTestCase {
         
         // Then
         let sortedRecipes = sut.filteredRecipes
-        XCTAssertEqual(sortedRecipes.map { $0.cuisine }, ["Mexican", "Japanese", "Italian", "Italian", "American"])
+        XCTAssertEqual(sortedRecipes.map { $0.cuisine }, [.mexican, .japanese, .italian, .italian, .american])
     }
     
     func testRecipeListViewModelAvailableCuisinesAreUniqueAndSorted() async {
@@ -210,7 +210,7 @@ final class RecipeListViewModelTests: XCTestCase {
         await sut.loadRecipes(from: .mock)
         
         // Then
-        XCTAssertEqual(sut.availableCuisines, ["American", "Italian", "Japanese", "Mexican"], "Available cuisines should be unique and sorted.")
+        XCTAssertEqual(sut.availableCuisines, [.american, .italian, .japanese, .mexican], "Available cuisines should be unique and sorted.")
     }
 }
 
@@ -239,11 +239,11 @@ private extension RecipeListViewModelTests {
     
     var mockRecipes: [Recipe] {
         [
-            Recipe(id: "1", name: "Spaghetti", cuisine: "Italian", smallPhotoURL: "https://example.com/image1.jpg"),
-            Recipe(id: "2", name: "Pizza", cuisine: "Italian", smallPhotoURL: "https://example.com/image2.jpg"),
-            Recipe(id: "3", name: "Sushi", cuisine: "Japanese", smallPhotoURL: "https://example.com/image3.jpg"),
-            Recipe(id: "4", name: "Tacos", cuisine: "Mexican", smallPhotoURL: "https://example.com/image4.jpg"),
-            Recipe(id: "5", name: "Burger", cuisine: "American", smallPhotoURL: "https://example.com/image5.jpg")
+            Recipe(id: "1", name: "Spaghetti", cuisine: .italian, smallPhotoURL: "https://example.com/image1.jpg"),
+            Recipe(id: "2", name: "Pizza", cuisine: .italian, smallPhotoURL: "https://example.com/image2.jpg"),
+            Recipe(id: "3", name: "Sushi", cuisine: .japanese, smallPhotoURL: "https://example.com/image3.jpg"),
+            Recipe(id: "4", name: "Tacos", cuisine: .mexican, smallPhotoURL: "https://example.com/image4.jpg"),
+            Recipe(id: "5", name: "Burger", cuisine: .american, smallPhotoURL: "https://example.com/image5.jpg")
         ]
     }
 }

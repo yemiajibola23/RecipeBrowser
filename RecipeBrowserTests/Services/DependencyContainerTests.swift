@@ -25,7 +25,7 @@ final class DependencyContainerTests: XCTestCase {
     }
     
     func testDependencyContainerMakeRecrpeItemViewModelMakesSeparateInstances() {
-        let recipe = Recipe(id: "1", name: "Test", cuisine: "American")
+        let recipe = Recipe(id: "1", name: "Test", cuisine: .american)
         assertSeparateInstances(instanceProvider: { sut.makeRecipeViewModel(recipe: recipe) }, message: "Recipe item view model should have separate instances.")
     }
     

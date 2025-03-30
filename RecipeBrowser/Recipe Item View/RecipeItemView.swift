@@ -30,13 +30,13 @@ struct RecipeItemView: View {
 //                    .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
                 
-                Text(viewModel.cuisine.uppercased())
+                Text(viewModel.cuisine.displayName)
                     .font(.caption)
                     .fontWeight(.medium)
                     .padding(.vertical, 4)
                     .padding(.horizontal, 10)
-                    .background(Color.blue.opacity(0.1))
-                    .foregroundStyle(.blue)
+                    .background(viewModel.cuisine.color.opacity(0.1))
+                    .foregroundStyle(viewModel.cuisine.color)
                     .clipShape(Capsule())
             }
             .frame(maxWidth: .infinity, alignment: .leading)
