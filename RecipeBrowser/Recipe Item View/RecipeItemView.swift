@@ -27,17 +27,9 @@ struct RecipeItemView: View {
                     .font(.title2)
                     .fontWeight(.semibold)
                     .foregroundStyle(.primary)
-//                    .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
                 
-                Text(viewModel.cuisine.displayName)
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .padding(.vertical, 4)
-                    .padding(.horizontal, 10)
-                    .background(viewModel.cuisine.color.opacity(0.1))
-                    .foregroundStyle(viewModel.cuisine.color)
-                    .clipShape(Capsule())
+                CuisineTagView(cuisine: viewModel.cuisine)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }

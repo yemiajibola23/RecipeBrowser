@@ -32,6 +32,8 @@ struct RecipeDetailView: View {
                         .foregroundStyle(.white)
                 }
                 
+                CuisineTagView(cuisine: viewModel.cuisine)
+                    .padding(.horizontal)
                 
                 if let youtubeURL = viewModel.youtubeURL {
                     YouTubePlayerView(videoURL: youtubeURL)
