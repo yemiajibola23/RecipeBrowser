@@ -22,6 +22,7 @@ class ImageManager: ImageManagerProtocol {
     static var emptyImage: Image { Image(systemName: "tray") }
     static var reloadImage: Image { Image(systemName: "arrow.clockwise.circle.fill") }
     static var placeholderImage: Image { Image(uiImage: UIImage(imageLiteralResourceName: "placeholder-meal")) }
+    static var linkImage: Image { Image(systemName: "safari") }
     
     init(diskCache: ImageCachable, memoryCache: ImageCachable, downloader: ImageDownloadable) {
         self.diskCache = diskCache

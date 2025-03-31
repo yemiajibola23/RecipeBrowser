@@ -23,6 +23,10 @@ class RecipeViewModel {
     var cuisine: Cuisine { recipe.cuisine }
     var recipeID: String { recipe.id }
     var youtubeURL: URL? { recipe.youtubeURL?.toYouTubeEmbedURL() }
+    var sourceURL: URL? {
+        guard let urlString = recipe.sourceURL else { return nil }
+        return URL(string: urlString)
+    }
     
     private let recipe: Recipe
     

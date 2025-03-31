@@ -14,7 +14,7 @@ struct RecipeDetailView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
-                ZStack {
+                ZStack(alignment: .topTrailing) {
                     CachedAsyncImage(
                         viewModel: viewModel,
                         imageKeyPath: \.largeImage,
@@ -24,13 +24,24 @@ struct RecipeDetailView: View {
                         contentMode: .fill,
                         loadingImageTask: { await viewModel.loadLargeImage() },
                         namespace: namespace)
-                        .frame(maxWidth: .infinity)
+                    .frame(maxWidth: .infinity)
                     
-                    Text(viewModel.name)
-                        .font(.title2)
-                        .bold()
-                        .foregroundStyle(.white)
+                    if let url = viewModel.sourceURL {
+                        Link(destination: url) {
+                            ImageManager.linkImage
+                                .font(.system(size: 25, weight: .semibold))
+                                .padding(10)
+                                .background(.ultraThinMaterial, in: Circle())
+                        }
+                        .padding(12)
+                        .shadow(radius: 2)
+                    }
                 }
+               
+                Text(viewModel.name)
+                    .font(.largeTitle)
+                    .bold()
+                    .padding(.horizontal)
                 
                 CuisineTagView(cuisine: viewModel.cuisine)
                     .padding(.horizontal)
@@ -43,7 +54,7 @@ struct RecipeDetailView: View {
                 }
             }
         }
-       
+        
     }
 }
 
