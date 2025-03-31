@@ -13,7 +13,7 @@ struct RecipeItemView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            CachedAsyncImage(viewModel: viewModel, imageKeyPath: \.smallImage, loadingKeyPath: \.isLoadingSmallImage, width: UIScreen.main.bounds.width * 0.9, height: 220, contentMode: .fill, loadingImageTask: { await viewModel.loadSmallImage() }, namespace: namespace)
+            CachedAsyncImage(viewModel: viewModel, imageKeyPath: \.smallImage, loadingKeyPath: \.isLoadingSmallImage, width: UIScreen.main.bounds.width * 0.9, height: 220, cornerRadius: 25.0, contentMode: .fill, loadingImageTask: { await viewModel.loadSmallImage() }, namespace: namespace)
                 .frame(height: 200)
                 .clipShape(RoundedRectangle(cornerRadius: 20))
                 .overlay {

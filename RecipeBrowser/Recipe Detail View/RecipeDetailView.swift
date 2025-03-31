@@ -15,17 +15,23 @@ struct RecipeDetailView: View {
         ScrollView {
             VStack(spacing: 16) {
                 ZStack(alignment: .topTrailing) {
-                    CachedAsyncImage(
-                        viewModel: viewModel,
-                        imageKeyPath: \.largeImage,
-                        loadingKeyPath: \.isLoadingLargeImage,
-                        width: nil,
-                        height: 250,
-                        contentMode: .fill,
-                        loadingImageTask: { await viewModel.loadLargeImage() },
-                        namespace: namespace)
-                    .frame(maxWidth: .infinity)
-                    
+                    ZStack(alignment: .bottom) {
+                        CachedAsyncImage(
+                            viewModel: viewModel,
+                            imageKeyPath: \.largeImage,
+                            loadingKeyPath: \.isLoadingLargeImage,
+                            width: nil,
+                            height: 250,
+                            cornerRadius: 0,
+                            contentMode: .fill,
+                            loadingImageTask: { await viewModel.loadLargeImage() },
+                            namespace: namespace)
+                        .frame(maxWidth: .infinity)
+    
+                        LinearGradient(gradient: Gradient(colors: [.clear, .black.opacity(0.3)]), startPoint: .top, endPoint: .bottom)
+                    }
+                    .aspectRatio(3/2, contentMode: .fit)
+
                     if let url = viewModel.sourceURL {
                         Link(destination: url) {
                             ImageManager.linkImage
@@ -34,6 +40,7 @@ struct RecipeDetailView: View {
                                 .background(.ultraThinMaterial, in: Circle())
                         }
                         .padding(12)
+                        .padding(.top, 20)
                         .shadow(radius: 2)
                     }
                 }
@@ -47,10 +54,19 @@ struct RecipeDetailView: View {
                     .padding(.horizontal)
                 
                 if let youtubeURL = viewModel.youtubeURL {
+                    Text("Video Tutorial")
+                        .font(.headline)
+                        .padding(.horizontal)
+                    
                     YouTubePlayerView(videoURL: youtubeURL)
                         .frame(height: 220)
                         .clipShape(RoundedRectangle(cornerRadius: 15))
                         .padding(.horizontal)
+                        .overlay (
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(Color.gray.opacity(0.15), lineWidth: 1)
+                        )
+                    
                 }
             }
         }

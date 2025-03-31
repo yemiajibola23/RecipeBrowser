@@ -13,6 +13,7 @@ struct CachedAsyncImage: View {
     let loadingKeyPath: KeyPath<RecipeViewModel, Bool>
     let width: CGFloat?
     let height: CGFloat?
+    let cornerRadius: CGFloat
     let contentMode: ContentMode
     let loadingImageTask: () async -> Void
     let namespace: Namespace.ID
@@ -24,7 +25,7 @@ struct CachedAsyncImage: View {
                     .resizable()
                     .aspectRatio(contentMode: contentMode)
                     .frame(width: width, height: height)
-                    .clipShape(RoundedRectangle(cornerRadius: 25))
+                    .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
                     .applyMatchingGeometryEffect(id: viewModel.recipeID, namespace: namespace)
                     .foregroundStyle(.primary)
                     .opacity(1)
@@ -33,7 +34,7 @@ struct CachedAsyncImage: View {
             } else if viewModel[keyPath: loadingKeyPath] {
                 ShimmerView()
                     .frame(width: width, height: height)
-                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                    .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
             } else if let errorMessage = viewModel.errorMessage {
                 Text(errorMessage)
                     .foregroundStyle(.white)
