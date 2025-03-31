@@ -9,7 +9,6 @@ import SwiftUI
 
 struct RecipeDetailView: View {
     @Bindable var viewModel: RecipeViewModel
-    var namespace: Namespace.ID
     
     var body: some View {
         ScrollView {
@@ -24,8 +23,7 @@ struct RecipeDetailView: View {
                             height: 250,
                             cornerRadius: 0,
                             contentMode: .fill,
-                            loadingImageTask: { await viewModel.loadLargeImage() },
-                            namespace: namespace)
+                            loadingImageTask: { await viewModel.loadLargeImage() })
                         .frame(maxWidth: .infinity)
     
                         LinearGradient(gradient: Gradient(colors: [.clear, .black.opacity(0.3)]), startPoint: .top, endPoint: .bottom)

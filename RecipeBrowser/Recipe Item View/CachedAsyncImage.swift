@@ -16,7 +16,6 @@ struct CachedAsyncImage: View {
     let cornerRadius: CGFloat
     let contentMode: ContentMode
     let loadingImageTask: () async -> Void
-    let namespace: Namespace.ID
 
     var body: some View {
         ZStack {
@@ -26,7 +25,6 @@ struct CachedAsyncImage: View {
                     .aspectRatio(contentMode: contentMode)
                     .frame(width: width, height: height)
                     .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
-                    .applyMatchingGeometryEffect(id: viewModel.recipeID, namespace: namespace)
                     .foregroundStyle(.primary)
                     .opacity(1)
                     .transition(.opacity)

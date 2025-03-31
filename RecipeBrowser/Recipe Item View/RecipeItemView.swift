@@ -9,11 +9,10 @@ import SwiftUI
 
 struct RecipeItemView: View {
     @Bindable var viewModel: RecipeViewModel
-    var namespace: Namespace.ID
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            CachedAsyncImage(viewModel: viewModel, imageKeyPath: \.smallImage, loadingKeyPath: \.isLoadingSmallImage, width: UIScreen.main.bounds.width * 0.9, height: 220, cornerRadius: 25.0, contentMode: .fill, loadingImageTask: { await viewModel.loadSmallImage() }, namespace: namespace)
+            CachedAsyncImage(viewModel: viewModel, imageKeyPath: \.smallImage, loadingKeyPath: \.isLoadingSmallImage, width: UIScreen.main.bounds.width * 0.9, height: 220, cornerRadius: 25.0, contentMode: .fill, loadingImageTask: { await viewModel.loadSmallImage() })
                 .frame(height: 200)
                 .clipShape(RoundedRectangle(cornerRadius: 20))
                 .overlay {
@@ -40,7 +39,6 @@ struct RecipeItemView: View {
                 .shadow(color: .black.opacity(0.08), radius: 6, x: 0, y: 4)
         )
         .padding(.horizontal)
-        .padding(.vertical, 6)
         .onAppear {
             print("✅ Recipe item view is rendered for \(viewModel.name)")
         }
