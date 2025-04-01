@@ -18,6 +18,11 @@ enum Cuisine: String, CaseIterable, Codable, Identifiable {
     case mexican
     case japanese
     case indian
+    case greek
+    case polish
+    case portuguese
+    case russian
+    case croatian
     case unknown
     
     var id: String { rawValue }
@@ -36,7 +41,12 @@ enum Cuisine: String, CaseIterable, Codable, Identifiable {
         case .mexican: return .orange
         case .japanese: return .purple
         case .indian: return .brown
+        case .greek: return .pink
         case .unknown: return .gray.opacity(0.6)
+        case .polish: return .black
+        case .portuguese: return .teal
+        case .russian: return .primary
+        case .croatian: return .secondary
         }
     }
 }

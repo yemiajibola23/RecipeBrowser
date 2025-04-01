@@ -21,7 +21,7 @@ final class InMemoryCache: ImageCachable {
             cache.removeObject(forKey: cache.name as NSString)
         }
         
-        print("Saving to RAM under name: \(path)")
+//        print("Saving to RAM under name: \(path)")
         cache.setObject(CacheEntry(image: image, date: dateSaved), forKey: path as NSString)
     }
     

@@ -43,18 +43,17 @@ extension Recipe: Codable {
     }
     
     init(from decoder: Decoder) throws {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
-            id = try container.decode(String.self, forKey: .id)
-            name = try container.decode(String.self, forKey: .name)
-
-            let cuisineString = try container.decode(String.self, forKey: .cuisine).lowercased()
-            cuisine = Cuisine(rawValue: cuisineString) ?? .unknown
-
-            smallPhotoURL = try container.decodeIfPresent(String.self, forKey: .smallPhotoURL)
-            largePhotoURL = try container.decodeIfPresent(String.self, forKey: .largePhotoURL)
-            sourceURL = try container.decodeIfPresent(String.self, forKey: .sourceURL)
-            youtubeURL = try container.decodeIfPresent(String.self, forKey: .youtubeURL)
-        }
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        
+        let cuisineString = try container.decode(String.self, forKey: .cuisine).lowercased()
+        cuisine = Cuisine(rawValue: cuisineString) ?? .unknown
+        smallPhotoURL = try container.decodeIfPresent(String.self, forKey: .smallPhotoURL)
+        largePhotoURL = try container.decodeIfPresent(String.self, forKey: .largePhotoURL)
+        sourceURL = try container.decodeIfPresent(String.self, forKey: .sourceURL)
+        youtubeURL = try container.decodeIfPresent(String.self, forKey: .youtubeURL)
+    }
 }
 
 extension Recipe: Equatable {}

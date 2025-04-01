@@ -78,15 +78,15 @@ final class DiskCache: ImageCachable {
     
     private func removeExpiredFiles() {
         let expirationDate = Date().addingTimeInterval(-expirationTime)
-        print("Expiration date calculated at: \(expirationDate)")
+//        print("Expiration date calculated at: \(expirationDate)")
         
         if let files = try? fileManager.contentsOfDirectory(at: cacheDirectory, includingPropertiesForKeys: [.contentModificationDateKey]) {
             for file in files {
-                print("👀 Looking into file: \(file.absoluteString)")
+//                print("👀 Looking into file: \(file.absoluteString)")
                 if let attributes = try? file.resourceValues(forKeys: [.contentModificationDateKey]),
                    let modifiedDate = attributes.contentModificationDate,
                    modifiedDate < expirationDate {
-                    print("Removing file at url: \(file.absoluteString)")
+//                    print("Removing file at url: \(file.absoluteString)")
                     try? fileManager.removeItem(at: file)
                 }
             }
